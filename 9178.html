@@ -1,0 +1,2625 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>伤害计算器</title>
+  <meta name="description" content="洛克王国 PVP 伤害计算器（精简版）：选精灵、调性格个体、配技能，即时算出伤害与击杀线。数据来自 BWiki 精灵图鉴。">
+  <meta name="theme-color" content="#1a1c2e">
+  <link rel="stylesheet" href="css/head.css">
+</head>
+<body>
+
+<header>
+  <div style="font-size:24px">⚔️</div>
+  <div style="display:flex;flex-direction:column;gap:2px">
+    <h1>伤害计算器</h1>
+  </div>
+  <div class="header-actions">
+    <div class="theme-toggle" onclick="toggleTheme()">
+      <span class="tt-icon" id="theme-icon">🌙</span>
+      <span id="theme-label">夜间</span>
+    </div>
+  </div>
+</header>
+
+<div class="main">
+  <div class="panels">
+    <!-- 攻击方 -->
+    <div class="panel" id="atk-panel">
+      <div class="panel-header">
+        <span class="panel-badge badge-atk">攻击方</span>
+        <span class="panel-title">选择出招精灵</span>
+      </div>
+      <div class="search-wrap" id="atk-search-wrap">
+        <span class="search-icon">🔍</span>
+        <input class="search-input" id="atk-search" placeholder="点击展开 / 输入名称过滤…" autocomplete="off">
+        <span class="search-arrow" id="atk-search-arrow">▼</span>
+        <div class="dropdown" id="atk-dropdown"></div>
+      </div>
+      <div class="spirit-card" id="atk-card">
+        <div class="no-spirit">请搜索并选择攻击方精灵</div>
+      </div>
+      <div class="nature-iv-row" id="atk-nature-row" style="display:none">
+        <div class="niv-field" style="flex:1;min-width:100%">
+          <div class="niv-label">性格</div>
+          <select class="niv-select" id="atk-nature" onchange="recalcStats('atk');calc()">
+            <option value="neutral">普通（无修正）</option>
+            <optgroup label="+生命">
+              <option value="沉默">沉默（+生命 -物攻）</option>
+              <option value="平和">平和（+生命 -魔攻）</option>
+              <option value="忧郁">忧郁（+生命 -物防）</option>
+              <option value="粗心">粗心（+生命 -魔防）</option>
+              <option value="踏实">踏实（+生命 -速度）</option>
+            </optgroup>
+            <optgroup label="+物攻">
+              <option value="大胆">大胆（+物攻 -物防）</option>
+              <option value="调皮">调皮（+物攻 -魔防）</option>
+              <option value="勇敢">勇敢（+物攻 -速度）</option>
+              <option value="逞强">逞强（+物攻 -生命）</option>
+              <option value="固执">固执（+物攻 -魔攻）</option>
+            </optgroup>
+            <optgroup label="+魔攻">
+              <option value="聪明">聪明（+魔攻 -物攻）</option>
+              <option value="专注">专注（+魔攻 -物防）</option>
+              <option value="偏执">偏执（+魔攻 -魔防）</option>
+              <option value="冷静">冷静（+魔攻 -速度）</option>
+              <option value="理性">理性（+魔攻 -生命）</option>
+            </optgroup>
+            <optgroup label="+速度">
+              <option value="胆小">胆小（+速度 -物攻）</option>
+              <option value="开朗">开朗（+速度 -魔攻）</option>
+              <option value="急躁">急躁（+速度 -物防）</option>
+              <option value="莽撞">莽撞（+速度 -魔防）</option>
+              <option value="热情">热情（+速度 -生命）</option>
+            </optgroup>
+            <optgroup label="+物防">
+              <option value="稳重">稳重（+物防 -物攻）</option>
+              <option value="天真">天真（+物防 -魔攻）</option>
+              <option value="悠闲">悠闲（+物防 -速度）</option>
+              <option value="懒散">懒散（+物防 -魔防）</option>
+              <option value="坦率">坦率（+物防 -生命）</option>
+            </optgroup>
+            <optgroup label="+魔防">
+              <option value="警惕">警惕（+魔防 -物攻）</option>
+              <option value="害羞">害羞（+魔防 -魔攻）</option>
+              <option value="温顺">温顺（+魔防 -物防）</option>
+              <option value="慎重">慎重（+魔防 -速度）</option>
+              <option value="焦虑">焦虑（+魔防 -生命）</option>
+            </optgroup>
+          </select>
+        </div>
+      </div>
+      <div class="stats-grid" id="atk-stats" style="display:none">
+        <div class="stat-box active-atk" id="atk-stat-patk" onclick="setAtkStat('patk')" title="使用物攻出招">
+          <div class="stat-left"><div class="stat-label">物攻</div><div class="stat-value atk-color" id="val-atk-patk">—</div><div class="stat-base" id="base-atk-patk"></div></div><div class="stat-iv-wrap"><div class="stat-iv-label">个体</div><button class="stat-iv-btn" id="atk-iv-patk" value="60" title="物攻个体值(0/60)，点击切换" onclick="event.stopPropagation();toggleIV('atk-iv-patk','atk')">60</button></div>
+        </div>
+        <div class="stat-box" id="atk-stat-matk" onclick="setAtkStat('matk')" title="使用魔攻出招">
+          <div class="stat-left"><div class="stat-label">魔攻</div><div class="stat-value atk-color" id="val-atk-matk">—</div><div class="stat-base" id="base-atk-matk"></div></div><div class="stat-iv-wrap"><div class="stat-iv-label">个体</div><button class="stat-iv-btn" id="atk-iv-matk" value="60" title="魔攻个体值(0/60)，点击切换" onclick="event.stopPropagation();toggleIV('atk-iv-matk','atk')">60</button></div>
+        </div>
+        <div class="stat-box" style="cursor:default">
+          <div class="stat-left"><div class="stat-label">速度</div><div class="stat-value" id="val-atk-spd">—</div><div class="stat-base" id="base-atk-spd"></div></div><div class="stat-iv-wrap"><div class="stat-iv-label">个体</div><button class="stat-iv-btn" id="atk-iv-spd" value="60" title="速度个体值(0/60)，点击切换" onclick="event.stopPropagation();toggleIV('atk-iv-spd','atk')">60</button></div>
+        </div>
+        <div class="stat-box" style="cursor:default">
+          <div class="stat-left"><div class="stat-label">HP</div><div class="stat-value" id="val-atk-hp">—</div><div class="stat-base" id="base-atk-hp"></div></div><div class="stat-iv-wrap"><div class="stat-iv-label">个体</div><button class="stat-iv-btn" id="atk-iv-hp" value="0" title="HP个体值(0/60)，点击切换" onclick="event.stopPropagation();toggleIV('atk-iv-hp','atk')">0</button></div>
+        </div>
+        <div class="stat-box" style="cursor:default">
+          <div class="stat-left"><div class="stat-label">物防</div><div class="stat-value" id="val-atk-pdef">—</div><div class="stat-base" id="base-atk-pdef"></div></div><div class="stat-iv-wrap"><div class="stat-iv-label">个体</div><button class="stat-iv-btn" id="atk-iv-pdef" value="0" title="物防个体值(0/60)，点击切换" onclick="event.stopPropagation();toggleIV('atk-iv-pdef','atk')">0</button></div>
+        </div>
+        <div class="stat-box" style="cursor:default">
+          <div class="stat-left"><div class="stat-label">魔防</div><div class="stat-value" id="val-atk-mdef">—</div><div class="stat-base" id="base-atk-mdef"></div></div><div class="stat-iv-wrap"><div class="stat-iv-label">个体</div><button class="stat-iv-btn" id="atk-iv-mdef" value="0" title="魔防个体值(0/60)，点击切换" onclick="event.stopPropagation();toggleIV('atk-iv-mdef','atk')">0</button></div>
+        </div>
+      </div>
+      <div class="level-row" id="atk-level-row" style="display:none">
+        <span class="level-label">攻击能力等级</span>
+        <button class="level-btn" onclick="changeLevel('atk','atk',-1)">−</button>
+        <span class="level-val" id="atk-atklevel-val">0</span>
+        <button class="level-btn" onclick="changeLevel('atk','atk',1)">+</button>
+        <span class="level-multiplier" id="atk-atklevel-mult">×1.00</span>
+      </div>
+    </div>
+
+    <!-- 交换 -->
+    <div class="swap-col">
+      <button class="swap-btn" onclick="swapSpirits()" title="交换攻防精灵">⇄</button>
+    </div>
+
+    <!-- 防御方 -->
+    <div class="panel" id="def-panel">
+      <div class="panel-header">
+        <span class="panel-badge badge-def">防御方</span>
+        <span class="panel-title">选择承受精灵</span>
+      </div>
+      <div class="search-wrap" id="def-search-wrap">
+        <span class="search-icon">🔍</span>
+        <input class="search-input" id="def-search" placeholder="点击展开 / 输入名称过滤…" autocomplete="off">
+        <span class="search-arrow" id="def-search-arrow">▼</span>
+        <div class="dropdown" id="def-dropdown"></div>
+      </div>
+      <div class="spirit-card" id="def-card">
+        <div class="no-spirit">请搜索并选择防御方精灵</div>
+      </div>
+      <div class="nature-iv-row" id="def-nature-row" style="display:none">
+        <div class="niv-field" style="flex:1;min-width:100%">
+          <div class="niv-label">性格</div>
+          <select class="niv-select" id="def-nature" onchange="recalcStats('def');calc()">
+            <option value="neutral">普通（无修正）</option>
+            <optgroup label="+生命">
+              <option value="沉默">沉默（+生命 -物攻）</option>
+              <option value="平和">平和（+生命 -魔攻）</option>
+              <option value="忧郁">忧郁（+生命 -物防）</option>
+              <option value="粗心">粗心（+生命 -魔防）</option>
+              <option value="踏实">踏实（+生命 -速度）</option>
+            </optgroup>
+            <optgroup label="+物攻">
+              <option value="大胆">大胆（+物攻 -物防）</option>
+              <option value="调皮">调皮（+物攻 -魔防）</option>
+              <option value="勇敢">勇敢（+物攻 -速度）</option>
+              <option value="逞强">逞强（+物攻 -生命）</option>
+              <option value="固执">固执（+物攻 -魔攻）</option>
+            </optgroup>
+            <optgroup label="+魔攻">
+              <option value="聪明">聪明（+魔攻 -物攻）</option>
+              <option value="专注">专注（+魔攻 -物防）</option>
+              <option value="偏执">偏执（+魔攻 -魔防）</option>
+              <option value="冷静">冷静（+魔攻 -速度）</option>
+              <option value="理性">理性（+魔攻 -生命）</option>
+            </optgroup>
+            <optgroup label="+速度">
+              <option value="胆小">胆小（+速度 -物攻）</option>
+              <option value="开朗">开朗（+速度 -魔攻）</option>
+              <option value="急躁">急躁（+速度 -物防）</option>
+              <option value="莽撞">莽撞（+速度 -魔防）</option>
+              <option value="热情">热情（+速度 -生命）</option>
+            </optgroup>
+            <optgroup label="+物防">
+              <option value="稳重">稳重（+物防 -物攻）</option>
+              <option value="天真">天真（+物防 -魔攻）</option>
+              <option value="悠闲">悠闲（+物防 -速度）</option>
+              <option value="懒散">懒散（+物防 -魔防）</option>
+              <option value="坦率">坦率（+物防 -生命）</option>
+            </optgroup>
+            <optgroup label="+魔防">
+              <option value="警惕">警惕（+魔防 -物攻）</option>
+              <option value="害羞">害羞（+魔防 -魔攻）</option>
+              <option value="温顺">温顺（+魔防 -物防）</option>
+              <option value="慎重">慎重（+魔防 -速度）</option>
+              <option value="焦虑">焦虑（+魔防 -生命）</option>
+            </optgroup>
+          </select>
+        </div>
+      </div>
+      <div class="stats-grid" id="def-stats" style="display:none">
+        <div class="stat-box active-def" id="def-stat-pdef" onclick="setDefStat('pdef')" title="使用物防承受">
+          <div class="stat-left"><div class="stat-label">物防</div><div class="stat-value def-color" id="val-def-pdef">—</div><div class="stat-base" id="base-def-pdef"></div></div><div class="stat-iv-wrap"><div class="stat-iv-label">个体</div><button class="stat-iv-btn" id="def-iv-def" value="0" title="物防个体值(0/60)，点击切换" onclick="event.stopPropagation();toggleIV('def-iv-def','def')">0</button></div>
+        </div>
+        <div class="stat-box" id="def-stat-mdef" onclick="setDefStat('mdef')" title="使用魔防承受">
+          <div class="stat-left"><div class="stat-label">魔防</div><div class="stat-value def-color" id="val-def-mdef">—</div><div class="stat-base" id="base-def-mdef"></div></div><div class="stat-iv-wrap"><div class="stat-iv-label">个体</div><button class="stat-iv-btn" id="def-iv-mdef" value="0" title="魔防个体值(0/60)，点击切换" onclick="event.stopPropagation();toggleIV('def-iv-mdef','def')">0</button></div>
+        </div>
+        <div class="stat-box" style="cursor:default">
+          <div class="stat-left"><div class="stat-label">速度</div><div class="stat-value" id="val-def-spd">—</div><div class="stat-base" id="base-def-spd"></div></div><div class="stat-iv-wrap"><div class="stat-iv-label">个体</div><button class="stat-iv-btn" id="def-iv-spd" value="0" title="速度个体值(0/60)，点击切换" onclick="event.stopPropagation();toggleIV('def-iv-spd','def')">0</button></div>
+        </div>
+        <div class="stat-box" style="cursor:default">
+          <div class="stat-left"><div class="stat-label">HP</div><div class="stat-value" id="val-def-hp">—</div><div class="stat-base" id="base-def-hp"></div></div><div class="stat-iv-wrap"><div class="stat-iv-label">个体</div><button class="stat-iv-btn" id="def-iv-hp" value="60" title="HP个体值(0/60)，点击切换" onclick="event.stopPropagation();toggleIV('def-iv-hp','def')">60</button></div>
+        </div>
+        <div class="stat-box" style="cursor:default">
+          <div class="stat-left"><div class="stat-label">物攻</div><div class="stat-value" id="val-def-patk">—</div><div class="stat-base" id="base-def-patk"></div></div><div class="stat-iv-wrap"><div class="stat-iv-label">个体</div><button class="stat-iv-btn" id="def-iv-patk" value="0" title="物攻个体值(0/60)，点击切换" onclick="event.stopPropagation();toggleIV('def-iv-patk','def')">0</button></div>
+        </div>
+        <div class="stat-box" style="cursor:default">
+          <div class="stat-left"><div class="stat-label">魔攻</div><div class="stat-value" id="val-def-matk">—</div><div class="stat-base" id="base-def-matk"></div></div><div class="stat-iv-wrap"><div class="stat-iv-label">个体</div><button class="stat-iv-btn" id="def-iv-matk" value="0" title="魔攻个体值(0/60)，点击切换" onclick="event.stopPropagation();toggleIV('def-iv-matk','def')">0</button></div>
+        </div>
+      </div>
+      <div class="level-row" id="def-level-row" style="display:none">
+        <span class="level-label">防御能力等级</span>
+        <button class="level-btn" onclick="changeLevel('def','def',-1)">−</button>
+        <span class="level-val" id="def-deflevel-val">0</span>
+        <button class="level-btn" onclick="changeLevel('def','def',1)">+</button>
+        <span class="level-multiplier" id="def-deflevel-mult">×1.00</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 技能参数 -->
+  <div class="skill-panel">
+    <h3>⚡ 技能参数</h3>
+    <div class="mode-tabs">
+      <button class="mode-tab active" id="tab-modea" onclick="switchMode('A')">
+        快捷计算
+        <span class="tab-sub">直接填游戏内显示的威力</span>
+      </button>
+      <button class="mode-tab" id="tab-modeb" onclick="switchMode('B')">
+        参数计算
+        <span class="tab-sub">从技能库选技能，自动算克制/本系/特性</span>
+      </button>
+      <button class="mode-tab" id="tab-modefull" onclick="switchMode('FULL')">
+        技能组
+        <span class="tab-sub">攻防各配 4 个技能，左右对比伤害</span>
+      </button>
+    </div>
+
+    <!-- 模式 A -->
+    <div class="mode-section active" id="section-modea">
+      <div class="skill-row">
+        <div class="skill-field" style="flex:0 0 130px">
+          <div class="field-label">技能威力（游戏内显示）</div>
+          <input class="field-input" id="power-input" type="number" min="1" max="9999" value="100" oninput="calc()">
+        </div>
+        <div class="skill-field" style="flex:0 0 110px">
+          <div class="field-label">连击次数</div>
+          <input class="field-input" id="hits-input" type="number" min="1" max="10" value="1" oninput="calc()" style="color:#ffca28">
+        </div>
+        <div class="skill-field" style="flex:0 0 150px">
+          <div class="field-label">技能类型</div>
+          <div class="atk-toggle">
+            <button class="atk-toggle-btn active" id="btn-physical" onclick="setSkillType('physical')">⚔️ 物理</button>
+            <button class="atk-toggle-btn" id="btn-magical" onclick="setSkillType('magical')">✨ 魔法</button>
+          </div>
+        </div>
+        <div class="skill-field">
+          <div class="field-label">技能属性</div>
+          <div class="type-selector" id="skill-type-selector-a"></div>
+        </div>
+      </div>
+      <div class="tip-box">💡 快捷模式下威力已包含特性加成 / 属性克制 / 能力等级 / 本系加成等，直接输入游戏内显示的威力即可。</div>
+      <div class="reduce-row">
+        <span class="reduce-label">⭐ 星陨印记层数</span>
+        <input class="reduce-input" type="number" id="star-marks-a" min="0" max="100" value="0" oninput="calc()" placeholder="0">
+        <span style="font-size:13px;color:var(--text2)">层</span>
+      </div>
+      <div class="reduce-row">
+        <span class="reduce-label">🛡️ 防御方减伤</span>
+        <input class="reduce-input" type="number" id="def-reduce" min="0" max="99" value="0" oninput="calc()" placeholder="0">
+        <span style="font-size:13px;color:var(--text2)">%</span>
+      </div>
+      <div class="reduce-row">
+        <span class="reduce-label">✨ 其他额外倍率</span>
+        <div style="display:flex;gap:4px">
+          <button class="quick-mult-btn" onclick="document.getElementById('extra-mult-a').value=1.0;calc()">x1.0</button>
+          <button class="quick-mult-btn" onclick="document.getElementById('extra-mult-a').value=1.5;calc()">x1.5</button>
+          <button class="quick-mult-btn" onclick="document.getElementById('extra-mult-a').value=2.0;calc()">x2.0</button>
+          <button class="quick-mult-btn" onclick="document.getElementById('extra-mult-a').value=2.5;calc()">x2.5</button>
+          <button class="quick-mult-btn" onclick="document.getElementById('extra-mult-a').value=3.0;calc()">x3.0</button>
+        </div>
+        <input class="reduce-input" type="number" id="extra-mult-a" min="0.1" max="10" step="0.05" value="1.0" oninput="calc()">
+        <span style="font-size:13px;color:var(--text2)">倍</span>
+      </div>
+    </div>
+
+    <!-- 模式 B -->
+    <div class="mode-section" id="section-modeb">
+      <div class="skill-row">
+        <div class="skill-field">
+          <div class="field-label">从技能库选择技能</div>
+          <div class="skill-lib-wrap" id="skill-combo-wrap">
+            <div style="position:relative">
+              <input class="skill-lib-search" id="skill-combo-input" placeholder="点击展开 / 输入名称过滤…" autocomplete="off" oninput="onSkillComboInput()" onfocus="onSkillComboFocus()" readonly style="padding-right:28px;cursor:pointer">
+              <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:10px;opacity:.5;pointer-events:none" id="skill-combo-arrow">▼</span>
+            </div>
+            <div class="skill-lib-dropdown" id="skill-combo-dropdown"></div>
+          </div>
+          <div id="skill-selected-info" style="font-size:12px;color:var(--text2);margin-top:5px">未选择技能</div>
+        </div>
+        <div class="skill-field" style="flex:0 0 150px">
+          <div class="field-label">技能类型（自动同步）</div>
+          <div class="atk-toggle">
+            <button class="atk-toggle-btn active" id="btn-physical-b" onclick="setSkillType('physical')">⚔️ 物理</button>
+            <button class="atk-toggle-btn" id="btn-magical-b" onclick="setSkillType('magical')">✨ 魔法</button>
+          </div>
+        </div>
+        <div class="skill-field">
+          <div class="field-label">技能属性（自动同步）</div>
+          <div class="type-selector" id="skill-type-selector-b"></div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-wrap:wrap;align-items:flex-start;gap:10px;margin-top:10px">
+        <div class="mult-box" style="flex:0 0 150px">
+          <div class="mult-box-label">基础威力（技能库）</div>
+          <input class="mult-box-input" type="number" id="base-power-b" value="100" min="1" max="9999" oninput="calc()" style="color:var(--atk-color)">
+        </div>
+        <div class="mult-box" style="flex:0 0 110px">
+          <div class="mult-box-label">连击次数</div>
+          <input class="mult-box-input" type="number" id="hits-input-b" value="1" min="1" max="10" oninput="calc()" style="color:#ffca28">
+        </div>
+        <div class="mult-box" style="flex:0 0 110px">
+          <div class="mult-box-label">其他额外倍率</div>
+          <input class="mult-box-input" type="number" id="extra-mult-b" min="0.1" max="10" step="0.05" value="1.0" oninput="calc()">
+        </div>
+        <div id="power-tip-b" class="power-tip-box" style="flex:1;min-width:220px;display:none"></div>
+      </div>
+
+      <!-- 特性双面板 -->
+      <div class="trait-panels-row">
+        <div class="trait-panel trait-panel-atk">
+          <div class="trait-panel-header">⚡ 攻方特性（自动判断）</div>
+          <div class="trait-panel-body">
+            <div class="trait-name-row atk-color" id="trait-atk-name-b">暂无特性</div>
+            <div class="trait-desc-text" id="trait-atk-desc-b">选择攻击方精灵后自动显示</div>
+            <div class="trait-mult-row">
+              <span class="trait-mult-label">特性倍率</span>
+              <input class="trait-mult-input atk" type="number" id="trait-mult-b" value="1.0" min="0" max="10" step="0.05" oninput="calc()">
+              <button class="trait-reset-btn" onclick="document.getElementById('trait-mult-b').value=1.0;calc()">重置</button>
+            </div>
+            <div class="trait-cond-area" id="trait-atk-cond-b"></div>
+          </div>
+        </div>
+        <div class="trait-panel trait-panel-def">
+          <div class="trait-panel-header">🛡️ 防方特性（自动判断）</div>
+          <div class="trait-panel-body">
+            <div class="trait-name-row def-color" id="trait-def-name-b">暂无特性</div>
+            <div class="trait-desc-text" id="trait-def-desc-b">选择防御方精灵后自动显示</div>
+            <div class="trait-mult-row">
+              <span class="trait-mult-label">特性倍率</span>
+              <input class="trait-mult-input def" type="number" id="trait-def-mult-b" value="1.0" min="0" max="10" step="0.05" oninput="calc()">
+              <button class="trait-reset-btn" onclick="document.getElementById('trait-def-mult-b').value=1.0;calc()">重置</button>
+            </div>
+            <div class="trait-cond-area" id="trait-def-cond-b"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 自动同步倍率 -->
+      <div class="mult-grid" style="grid-template-columns:repeat(4,1fr)">
+        <div class="mult-box">
+          <div class="mult-box-label">属性克制倍率（自动）</div>
+          <input class="mult-box-input" type="number" id="type-eff-b" value="1.0" min="0" max="3" step="0.25" oninput="calc()" style="color:#ff6464">
+        </div>
+        <div class="mult-box">
+          <div class="mult-box-label">本系加成 STAB（自动）</div>
+          <input class="mult-box-input" type="number" id="stab-mult-b" value="1.0" min="0.1" max="5" step="0.05" oninput="calc()" style="color:#ffd700">
+        </div>
+        <div class="mult-box">
+          <div class="mult-box-label">攻击能级倍率（自动）</div>
+          <input class="mult-box-input" type="number" id="atk-level-mult-b" value="1.0" min="0.1" max="5" step="0.05" oninput="calc()" style="color:var(--accent)">
+        </div>
+        <div class="mult-box">
+          <div class="mult-box-label">防御能级倍率（自动）</div>
+          <input class="mult-box-input" type="number" id="def-level-mult-b" value="1.0" min="0.1" max="5" step="0.05" oninput="calc()" style="color:var(--def-color)">
+        </div>
+      </div>
+      <div class="tip-box">💡 上面四项在选精灵 / 切属性 / 调能力等级时自动填入，也可手动改。双重克制上限 ×3，双重抵抗下限 ×0.25。</div>
+
+      <div class="reduce-row">
+        <span class="reduce-label">⭐ 星陨印记层数</span>
+        <input class="reduce-input" type="number" id="star-marks-b" min="0" max="100" value="0" oninput="calc()" placeholder="0">
+        <span style="font-size:13px;color:var(--text2)">层</span>
+      </div>
+      <div class="reduce-row">
+        <span class="reduce-label">🛡️ 防御方减伤</span>
+        <input class="reduce-input" type="number" id="def-reduce-b" min="0" max="99" value="0" oninput="calc()" placeholder="0">
+        <span style="font-size:13px;color:var(--text2)">%</span>
+      </div>
+    </div>
+
+    <!-- 模式 FULL：技能组 -->
+    <div class="mode-section" id="section-modefull">
+      <div class="full-skill-panel">
+        <div class="full-skill-side">
+          <div class="full-skill-side-title">⚔️ 攻击方技能 <span id="full-atk-name" style="color:var(--atk-color);font-weight:700">未选择精灵</span></div>
+          <div id="full-atk-skills"></div>
+        </div>
+        <div class="full-skill-side">
+          <div class="full-skill-side-title">🛡️ 防御方技能 <span id="full-def-name" style="color:var(--def-color);font-weight:700">未选择精灵</span></div>
+          <div id="full-def-skills"></div>
+        </div>
+      </div>
+
+      <!-- 特性双面板（技能组） -->
+      <div class="trait-panels-row" style="margin-top:12px">
+        <div class="trait-panel trait-panel-atk">
+          <div class="trait-panel-header">⚡ 攻方特性（自动判断）</div>
+          <div class="trait-panel-body">
+            <div class="trait-name-row atk-color" id="trait-atk-name-full">暂无特性</div>
+            <div class="trait-desc-text" id="trait-atk-desc-full">选择攻击方精灵后自动显示</div>
+            <div class="trait-mult-row">
+              <span class="trait-mult-label">特性倍率</span>
+              <input class="trait-mult-input atk" type="number" id="trait-mult-full" value="1.0" min="0" max="10" step="0.05" oninput="calcFull()">
+              <button class="trait-reset-btn" onclick="document.getElementById('trait-mult-full').value=1.0;calcFull()">重置</button>
+            </div>
+            <div class="trait-cond-area" id="trait-atk-cond-full"></div>
+          </div>
+        </div>
+        <div class="trait-panel trait-panel-def">
+          <div class="trait-panel-header">🛡️ 防方特性（自动判断）</div>
+          <div class="trait-panel-body">
+            <div class="trait-name-row def-color" id="trait-def-name-full">暂无特性</div>
+            <div class="trait-desc-text" id="trait-def-desc-full">选择防御方精灵后自动显示</div>
+            <div class="trait-mult-row">
+              <span class="trait-mult-label">特性倍率</span>
+              <input class="trait-mult-input def" type="number" id="trait-def-mult-full" value="1.0" min="0" max="10" step="0.05" oninput="calcFull()">
+              <button class="trait-reset-btn" onclick="document.getElementById('trait-def-mult-full').value=1.0;calcFull()">重置</button>
+            </div>
+            <div class="trait-cond-area" id="trait-def-cond-full"></div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;align-items:flex-end">
+        <div class="mult-box" style="min-width:110px;flex:0 0 auto">
+          <div class="mult-box-label">其他额外倍率</div>
+          <input class="mult-box-input" type="number" id="extra-mult-full" value="1.0" min="0.1" max="10" step="0.05" oninput="calcFull()">
+        </div>
+        <div class="mult-box" style="min-width:110px;flex:0 0 auto">
+          <div class="mult-box-label">⭐ 星陨印记层数</div>
+          <input class="mult-box-input" type="number" id="star-marks-full" min="0" max="100" value="0" oninput="calcFull()" placeholder="0">
+        </div>
+        <div class="mult-box" style="min-width:110px;flex:0 0 auto">
+          <div class="mult-box-label">🛡️ 防御方减伤 %</div>
+          <input class="mult-box-input" type="number" id="def-reduce-full" min="0" max="99" value="0" oninput="calcFull()" placeholder="0">
+        </div>
+        <div class="trait-hint-box" style="flex:1;min-width:160px">
+          <b>💡</b> 攻防双方的 4 个技能都会按各自属性/本系/克制/特性独立计算。<br>
+          点击任一技能行看详细拆解；防御方技能会用于「偏振」类特性的自动判定。
+        </div>
+      </div>
+      <div class="result-panel" id="full-result-panel" style="margin-top:16px">
+        <div style="color:var(--text2);font-size:14px;text-align:center;padding:12px">请选择双方精灵并配置技能</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 结果 -->
+  <div class="result-panel" id="result-panel">
+    <div style="color:var(--text2);font-size:14px;text-align:center;padding:12px">请选择双方精灵并设置技能参数</div>
+  </div>
+</div>
+
+<!-- 游戏数据 -->
+<script src="data/spirits.js"></script>
+<script src="data/skills.js"></script>
+<script src="data/type.js"></script>
+<script src="data/pinyin.js"></script>
+
+<script>
+function toPinyin(str){
+  return Array.from(str).map(function(c){return PINYIN_MAP[c]||c;}).join("");
+}
+function toInitials(str){
+  return Array.from(str).map(function(c){return PINYIN_MAP[c]?PINYIN_MAP[c][0]:c;}).join("");
+}
+function matchQuery(name, q){
+  if(!q) return false;
+  var ql = q.toLowerCase();
+  if(name.indexOf(q)!==-1) return true;
+  var py = toPinyin(name).toLowerCase();
+  if(py.indexOf(ql)!==-1) return true;
+  var ini = toInitials(name).toLowerCase();
+  if(ini.indexOf(ql)!==-1) return true;
+  return false;
+}
+
+// 愿力冲击（全属性，每属性一条，k="双攻"表示取较高攻）
+['普通','草','火','水','光','地','冰','龙','电','毒','虫','武','翼','萌','幽','恶','机械','幻'].forEach(t => SKILLS.push({"n":"愿力冲击("+t+")","a":t,"p":80,"k":"双攻","c":3}));
+
+const SORTED_SPIRITS = SPIRITS;
+
+// ============================================================
+// STATE
+// ============================================================
+let state = {
+  atk: null, def: null,
+  atkStat: 'patk', defStat: 'pdef',
+  atkAtkLevel: 0, atkDefLevel: 0,
+  defAtkLevel: 0, defDefLevel: 0,
+  skillType: 'physical',
+  skillAttr: '普通',
+  mode: 'A',
+  selectedSkillName: '',
+};
+
+// 技能组：每侧 4 个技能槽，元素形如 { skill, hits, power } 或 null
+const fullState = {
+  atk: [null, null, null, null],
+  def: [null, null, null, null],
+  atkSel: -1,
+  defSel: -1,
+};
+
+const f1 = v => String(Math.floor(v));
+const f2 = v => v.toFixed(2);
+const f3 = v => v.toFixed(3);
+
+// ============================================================
+// STAT CALCULATION  (species value → real stat)
+// HP:    (sv*1.7 + iv*0.85 + 70) * nature + 100
+// Other: (sv*1.1 + iv*0.55 + 10) * nature + 50
+// ============================================================
+function calcRealStat(sv, iv, nature, isHp) {
+  iv = Math.max(0, Math.min(100, iv));
+  // 种族值=105、无个体(iv=0)、无性格加成(nature=1.0) 时，中间值向下取整
+  const baseRounder = (sv === 105 && iv === 0 && nature === 1.0) ? Math.floor : Math.round;
+  if (isHp) return Math.round((sv * 1.7 + iv * 0.85 + 70) * nature + 100);
+  const base = baseRounder(sv * 1.1 + iv * 0.55 + 10);
+  return Math.round(base * nature + 50);
+}
+
+function readIV(id) {
+  const raw = document.getElementById(id).value;
+  if (raw === '' || raw === null) return 50; // 空时默认50
+  return Math.max(0, Math.min(100, parseInt(raw, 10) || 0));
+}
+
+function setIv(id, v) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  v = Math.max(0, Math.min(100, parseInt(v, 10) || 0));
+  el.value = v;
+  el.textContent = v;
+}
+
+// 点击个体值按钮：当前为 0 则切到 60，否则（含 60）切回 0
+function toggleIV(id, side) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const cur = parseInt(el.value, 10) || 0;
+  setIv(id, cur === 0 ? 60 : 0);
+  recalcStats(side);
+  calc();
+}
+
+// ============================================================
+// 攻方特性倍率计算
+// ============================================================
+function calcAtkTraitMult(atk, def, skill, opts) {
+  opts = opts || {};
+  const atkTr = atk ? atk.tr : null;
+  if (!skill || skill.k === '状态') return { mult:1, desc:'状态技能无伤害', needsInput:[] };
+  const skAttr = skill.a || '';
+  const skCost = skill.c || 0;
+  const atkA1 = atk ? (atk.a1 || '') : '';
+  const atkA2 = atk ? (atk.a2 || '') : '';
+  const defA1 = def ? (def.a1 || '') : '';
+  const defA2 = def ? (def.a2 || '') : '';
+
+  let mult = 1.0;
+  const desc = [];
+
+  if (atkTr) {
+    switch(atkTr) {
+      case '挺起胸脖': case '“国王”的威严':
+        if (skCost === 1) { mult *= 1.5; desc.push('能耗1→威力×1.5'); } break;
+      case '勇敢':
+        if (skCost > 3) { mult *= 1.4; desc.push('能耗>3→威力×1.4'); } break;
+      case '顺风':
+        if (opts.faster) { mult *= 1.5; desc.push('先手→威力×1.5'); } break;
+      case '破空':
+        if (opts.faster) { mult *= 1.75; desc.push('先手→威力×1.75'); } break;
+      case '目空': case '夺目':
+        if (skAttr && skAttr !== '光') { mult *= 1.25; desc.push('非光系→威力×1.25'); } break;
+      case '涂鸦':
+        if (skAttr && skAttr !== atkA1 && skAttr !== atkA2) { mult *= 1.5; desc.push('非本系→威力×1.5'); } break;
+      case '不移':
+        if (opts.noEffect !== false) { mult *= 1.3; desc.push('无额外效果→威力×1.3'); } break;
+      case '圣火骑士':
+        if (opts.activated) { mult *= 2.0; desc.push('应对成功后→威力×2.0'); } break;
+      case '专注力':
+        if (opts.activated) { mult *= 2.0; desc.push('入场首回合→物攻×2.0'); } break;
+      case '全神贯注': {
+        if (opts.activated) {
+          const n = Math.max(0,Math.min(5,opts.stackCount||0));
+          const r = 1.0+(5-n)*0.2; mult *= r;
+          desc.push('全神贯注(已行动'+n+'次)→物攻×'+r.toFixed(2));
+        } break;
+      }
+      case '助燃':
+        if (opts.activated) { mult *= 1.2; desc.push('助燃激活→双攻×1.2'); } break;
+      case '爆燃':
+        if (opts.activated) { mult *= 1.3; desc.push('爆燃激活→双攻×1.3'); } break;
+      case '观星':
+        if (skAttr==='地'&&(opts.stackCount||0)>0){const m=1+0.15*opts.stackCount;mult*=m;desc.push('观星'+opts.stackCount+'层→威力×'+m.toFixed(2));} break;
+      case '坠星':
+        if((opts.stackCount||0)>0){const m=1+0.15*opts.stackCount;mult*=m;desc.push('坠星'+opts.stackCount+'层→威力×'+m.toFixed(2));} break;
+      case '蓄电池':
+        if((opts.stackCount||0)>0){const m=1+0.2*opts.stackCount;mult*=m;desc.push('蓄电池入场'+opts.stackCount+'次→双攻×'+m.toFixed(2));} break;
+      case '超级电池':
+        if((opts.stackCount||0)>0){const m=1+0.3*opts.stackCount;mult*=m;desc.push('超级电池'+opts.stackCount+'次→双攻×'+m.toFixed(2));} break;
+      case '冰钻':
+        if((opts.enemyTotalCost||0)>0){const m=1+0.1*opts.enemyTotalCost;mult*=m;desc.push('冰钻(敌总能耗'+opts.enemyTotalCost+')→威力×'+m.toFixed(2));} break;
+      case '月光审判':
+        if(def&&def.st&&def.st.includes('首领')){mult*=2.0;desc.push('敌方首领血脉→威力×2.0');} break;
+      case '绒粉星光': {
+        const st=(defA1===atkA1||defA1===atkA2||defA2===atkA1||defA2===atkA2);
+        if(def&&!st){mult*=2.0;desc.push('敌非本系血脉→威力×2.0');} break;
+      }
+      case '天通地明':
+        if(opts.enemyIsPolluted){mult*=2.0;desc.push('敌污染血脉→威力×2.0');} break;
+      case '变形活画': case '画间沉鐵兽':
+        if((opts.enemyBuff||0)>0){const m=1+0.1*opts.enemyBuff;mult*=m;desc.push('敌'+opts.enemyBuff+'层增益→威力×'+m.toFixed(2));} break;
+      case '悔悯':
+        if((opts.stackCount||0)>0){const m=1+0.3*opts.stackCount;mult*=m;desc.push(opts.stackCount+'只力竭→双攻×'+m.toFixed(2));} break;
+      case '悝亡':
+        if((opts.stackCount||0)>0){const m=1+0.3*opts.stackCount;mult*=m;desc.push(opts.stackCount+'只力竭→双攻×'+m.toFixed(2));} break;
+      case '壮胆':
+        if(opts.activated){mult*=1.5;desc.push('队伍有虫系→双攻×1.5');} break;
+      case '虫群鼓舞':
+        if((opts.stackCount||0)>0){const m=1+0.1*opts.stackCount;mult*=m;desc.push(opts.stackCount+'只虫系→攻防速×'+m.toFixed(2));} break;
+      case '虫群突袭':
+        if((opts.stackCount||0)>0){const m=1+0.15*opts.stackCount;mult*=m;desc.push(opts.stackCount+'只虫系→攻防速×'+m.toFixed(2));} break;
+      case '得寸进尺':
+        if(opts.rainy){mult*=2.0;desc.push('雨天→双攻×2.0');} break;
+      case '最好的伙伴':
+        if(opts.activated){mult*=1.2;desc.push('克制触发后→攻防速×1.2');} break;
+      case '指挥家':
+        if((opts.stackCount||0)>0){const m=1+0.2*opts.stackCount;mult*=m;desc.push('应对'+opts.stackCount+'次→双攻×'+m.toFixed(2));} break;
+      case '身经百练':
+        if((opts.stackCount||0)>0&&(skAttr==='水'||skAttr==='武')){const m=1+0.2*opts.stackCount;mult*=m;desc.push('应对'+opts.stackCount+'次→水/武威力×'+m.toFixed(2));} break;
+      case '恶魔的晚宴':
+        if((opts.stackCount||0)>0){const m=1+0.5*opts.stackCount;mult*=m;desc.push('击败'+opts.stackCount+'只→双攻×'+m.toFixed(2));} break;
+      case '鼓气':
+        if(skCost===3&&opts.activated){mult*=1.2;desc.push('能耗3→攻防×1.2');} break;
+      case '三鼓作气':
+        if(skCost===3&&(opts.stackCount||0)>0){const m=1+0.2*opts.stackCount;mult*=m;desc.push('三鼓'+opts.stackCount+'次→攻防×'+m.toFixed(2));} break;
+      case '水翅飞升':
+        if(skCost===0){mult*=1.3;desc.push('能耗0→威力×1.3');} break;
+    }
+  }
+
+  return {
+    mult,
+    desc: desc.length>0 ? desc.join('；') : (atkTr ? '特性对此技能无直接伤害加成' : '无特性'),
+    needsInput: getTraitNeedsInput(atkTr, null, skill),
+  };
+}
+
+// ============================================================
+// 防方特性倍率计算
+// ============================================================
+function calcDefTraitMult(atk, def, skill, opts) {
+  opts = opts || {};
+  const defTr = def ? def.tr : null;
+  if (!skill || skill.k === '状态') return { mult:1, desc:'状态技能无伤害', needsInput:[] };
+  const skAttr = skill.a || '';
+  const atkA1 = atk ? (atk.a1 || '') : '';
+  const atkA2 = atk ? (atk.a2 || '') : '';
+
+  let mult = 1.0;
+  const desc = [];
+
+  if (defTr) {
+    // 偏振：防御方携带了与攻击技能同属性的技能时，受该属性攻击伤害-40%（×0.6）
+    if (defTr === '偏振') {
+      const autoCarry = checkDefCarriesAttr(def, skAttr);
+      const defCarries = autoCarry !== null ? autoCarry : (opts.defCarriesSameAttr !== undefined ? opts.defCarriesSameAttr : false);
+      if (defCarries) {
+        mult *= 0.6;
+        desc.push('防御方携带'+skAttr+'系技能，受该系攻击-40%→×0.6');
+      }
+    }
+    // 完全偏振：同上条件，伤害×0.5
+    if (defTr === '完全偏振') {
+      const autoCarry = checkDefCarriesAttr(def, skAttr);
+      const defCarries = autoCarry !== null ? autoCarry : (opts.defCarriesSameAttr !== undefined ? opts.defCarriesSameAttr : false);
+      if (defCarries) {
+        mult *= 0.5;
+        desc.push('防御方携带'+skAttr+'系技能，受该系攻击-50%→×0.5');
+      }
+    }
+    // 绝对秩序：攻击技能属性不在攻击方精灵自身属性(a1/a2)内时触发，伤害-50%
+    if (defTr === '绝对秩序') {
+      const isAtkNativeType = skAttr === atkA1 || (atkA2 && skAttr === atkA2);
+      if (!isAtkNativeType) {
+        mult *= 0.5;
+        desc.push('攻击方使用非本系技能，伤害-50%→×0.5');
+      }
+    }
+  }
+
+  return {
+    mult,
+    desc: desc.length>0 ? desc.join('；') : (defTr ? '特性对此技能无直接减伤' : '无特性'),
+    needsInput: getDefTraitNeedsInput(defTr, skill),
+  };
+}
+
+function getDefTraitNeedsInput(defTr, skill) {
+  const fields = [];
+  const skAttr = skill ? skill.a : '';
+  if (defTr === '偏振' || defTr === '完全偏振') {
+    fields.push({ id:'defCarriesSameAttr', label:'防御方携带了'+skAttr+'系技能', type:'checkbox', key:'defCarriesSameAttr', def:true, onlyIfNoAuto:true });
+  }
+  return fields;
+}
+
+// 防御方是否携带了指定属性的技能：优先从技能组槽位自动判断，
+// 槽位为空（无法判断）时返回 null，交由用户复选框决定
+function checkDefCarriesAttr(defSpirit, attr) {
+  if (!defSpirit || !attr) return null;
+  const side = defSpirit === state.def ? 'def' : 'atk';
+  const slots = fullState[side];
+  if (slots) {
+    for (const slot of slots) {
+      if (slot && slot.skill && slot.skill.a === attr) return true;
+    }
+    const hasAny = slots.some(s => s && s.skill);
+    if (hasAny) return false;
+  }
+  return null;
+}
+
+// 计算防御方技能槽总能耗（冰钻特性自动计算用）
+function calcDefTotalCost(defSpirit) {
+  if (!defSpirit) return 0;
+  const side = defSpirit === state.def ? 'def' : 'atk';
+  const slots = fullState[side];
+  if (!slots) return 0;
+  let total = 0;
+  slots.forEach(slot => { if (slot && slot.skill && slot.skill.c !== undefined) total += (slot.skill.c || 0); });
+  return total;
+}
+
+function getTraitNeedsInput(atkTr, defTr, skill) {
+  const fields = [];
+  const skAttr = skill ? skill.a : '';
+  if (atkTr === '顺风' || atkTr === '破空')
+    fields.push({ id:'trait-opt-faster', label:'先手攻击（攻方速度更高）', type:'checkbox', key:'faster', def:false });
+  if (atkTr === '圣火骑士' || atkTr === '最好的伙伴')
+    fields.push({ id:'trait-opt-activated', label:'条件已触发', type:'checkbox', key:'activated', def:false });
+  if (atkTr === '专注力' || atkTr === '全神贯注')
+    fields.push({ id:'trait-opt-activated', label:'特性激活（首回合）', type:'checkbox', key:'activated', def:true });
+  if (atkTr === '全神贯注')
+    fields.push({ id:'trait-opt-stacks', label:'已行动次数(0-5)', type:'number', key:'stackCount', def:0, min:0, max:5 });
+  if (atkTr === '助燃' || atkTr === '爆燃')
+    fields.push({ id:'trait-opt-activated', label:'已使用过火系技能', type:'checkbox', key:'activated', def:false });
+  if (atkTr === '观星' || atkTr === '坠星')
+    fields.push({ id:'trait-opt-stacks', label:'敌方星陨印记层数(0-20)', type:'number', key:'stackCount', def:0, min:0, max:20 });
+  if (atkTr === '冰钻')
+    fields.push({ id:'trait-opt-stacks', label:'敌方携带技能总能耗', type:'number', key:'enemyTotalCost', def:0, min:0, max:20 });
+  if (atkTr === '变形活画' || atkTr === '画间沉鐵兽')
+    fields.push({ id:'trait-opt-stacks', label:'敌方当前增益层数', type:'number', key:'enemyBuff', def:0, min:0, max:20 });
+  if (atkTr === '蓄电池' || atkTr === '超级电池')
+    fields.push({ id:'trait-opt-stacks', label:'已入场次数(0-5)', type:'number', key:'stackCount', def:0, min:0, max:5 });
+  if (atkTr === '悔悯' || atkTr === '悝亡')
+    fields.push({ id:'trait-opt-stacks', label:'力竭精灵数量(0-5)', type:'number', key:'stackCount', def:0, min:0, max:5 });
+  if (atkTr === '壮胆')
+    fields.push({ id:'trait-opt-activated', label:'队伍存在虫系精灵', type:'checkbox', key:'activated', def:true });
+  if (atkTr === '虫群鼓舞' || atkTr === '虫群突袭')
+    fields.push({ id:'trait-opt-stacks', label:'队伍中其他虫系精灵数(0-5)', type:'number', key:'stackCount', def:0, min:0, max:5 });
+  if (atkTr === '得寸进尺')
+    fields.push({ id:'trait-opt-activated', label:'天气为雨天', type:'checkbox', key:'rainy', def:false });
+  if (atkTr === '指挥家' || atkTr === '三鼓作气')
+    fields.push({ id:'trait-opt-stacks', label:'已累积触发次数', type:'number', key:'stackCount', def:0, min:0, max:10 });
+  if (atkTr === '身经百练' && (skAttr === '水' || skAttr === '武'))
+    fields.push({ id:'trait-opt-stacks', label:'己方应对成功次数', type:'number', key:'stackCount', def:0, min:0, max:10 });
+  if (atkTr === '恶魔的晚宴')
+    fields.push({ id:'trait-opt-stacks', label:'本场已击败敌方精灵数(0-5)', type:'number', key:'stackCount', def:0, min:0, max:5 });
+  if (atkTr === '天通地明')
+    fields.push({ id:'trait-opt-activated', label:'敌方是污染血脉', type:'checkbox', key:'enemyIsPolluted', def:false });
+  return fields;
+}
+
+function readTraitOptsByMode(mode, side) {
+  const opts = {};
+  const prefixNew = side ? `trait-opt-${mode}-${side}-` : null;
+  const prefixOld = `trait-opt-${mode}-`;
+  const prefixAtk = !side ? `trait-opt-${mode}-atk-` : null;
+  const prefixDef = !side ? `trait-opt-${mode}-def-` : null;
+  function readEl(k) {
+    return (prefixNew && document.getElementById(prefixNew + k))
+        || (prefixAtk && document.getElementById(prefixAtk + k))
+        || (prefixDef && document.getElementById(prefixDef + k))
+        || document.getElementById(prefixOld + k);
+  }
+  ['faster','activated','rainy','enemyIsPolluted','defCarriesSameAttr'].forEach(k => {
+    const el = readEl(k);
+    if (el && el.type === 'checkbox') opts[k] = el.checked;
+  });
+  ['stackCount','enemyTotalCost','enemyBuff'].forEach(k => {
+    const el = readEl(k);
+    if (el) opts[k] = parseInt(el.value) || 0;
+  });
+  return opts;
+}
+
+// ============================================================
+// 性格表
+// ============================================================
+const NATURE_TABLE = {
+  neutral: {patk:1.0, matk:1.0, pdef:1.0, mdef:1.0, spd:1.0, hp:1.0},
+  // +生命
+  '沉默':   {patk:0.9, matk:1.0, pdef:1.0, mdef:1.0, spd:1.0, hp:1.2},
+  '平和':   {patk:1.0, matk:0.9, pdef:1.0, mdef:1.0, spd:1.0, hp:1.2},
+  '忧郁':   {patk:1.0, matk:1.0, pdef:0.9, mdef:1.0, spd:1.0, hp:1.2},
+  '粗心':   {patk:1.0, matk:1.0, pdef:1.0, mdef:0.9, spd:1.0, hp:1.2},
+  '踏实':   {patk:1.0, matk:1.0, pdef:1.0, mdef:1.0, spd:0.9, hp:1.2},
+  // +物攻
+  '大胆':   {patk:1.2, matk:1.0, pdef:0.9, mdef:1.0, spd:1.0, hp:1.0},
+  '调皮':   {patk:1.2, matk:1.0, pdef:1.0, mdef:0.9, spd:1.0, hp:1.0},
+  '勇敢':   {patk:1.2, matk:1.0, pdef:1.0, mdef:1.0, spd:0.9, hp:1.0},
+  '逞强':   {patk:1.2, matk:1.0, pdef:1.0, mdef:1.0, spd:1.0, hp:0.9},
+  '固执':   {patk:1.2, matk:0.9, pdef:1.0, mdef:1.0, spd:1.0, hp:1.0},
+  // +魔攻
+  '聪明':   {patk:0.9, matk:1.2, pdef:1.0, mdef:1.0, spd:1.0, hp:1.0},
+  '专注':   {patk:1.0, matk:1.2, pdef:0.9, mdef:1.0, spd:1.0, hp:1.0},
+  '偏执':   {patk:1.0, matk:1.2, pdef:1.0, mdef:0.9, spd:1.0, hp:1.0},
+  '冷静':   {patk:1.0, matk:1.2, pdef:1.0, mdef:1.0, spd:0.9, hp:1.0},
+  '理性':   {patk:1.0, matk:1.2, pdef:1.0, mdef:1.0, spd:1.0, hp:0.9},
+  // +速度
+  '胆小':   {patk:0.9, matk:1.0, pdef:1.0, mdef:1.0, spd:1.2, hp:1.0},
+  '开朗':   {patk:1.0, matk:0.9, pdef:1.0, mdef:1.0, spd:1.2, hp:1.0},
+  '急躁':   {patk:1.0, matk:1.0, pdef:0.9, mdef:1.0, spd:1.2, hp:1.0},
+  '莽撞':   {patk:1.0, matk:1.0, pdef:1.0, mdef:0.9, spd:1.2, hp:1.0},
+  '热情':   {patk:1.0, matk:1.0, pdef:1.0, mdef:1.0, spd:1.2, hp:0.9},
+  // +物防
+  '稳重':   {patk:0.9, matk:1.0, pdef:1.2, mdef:1.0, spd:1.0, hp:1.0},
+  '天真':   {patk:1.0, matk:0.9, pdef:1.2, mdef:1.0, spd:1.0, hp:1.0},
+  '悠闲':   {patk:1.0, matk:1.0, pdef:1.2, mdef:1.0, spd:0.9, hp:1.0},
+  '懒散':   {patk:1.0, matk:1.0, pdef:1.2, mdef:0.9, spd:1.0, hp:1.0},
+  '坦率':   {patk:1.0, matk:1.0, pdef:1.2, mdef:1.0, spd:1.0, hp:0.9},
+  // +魔防
+  '警惕':   {patk:0.9, matk:1.0, pdef:1.0, mdef:1.2, spd:1.0, hp:1.0},
+  '害羞':   {patk:1.0, matk:0.9, pdef:1.0, mdef:1.2, spd:1.0, hp:1.0},
+  '温顺':   {patk:1.0, matk:1.0, pdef:0.9, mdef:1.2, spd:1.0, hp:1.0},
+  '慎重':   {patk:1.0, matk:1.0, pdef:1.0, mdef:1.2, spd:0.9, hp:1.0},
+  '焦虑':   {patk:1.0, matk:1.0, pdef:1.0, mdef:1.2, spd:1.0, hp:0.9},
+};
+
+function getNature(side) {
+  const key = document.getElementById(side + '-nature').value;
+  return NATURE_TABLE[key] || NATURE_TABLE.neutral;
+}
+
+function recalcStats(side) {
+  const spirit = side === 'atk' ? state.atk : state.def;
+  if (!spirit) return;
+
+  const nat = getNature(side);
+
+  let ivPatk, ivMatk, ivSpd, ivHp, ivDef, ivMdef;
+  if (side === 'atk') {
+    ivPatk = readIV('atk-iv-patk');
+    ivMatk = readIV('atk-iv-matk');
+    ivSpd  = readIV('atk-iv-spd');
+    ivHp   = readIV('atk-iv-hp');
+    ivDef  = readIV('atk-iv-pdef');
+    ivMdef = readIV('atk-iv-mdef');
+  } else {
+    ivPatk = readIV('def-iv-patk');
+    ivMatk = readIV('def-iv-matk');
+    ivSpd  = readIV('def-iv-spd');
+    ivHp   = readIV('def-iv-hp');
+    ivDef  = readIV('def-iv-def');
+    ivMdef = readIV('def-iv-mdef');
+  }
+
+  spirit.real_hp   = calcRealStat(spirit.hp, ivHp,   nat.hp,   true);
+  spirit.real_patk = calcRealStat(spirit.pa, ivPatk,  nat.patk, false);
+  spirit.real_matk = calcRealStat(spirit.ma, ivMatk,  nat.matk, false);
+  spirit.real_pdef = calcRealStat(spirit.pd, ivDef,   nat.pdef, false);
+  spirit.real_mdef = calcRealStat(spirit.md, ivMdef,  nat.mdef, false);
+  spirit.real_spd  = calcRealStat(spirit.sp, ivSpd,   nat.spd,  false);
+
+  const map   = {hp: spirit.real_hp, patk: spirit.real_patk, matk: spirit.real_matk,
+                 pdef: spirit.real_pdef, mdef: spirit.real_mdef, spd: spirit.real_spd};
+  const bases = {hp: spirit.hp, patk: spirit.pa, matk: spirit.ma,
+                 pdef: spirit.pd, mdef: spirit.md, spd: spirit.sp};
+  for (const [k, v] of Object.entries(map)) {
+    const el  = document.getElementById('val-'  + side + '-' + k);
+    if (el)  el.textContent = v;
+    const bel = document.getElementById('base-' + side + '-' + k);
+    if (bel) bel.textContent = '种:' + bases[k];
+  }
+  spirit.patk = spirit.real_patk;
+  spirit.matk = spirit.real_matk;
+  spirit.pdef = spirit.real_pdef;
+  spirit.mdef = spirit.real_mdef;
+  // 速度变化时同步刷新浮动威力提示
+  updatePowerTip();
+}
+
+// ============================================================
+// HELPERS
+// ============================================================
+function levelMult(lv) {
+  return lv >= 0 ? 1 + lv * 0.1 : 1 / (1 + Math.abs(lv) * 0.1);
+}
+
+function getTypeEff(atkType, d1, d2) {
+  const ac = TYPE_CHART[atkType];
+  if (!ac) return 1;
+
+  // Wiki 字段语义（来自 wiki.biligame.com/rocom/克制计算器）：
+  //   攻击方字段：
+  //     strong  = 造成伤害增加 → 攻击这些防御属性时 ×2
+  //     resist  = 造成伤害降低 → 攻击这些防御属性时 ×0.5
+  //   防御方字段：
+  //     weak       = 受到伤害增加 → 被这些攻击属性打时 ×2
+  //     vulnerable = 受到伤害降低 → 被这些攻击属性打时 ×0.5
+  function singleEff(dt) {
+    if (!dt) return 1;
+    const dc = TYPE_CHART[dt];
+    if (ac.strong?.includes(dt)) return 2;
+    if (ac.resist?.includes(dt)) return 0.5;
+    if (dc?.weak?.includes(atkType)) return 2;
+    if (dc?.vulnerable?.includes(atkType)) return 0.5;
+    return 1;
+  }
+
+  const r1 = singleEff(d1);
+  if (r1 === 0) return 0;
+  const r2 = d2 ? singleEff(d2) : 1;
+  if (r2 === 0) return 0;
+
+  const raw = r1 * r2;
+  if (raw >= 4) return 3;           // 双重克制上限 ×3
+  if (raw > 0 && raw <= 0.25) return 0.25; // 双重抵抗下限 ×0.25
+  return raw;
+}
+
+function hasStab(spirit, attr) {
+  return spirit && (spirit.a1 === attr || (spirit.a2 && spirit.a2 === attr));
+}
+
+// ============================================================
+// MODE SWITCH
+// ============================================================
+function switchMode(m) {
+  state.mode = m;
+  ['A','B','FULL'].forEach(id => {
+    const tab = document.getElementById('tab-mode' + id.toLowerCase());
+    const sec = document.getElementById('section-mode' + id.toLowerCase());
+    if (tab) tab.className = 'mode-tab' + (m === id ? ' active' : '');
+    if (sec) sec.className = 'mode-section' + (m === id ? ' active' : '');
+  });
+  // 技能组模式用自己的结果面板，公共结果面板隐藏
+  const rp = document.getElementById('result-panel');
+  if (rp) rp.style.display = m === 'FULL' ? 'none' : '';
+  if (m === 'FULL') {
+    calcFull();
+  } else {
+    // 切到参数模式时，同步技能组当前选中的攻击技能
+    if (m === 'B') {
+      const selIdx = fullState.atkSel;
+      if (selIdx >= 0) {
+        const slot = fullState.atk[selIdx];
+        if (slot && slot.skill && slot.skill.k !== '状态') applyQuickSkill(slot.skill);
+      }
+    }
+    calc();
+  }
+}
+
+// ============================================================
+// CALCULATION
+// ============================================================
+function calc() {
+  // 技能组模式下所有计算走 calcFull()，避免 result-panel 被隐藏导致结果不更新
+  if (state.mode === 'FULL') { calcFull(); return; }
+  const rp = document.getElementById('result-panel');
+  if (!state.atk || !state.def) {
+    rp.innerHTML = '<div style="color:var(--text2);font-size:14px;text-align:center;padding:12px">请选择双方精灵并设置技能参数</div>';
+    return;
+  }
+
+  const atkBase  = state.atk[state.atkStat];
+  const defBase  = state.def[state.defStat];
+  const defHp    = state.def.real_hp || state.def.hp;
+  const atkMult  = levelMult(state.atkAtkLevel);
+  const defMult  = levelMult(state.defDefLevel);
+  // 快捷模式（A）不受能力等级影响，直接使用基础属性
+  const atkFinal = state.mode === 'A' ? atkBase : atkBase * atkMult;
+  const defFinal = state.mode === 'A' ? defBase : defBase * defMult;
+
+  const reduceId   = state.mode === 'A' ? 'def-reduce' : 'def-reduce-b';
+  const reducePct  = parseFloat(document.getElementById(reduceId).value) || 0;
+  const reduceMult = 1 - Math.min(99, Math.max(0, reducePct)) / 100;
+
+  // 星陨印记（幻系技能不触发星陨）
+  const starMarksId = state.mode === 'A' ? 'star-marks-a' : 'star-marks-b';
+  const isPhantomSkill = state.skillAttr === '幻';
+  const starMarksEl = document.getElementById(starMarksId);
+  if (isPhantomSkill) {
+    starMarksEl.disabled = true;
+    starMarksEl.title = '幻系技能不触发星陨印记';
+    starMarksEl.style.opacity = '0.4';
+  } else {
+    starMarksEl.disabled = false;
+    starMarksEl.title = '';
+    starMarksEl.style.opacity = '';
+  }
+  const starMarks = isPhantomSkill ? 0 : Math.max(0, Math.min(100, parseInt(starMarksEl.value) || 0));
+
+  let dmg = 0, formulaStr = '';
+  let stabMult = 1, typeEff = 1, traitMult = 1, extraMult = 1, power = 0;
+  let atkTraitMult = 1, defTraitMult = 1;
+
+  if (state.mode === 'A') {
+    power = parseFloat(document.getElementById('power-input').value) || 0;
+    const hits = Math.max(1, parseInt(document.getElementById('hits-input').value) || 1);
+    // 快捷模式不计算本系加成
+    stabMult = 1.0;
+    extraMult = parseFloat(document.getElementById('extra-mult-a').value) || 1;
+    const singleDmgA = (atkFinal / defFinal) * (37/41) * power * stabMult * extraMult * reduceMult;
+    dmg = Math.floor(singleDmgA * hits);
+    formulaStr = `(${f1(atkFinal)} / ${f1(defFinal)}) × 37/41 × ${power}` +
+      (extraMult !== 1 ? ` × ${extraMult}(其他)` : '') +
+      (reduceMult < 1 ? ` × ${f2(reduceMult)}(减伤)` : '') +
+      (hits > 1 ? ` × ${hits}连击` : '') +
+      ` = ${f1(dmg)}`;
+  } else {
+    power      = parseFloat(document.getElementById('base-power-b').value) || 0;
+    const hitsB = Math.max(1, parseInt(document.getElementById('hits-input-b').value) || 1);
+    typeEff    = parseFloat(document.getElementById('type-eff-b').value) || 1;
+    stabMult   = parseFloat(document.getElementById('stab-mult-b').value) || 1;
+    atkTraitMult = parseFloat(document.getElementById('trait-mult-b').value) || 1;
+    defTraitMult = parseFloat(document.getElementById('trait-def-mult-b') ? document.getElementById('trait-def-mult-b').value : 1) || 1;
+    traitMult  = atkTraitMult * defTraitMult;
+    extraMult  = parseFloat(document.getElementById('extra-mult-b').value) || 1;
+    const singleDmgB = (atkFinal / defFinal) * (37/41) * power * typeEff * stabMult * traitMult * extraMult * reduceMult;
+    dmg = Math.floor(singleDmgB * hitsB);
+    formulaStr = `(${f1(atkFinal)} / ${f1(defFinal)}) × 37/41 × ${power}` +
+      (typeEff  !== 1 ? ` × ${typeEff}(克制)` : '') +
+      (stabMult !== 1 ? ` × ${stabMult}(本系)` : '') +
+      (atkTraitMult !== 1 ? ` × ${f2(atkTraitMult)}(攻方特性)` : '') +
+      (defTraitMult !== 1 ? ` × ${f2(defTraitMult)}(防方特性)` : '') +
+      (extraMult!== 1 ? ` × ${extraMult}(其他)` : '') +
+      (reduceMult< 1 ? ` × ${f2(reduceMult)}(减伤)` : '') +
+      (hitsB > 1 ? ` × ${hitsB}连击` : '') +
+      ` = ${f1(dmg)}`;
+  }
+
+  // 星陨伤害：威力 = x² + 24x − 24（x = 层数），幻系伤害，套用相同攻防值与减伤
+  let starDmg = 0, starFormula = '', starPower = 0;
+  if (starMarks > 0) {
+    starPower = starMarks * starMarks + 24 * starMarks - 24;
+    const starTypeEff = getTypeEff('幻', state.def.a1, state.def.a2 || '');
+    starDmg = Math.floor((atkFinal / defFinal) * (37/41) * starPower * starTypeEff * reduceMult);
+    const starEffStr = starTypeEff !== 1 ? ` × ${starTypeEff}(幻系克制)` : '';
+    const starReduceStr = reduceMult < 1 ? ` × ${f2(reduceMult)}(减伤)` : '';
+    starFormula = `威力(${starMarks}层) = ${starMarks}²+24×${starMarks}-24 = ${starPower}` +
+      `\n(${f1(atkFinal)} / ${f1(defFinal)}) × 37/41 × ${starPower}${starEffStr}${starReduceStr} = ${f1(starDmg)}`;
+  }
+
+  const pct = defHp > 0 ? dmg / defHp * 100 : 0;
+  const barW = Math.min(100, pct).toFixed(1);
+  const barCls = pct >= 50 ? 'fill-red' : pct >= 25 ? 'fill-yellow' : 'fill-green';
+  const pctColor = pct >= 50 ? '#ef5350' : pct >= 25 ? '#ffa726' : '#66bb6a';
+
+  let effLabel = '', effCls = '';
+  if (typeEff === 0)       { effLabel = '免疫';           effCls = 'eff-05x'; }
+  else if (typeEff >= 3)   { effLabel = '双重克制 ×3';    effCls = 'eff-4x';   }
+  else if (typeEff === 2)  { effLabel = '克制 ×2';        effCls = 'eff-2x';   }
+  else if (typeEff <= 0.25){ effLabel = '双重抵抗 ×1/4';  effCls = 'eff-025x'; }
+  else if (typeEff < 1)    { effLabel = '抵抗 ×0.5';      effCls = 'eff-05x';  }
+  else                     { effLabel = '普通效果';        effCls = 'eff-1x';   }
+
+  const asLabel = state.atkStat === 'patk' ? '物攻' : '魔攻';
+  const dsLabel = state.defStat === 'pdef' ? '物防' : '魔防';
+  const alStr   = state.atkAtkLevel >= 0 ? '+'+state.atkAtkLevel : ''+state.atkAtkLevel;
+  const dlStr   = state.defDefLevel >= 0 ? '+'+state.defDefLevel : ''+state.defDefLevel;
+
+  const modeTag = state.mode === 'A'
+    ? '<span style="font-size:11px;background:rgba(124,107,255,.25);color:#a89fff;border:1px solid rgba(124,107,255,.4);padding:1px 8px;border-radius:8px;margin-left:6px">快捷</span>'
+    : '<span style="font-size:11px;background:rgba(255,107,157,.25);color:#ff9bbf;border:1px solid rgba(255,107,157,.4);padding:1px 8px;border-radius:8px;margin-left:6px">参数</span>';
+
+  rp.innerHTML = `
+    <div style="margin-bottom:16px">
+      <div style="font-size:11px;color:var(--text2);margin-bottom:4px;display:flex;align-items:center">
+        ${state.atk.n} → ${state.def.n} ${modeTag}
+      </div>
+      <div style="display:flex;align-items:baseline;gap:6px;flex-wrap:wrap">
+        <span style="font-size:36px;font-weight:900;color:var(--text)">${f1(dmg)}</span>
+        <span style="font-size:14px;color:var(--text2)">伤害</span>
+        ${state.mode==='B' ? `<span class="eff-tag ${effCls}">${effLabel}</span>` : ''}
+        ${stabMult > 1 ? '<span class="eff-tag" style="background:rgba(255,200,0,.25);color:#ffd700;border:1px solid rgba(255,200,0,.4)">本系 ×1.25</span>' : ''}
+        ${reducePct > 0 ? `<span class="eff-tag" style="background:rgba(100,200,100,.25);color:#80e080;border:1px solid rgba(100,200,100,.4)">减伤 ${reducePct}%</span>` : ''}
+      </div>
+    </div>
+
+    <div class="hp-section">
+      <div class="hp-header">
+        <span>${state.def.n} HP：<b>${defHp}</b></span>
+        <span style="font-weight:700;color:${pctColor}">${pct.toFixed(1)}%</span>
+      </div>
+      <div class="hp-bar-track">
+        <div class="hp-bar-fill ${barCls}" style="width:${barW}%"></div>
+        <span class="hp-pct">${pct.toFixed(1)}%</span>
+      </div>
+      <div style="font-size:11px;color:var(--text2);margin-top:4px">
+        ${pct>=100?'⚡ 可一击击倒！':pct>=50?'💥 大于半血伤害':pct>=25?'🎯 约四分之一血':'💧 伤害较低'}
+      </div>
+    </div>
+
+    <div class="breakdown">
+      ${(()=>{ const hId = state.mode==='B' ? 'hits-input-b' : 'hits-input'; const h=parseInt(document.getElementById(hId).value)||1; return h>1?`<div class="breakdown-item"><span class="bi-label">连击</span><span class="bi-val highlight">×${h}次（单次 ${f1(dmg/h)}）</span></div>`:''; })()}
+      <div class="breakdown-item"><span class="bi-label">${asLabel}（等级${alStr}）</span><span class="bi-val highlight">${atkBase} × ${f2(atkMult)} = ${f1(atkFinal)}</span></div>
+      <div class="breakdown-item"><span class="bi-label">${dsLabel}（等级${dlStr}）</span><span class="bi-val highlight">${defBase} × ${f2(defMult)} = ${f1(defFinal)}</span></div>
+      <div class="breakdown-item"><span class="bi-label">威力</span><span class="bi-val">${power}</span></div>
+      <div class="breakdown-item"><span class="bi-label">攻防比 × 37/41</span><span class="bi-val">${f3(atkFinal/defFinal*(37/41))}</span></div>
+      ${state.mode==='B' ? `
+        <div class="breakdown-item"><span class="bi-label">属性克制</span><span class="bi-val ${typeEff!==1?'highlight':''}">${typeEff===0?'免疫':'×'+typeEff}</span></div>
+        ${stabMult!==1 ? `<div class="breakdown-item"><span class="bi-label">本系加成</span><span class="bi-val highlight">×${stabMult}</span></div>` : ''}
+        ${atkTraitMult!==1 ? `<div class="breakdown-item"><span class="bi-label">攻方特性</span><span class="bi-val highlight" style="color:#a5d6a7">×${f2(atkTraitMult)}</span></div>` : ''}
+        ${defTraitMult!==1 ? `<div class="breakdown-item"><span class="bi-label">防方特性</span><span class="bi-val highlight" style="color:#90caf9">×${f2(defTraitMult)}</span></div>` : ''}
+        ${extraMult!==1 ? `<div class="breakdown-item"><span class="bi-label">其他倍率</span><span class="bi-val highlight">×${extraMult}</span></div>` : ''}
+      ` : ''}
+      ${reducePct>0 ? `<div class="breakdown-item"><span class="bi-label">减伤</span><span class="bi-val" style="color:#80e080">×${f2(reduceMult)}（-${reducePct}%）</span></div>` : ''}
+    </div>
+    <div class="formula-row"><b>公式：</b> ${formulaStr}</div>
+    ${starMarks > 0 ? `
+    <div style="margin-top:18px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08)">
+      <div style="font-size:12px;color:#ce93d8;font-weight:700;margin-bottom:8px">⭐ 星陨追加伤害（${starMarks}层 · 幻系 ${state.atkStat==='patk'?'物攻':'魔攻'}）</div>
+      <div style="display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+        <span style="font-size:28px;font-weight:900;color:#ce93d8">${f1(starDmg)}</span>
+        <span style="font-size:13px;color:var(--text2)">星陨伤害</span>
+        ${(() => { const se = getTypeEff('幻', state.def.a1, state.def.a2||''); return se===0?'<span class="eff-tag eff-05x">免疫</span>':se>=3?'<span class="eff-tag eff-4x">双重克制 ×3</span>':se===2?'<span class="eff-tag eff-2x">克制 ×2</span>':se<=0.25?'<span class="eff-tag eff-025x">双重抵抗 ×1/4</span>':se<1?'<span class="eff-tag eff-05x">抵抗 ×0.5</span>':''; })()}
+        <span style="font-size:11px;background:rgba(206,147,216,.18);color:#ce93d8;border:1px solid rgba(206,147,216,.35);padding:1px 8px;border-radius:8px">威力 ${starPower}</span>
+      </div>
+      <div class="hp-section">
+        <div class="hp-header">
+          <span>${state.def.n} HP：<b>${defHp}</b></span>
+          <span style="font-weight:700;color:#ce93d8">${(defHp>0?starDmg/defHp*100:0).toFixed(1)}%</span>
+        </div>
+        <div class="hp-bar-track">
+          <div class="hp-bar-fill" style="width:${Math.min(100,defHp>0?starDmg/defHp*100:0).toFixed(1)}%;background:linear-gradient(90deg,#9c27b0,#ce93d8)"></div>
+          <span class="hp-pct">${(defHp>0?starDmg/defHp*100:0).toFixed(1)}%</span>
+        </div>
+      </div>
+      <div class="formula-row" style="white-space:pre-line"><b>星陨公式：</b> ${starFormula}</div>
+      <div class="breakdown" style="margin-top:8px">
+        <div class="breakdown-item"><span class="bi-label">星陨层数</span><span class="bi-val highlight">${starMarks} 层</span></div>
+        <div class="breakdown-item"><span class="bi-label">星陨威力公式</span><span class="bi-val">x²+24x−24</span></div>
+        <div class="breakdown-item"><span class="bi-label">实际星陨威力</span><span class="bi-val highlight">${starPower}</span></div>
+        <div class="breakdown-item"><span class="bi-label">合计伤害（主技能+星陨）</span><span class="bi-val highlight">${f1(dmg+starDmg)}（HP ${defHp>0?((dmg+starDmg)/defHp*100).toFixed(1):0}%）</span></div>
+      </div>
+    </div>` : ''}
+  `;
+}
+
+// ============================================================
+// SWAP / LEVEL / SKILL TYPE
+// ============================================================
+function swapSpirits() {
+  const tmp = state.atk;
+  state.atk = state.def;
+  state.def = tmp;
+
+  const atkSearch = document.getElementById('atk-search');
+  const defSearch = document.getElementById('def-search');
+  const tmpTxt = atkSearch.value;
+  atkSearch.value = defSearch.value;
+  defSearch.value = tmpTxt;
+
+  const na = document.getElementById('atk-nature');
+  const nb = document.getElementById('def-nature');
+  const tv = na.value; na.value = nb.value; nb.value = tv;
+
+  // IV 不参与交换，重置为固定默认值
+  setIv('atk-iv-patk', 60); setIv('atk-iv-matk', 60); setIv('atk-iv-spd', 60);
+  setIv('atk-iv-hp', 0);    setIv('atk-iv-pdef', 0);  setIv('atk-iv-mdef', 0);
+  setIv('def-iv-hp', 60);   setIv('def-iv-def', 0);   setIv('def-iv-mdef', 0);
+  setIv('def-iv-spd', 0);   setIv('def-iv-patk', 0);  setIv('def-iv-matk', 0);
+
+  renderCard('atk', state.atk);
+  renderCard('def', state.def);
+
+  // 能力等级互换
+  const tmpAtkLv = state.atkAtkLevel;
+  state.atkAtkLevel = state.defDefLevel;
+  state.defDefLevel = tmpAtkLv;
+  refreshLevelUI('atk');
+  refreshLevelUI('def');
+
+  syncModeBAutoFields();
+  calc();
+}
+
+function refreshLevelUI(side) {
+  const kind = side === 'atk' ? 'atk' : 'def';
+  const val = side === 'atk' ? state.atkAtkLevel : state.defDefLevel;
+  const valEl = document.getElementById(`${side}-${kind}level-val`);
+  const multEl = document.getElementById(`${side}-${kind}level-mult`);
+  if (valEl) valEl.textContent = val >= 0 ? '+' + val : '' + val;
+  if (multEl) multEl.textContent = '×' + levelMult(val).toFixed(2);
+}
+
+function changeLevel(side, kind, delta) {
+  const key = side === 'atk' ? 'atkAtkLevel' : 'defDefLevel';
+  state[key] = (state[key] || 0) + delta;
+  refreshLevelUI(side);
+  // 同步参数模式的能力等级倍率输入框
+  if (side === 'atk') {
+    const bEl = document.getElementById('atk-level-mult-b');
+    if (bEl) bEl.value = levelMult(state.atkAtkLevel).toFixed(2);
+  } else {
+    const bEl = document.getElementById('def-level-mult-b');
+    if (bEl) bEl.value = levelMult(state.defDefLevel).toFixed(2);
+  }
+  calc();
+  if (state.mode === 'FULL') calcFull();
+}
+
+function setSkillType(type) {
+  state.skillType = type;
+  ['btn-physical','btn-physical-b'].forEach(id => { const e=document.getElementById(id); if(e) e.className='atk-toggle-btn'+(type==='physical'?' active':''); });
+  ['btn-magical','btn-magical-b'].forEach(id => { const e=document.getElementById(id); if(e) e.className='atk-toggle-btn'+(type==='magical'?' active':''); });
+  if (state.atk) setAtkStat(type==='physical'?'patk':'matk', false);
+  if (state.def) setDefStat(type==='physical'?'pdef':'mdef', false);
+  calc();
+}
+function setAtkStat(s, doCalc=true) {
+  state.atkStat = s;
+  document.getElementById('atk-stat-patk').className = 'stat-box'+(s==='patk'?' active-atk':'');
+  document.getElementById('atk-stat-matk').className = 'stat-box'+(s==='matk'?' active-atk':'');
+  if (doCalc) calc();
+}
+function setDefStat(s, doCalc=true) {
+  state.defStat = s;
+  document.getElementById('def-stat-pdef').className = 'stat-box'+(s==='pdef'?' active-def':'');
+  document.getElementById('def-stat-mdef').className = 'stat-box'+(s==='mdef'?' active-def':'');
+  if (doCalc) calc();
+}
+
+// ============================================================
+// 自动同步 + 特性面板
+// ============================================================
+function syncModeBAutoFields() {
+  if (state.def) {
+    const eff = getTypeEff(state.skillAttr, state.def.a1, state.def.a2 || null);
+    document.getElementById('type-eff-b').value = eff;
+  }
+  if (state.atk) {
+    const stab = hasStab(state.atk, state.skillAttr) ? 1.25 : 1.0;
+    document.getElementById('stab-mult-b').value = stab.toFixed(2);
+  }
+  // 参数模式：用 B 模式选中的技能
+  const skillB = state.selectedSkillName ? SKILLS.find(s => s.n === state.selectedSkillName) : null;
+  updateTraitPanelForMode('b', skillB);
+  // 技能组：优先用选中的攻方技能槽
+  let skillFull = skillB;
+  const selIdx = fullState.atkSel >= 0 ? fullState.atkSel : 0;
+  for (let i = selIdx; i < 4; i++) {
+    if (fullState.atk[i] && fullState.atk[i].skill) { skillFull = fullState.atk[i].skill; break; }
+  }
+  updateTraitPanelForMode('full', skillFull);
+  rebuildQuickSkillSelect();
+}
+
+function updateTraitPanelForMode(mode, skill) {
+  const atkTr = state.atk ? state.atk.tr : null;
+  const defTr = state.def ? state.def.tr : null;
+
+  const atkNameEl = document.getElementById(`trait-atk-name-${mode}`);
+  const atkDescEl = document.getElementById(`trait-atk-desc-${mode}`);
+  const atkMultEl = document.getElementById(mode === 'b' ? 'trait-mult-b' : 'trait-mult-full');
+  const atkCondEl = document.getElementById(`trait-atk-cond-${mode}`);
+  const defNameEl = document.getElementById(`trait-def-name-${mode}`);
+  const defDescEl = document.getElementById(`trait-def-desc-${mode}`);
+  const defMultEl = document.getElementById(`trait-def-mult-${mode}`);
+  const defCondEl = document.getElementById(`trait-def-cond-${mode}`);
+
+  if (atkNameEl) atkNameEl.textContent = atkTr || '暂无特性';
+  if (atkDescEl) atkDescEl.textContent = (state.atk && state.atk.tr_desc) || (atkTr ? '（暂无说明）' : '选择攻击方精灵后自动显示');
+  if (defNameEl) defNameEl.textContent = defTr || '暂无特性';
+  if (defDescEl) defDescEl.textContent = (state.def && state.def.tr_desc) || (defTr ? '（暂无说明）' : '选择防御方精灵后自动显示');
+
+  if (!skill) {
+    if (atkMultEl) atkMultEl.value = '1.00';
+    if (defMultEl) defMultEl.value = '1.00';
+    if (atkCondEl) atkCondEl.innerHTML = '';
+    if (defCondEl) defCondEl.innerHTML = '';
+    return;
+  }
+
+  const opts = readTraitOptsByMode(mode, 'atk');
+  // 冰钻特性：自动从防方技能槽累加总能耗
+  if (state.atk && state.atk.tr === '冰钻') {
+    const autoCost = calcDefTotalCost(state.def);
+    if (autoCost > 0) opts.enemyTotalCost = autoCost;
+  }
+  const atkResult = calcAtkTraitMult(state.atk, state.def, skill, opts);
+  const defResult = calcDefTraitMult(state.atk, state.def, skill, readTraitOptsByMode(mode, 'def'));
+
+  if (atkMultEl) atkMultEl.value = atkResult.mult.toFixed(2);
+  if (atkCondEl) renderTraitCond(atkResult.needsInput, atkCondEl, mode, 'atk');
+  if (atkDescEl && atkResult.desc && atkResult.desc !== '特性对此技能无直接伤害加成' && atkResult.desc !== '无特性') {
+    atkDescEl.innerHTML = `<span>${(state.atk && state.atk.tr_desc) || ''}</span>` +
+      `<div style="margin-top:4px;font-weight:600;color:var(--atk-color)">✨ ${atkResult.desc}</div>`;
+  }
+
+  if (defMultEl) defMultEl.value = defResult.mult.toFixed(2);
+  if (defCondEl) renderTraitCond(defResult.needsInput, defCondEl, mode, 'def');
+  if (defDescEl && defResult.desc && defResult.desc !== '特性对此技能无直接减伤' && defResult.desc !== '无特性') {
+    defDescEl.innerHTML = `<span>${(state.def && state.def.tr_desc) || ''}</span>` +
+      `<div style="margin-top:4px;font-weight:600;color:#42a5f5">🛡️ ${defResult.desc}</div>`;
+  }
+}
+
+function renderTraitCond(fields, container, mode, side) {
+  if (!container) return;
+  if (!fields || fields.length === 0) { container.innerHTML = ''; return; }
+
+  // onlyIfNoAuto：仅在无法自动判断（技能槽为空）时才显示
+  const skill = state.selectedSkillName ? SKILLS.find(s => s.n === state.selectedSkillName) : null;
+  const visibleFields = fields.filter(f => {
+    if (!f.onlyIfNoAuto) return true;
+    const skAttr = skill ? skill.a : '';
+    return checkDefCarriesAttr(state.def, skAttr) === null;
+  });
+  if (visibleFields.length === 0) { container.innerHTML = ''; return; }
+
+  const accentColor = side === 'atk' ? 'var(--atk-color)' : '#42a5f5';
+
+  // 渲染前保存已有输入，避免重建时丢失
+  const _savedVals = {};
+  visibleFields.forEach(f => {
+    const _el = document.getElementById(`trait-opt-${mode}-${side}-${f.key}`);
+    if (_el) _savedVals[f.key] = f.type === 'checkbox' ? _el.checked : _el.value;
+  });
+
+  let html = `<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;padding:6px 8px;background:rgba(124,107,255,.06);border-radius:7px;border:1px dashed rgba(124,107,255,.2)">`;
+  html += `<div style="width:100%;font-size:10px;color:${accentColor};font-weight:600;margin-bottom:1px">⚙️ 特性生效条件</div>`;
+
+  visibleFields.forEach(f => {
+    const targetId = `trait-opt-${mode}-${side}-${f.key}`;
+    const savedVal = _savedVals.hasOwnProperty(f.key) ? _savedVals[f.key] : f.def;
+    if (f.type === 'checkbox') {
+      const checked = savedVal ? 'checked' : '';
+      html += `<label style="display:flex;align-items:center;gap:4px;font-size:11px;cursor:pointer;white-space:nowrap">
+        <input type="checkbox" id="${targetId}" ${checked} onchange="onTraitCondChange('${mode}','${side}')"> ${f.label}
+      </label>`;
+    } else {
+      html += `<div style="display:flex;align-items:center;gap:4px;font-size:11px;white-space:nowrap">
+        <span>${f.label}：</span>
+        <input type="number" id="${targetId}" value="${savedVal}" min="${f.min||0}" max="${f.max||99}"
+          style="width:52px;padding:2px 4px;background:var(--card2);border:1px solid var(--border);border-radius:5px;color:${accentColor};text-align:center;font-size:11px;font-weight:700"
+          oninput="onTraitCondChange('${mode}','${side}')">
+      </div>`;
+    }
+  });
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+function onTraitCondChange(mode, side) {
+  const skill = state.selectedSkillName ? SKILLS.find(s => s.n === state.selectedSkillName) : null;
+  if (!skill) return;
+  const opts = readTraitOptsByMode(mode, side);
+
+  if (side === 'atk') {
+    const r = calcAtkTraitMult(state.atk, state.def, skill, opts);
+    const el = document.getElementById(mode === 'b' ? 'trait-mult-b' : 'trait-mult-full');
+    if (el) el.value = r.mult.toFixed(2);
+    const descEl = document.getElementById(`trait-atk-desc-${mode}`);
+    if (descEl && r.desc && r.desc !== '特性对此技能无直接伤害加成' && r.desc !== '无特性') {
+      descEl.innerHTML = `<span>${(state.atk && state.atk.tr_desc) || ''}</span><div style="margin-top:4px;font-weight:600;color:var(--atk-color)">✨ ${r.desc}</div>`;
+    } else if (descEl) {
+      descEl.textContent = (state.atk && state.atk.tr_desc) || '';
+    }
+  } else {
+    const r = calcDefTraitMult(state.atk, state.def, skill, opts);
+    const el = document.getElementById(`trait-def-mult-${mode}`);
+    if (el) el.value = r.mult.toFixed(2);
+    const descEl = document.getElementById(`trait-def-desc-${mode}`);
+    if (descEl && r.desc && r.desc !== '特性对此技能无直接减伤' && r.desc !== '无特性') {
+      descEl.innerHTML = `<span>${(state.def && state.def.tr_desc) || ''}</span><div style="margin-top:4px;font-weight:600;color:#42a5f5">🛡️ ${r.desc}</div>`;
+    } else if (descEl) {
+      descEl.textContent = (state.def && state.def.tr_desc) || '';
+    }
+  }
+  if (mode === 'b') calc(); else calcFull();
+}
+
+// ============================================================
+// 技能库下拉
+// ============================================================
+let _comboAllSkills = [];
+
+function rebuildQuickSkillSelect() {
+  const input = document.getElementById('skill-combo-input');
+  if (!input) return;
+  _comboAllSkills = SKILLS.map(s => ({ skill: s }));
+  input.placeholder = '搜索技能… （' + SKILLS.length + ' 个）';
+  input.readOnly = false;
+  renderComboPanel('');
+}
+
+function renderComboPanel(q) {
+  const dd = document.getElementById('skill-combo-dropdown');
+  if (!dd) return;
+
+  const filtered = q ? _comboAllSkills.filter(e => matchQuery(e.skill.n, q)) : _comboAllSkills;
+
+  if (!filtered.length) {
+    dd.innerHTML = '<div style="padding:10px 14px;font-size:12px;color:var(--text2)">无匹配技能</div>';
+    return;
+  }
+
+  let html = '';
+  if (!q) {
+    const groups = {};
+    const statusSkills = [];
+    filtered.forEach(e => {
+      if (e.skill.k === '状态') { statusSkills.push(e.skill); return; }
+      const a = e.skill.a;
+      if (!groups[a]) groups[a] = [];
+      groups[a].push(e.skill);
+    });
+    Object.keys(groups).sort().forEach(attr => {
+      const bg = TYPE_COLORS[attr] || '#888';
+      const tc = TYPE_TEXT_DARK.has(attr) ? '#333' : '#fff';
+      html += '<div class="skill-lib-separator" style="text-align:left">' +
+        '<span class="type-tag" style="background:' + bg + ';color:' + tc + '">' + attr + '</span>' +
+        '<span style="font-size:11px;color:var(--text2);margin-left:6px">' + groups[attr].length + ' 个</span></div>';
+      groups[attr].sort((a, b) => b.p - a.p).forEach(s => { html += makeSkillItem(s); });
+    });
+    if (statusSkills.length) {
+      html += '<div class="skill-lib-separator" style="text-align:left">' +
+        '<span style="font-size:11px;color:#80cbc4;font-weight:600">状态技能</span>' +
+        '<span style="font-size:11px;color:var(--text2);margin-left:6px">' + statusSkills.length + ' 个</span></div>';
+      statusSkills.sort((a, b) => a.n.localeCompare(b.n, 'zh')).forEach(s => { html += makeSkillItem(s); });
+    }
+  } else {
+    filtered.forEach(e => { html += makeSkillItem(e.skill); });
+  }
+
+  dd.innerHTML = html;
+  dd.querySelectorAll('.skill-lib-item').forEach(item => {
+    item.addEventListener('mousedown', e => {
+      e.preventDefault();
+      const skill = SKILLS.find(s => s.n === item.dataset.name);
+      if (skill) applyQuickSkill(skill);
+    });
+  });
+}
+
+function makeSkillItem(skill) {
+  const sbg       = TYPE_COLORS[skill.a] || '#888';
+  const stc       = TYPE_TEXT_DARK.has(skill.a) ? '#333' : '#fff';
+  const isStatus  = skill.k === '状态';
+  const kindColor = skill.k === '物攻' ? '#ff9966' : skill.k === '魔攻' ? '#88aaff' : '#80cbc4';
+  const attrTag   = isStatus
+    ? '<span class="sli-kind" style="color:#80cbc4;font-weight:600">状态</span>'
+    : '<span class="type-tag" style="background:' + sbg + ';color:' + stc + '">' + skill.a + '</span>' +
+      '<span class="sli-kind" style="color:' + kindColor + ';font-weight:600">' + skill.k + '</span>';
+  const powerTag  = isStatus
+    ? '<span class="sli-power" style="color:var(--text2)">威力 --</span>'
+    : '<span class="sli-power">威力 ' + skill.p + '</span>';
+  return '<div class="skill-lib-item" data-name="' + skill.n + '">' +
+    '<span class="sli-name">' + skill.n + '</span>' + attrTag + powerTag + '</div>';
+}
+
+function onSkillComboFocus() {
+  const input = document.getElementById('skill-combo-input');
+  const dd    = document.getElementById('skill-combo-dropdown');
+  if (!dd || !_comboAllSkills.length) return;
+  input.removeAttribute('readonly');
+  input.select();
+  renderComboPanel(input.value.trim());
+  dd.classList.add('open');
+  const arrow = document.getElementById('skill-combo-arrow');
+  if (arrow) arrow.textContent = '▲';
+
+  const closeHandler = e => {
+    const wrap = document.getElementById('skill-combo-wrap');
+    if (wrap && !wrap.contains(e.target)) {
+      dd.classList.remove('open');
+      if (arrow) arrow.textContent = '▼';
+      if (state.selectedSkillName) input.value = state.selectedSkillName;
+      document.removeEventListener('click', closeHandler);
+    }
+  };
+  setTimeout(() => document.addEventListener('click', closeHandler), 0);
+}
+
+function onSkillComboInput() {
+  const input = document.getElementById('skill-combo-input');
+  const dd    = document.getElementById('skill-combo-dropdown');
+  if (!dd) return;
+  renderComboPanel(input.value.trim());
+  if (!dd.classList.contains('open')) {
+    dd.classList.add('open');
+    const arrow = document.getElementById('skill-combo-arrow');
+    if (arrow) arrow.textContent = '▲';
+  }
+}
+
+function applyQuickSkill(skill) {
+  const input = document.getElementById('skill-combo-input');
+  const dd    = document.getElementById('skill-combo-dropdown');
+  const arrow = document.getElementById('skill-combo-arrow');
+  if (input) input.value = skill.n;
+  if (dd)    dd.classList.remove('open');
+  if (arrow) arrow.textContent = '▼';
+
+  document.getElementById('base-power-b').value = skill.p;
+  // 双攻技能：取攻方物攻/魔攻较高一项
+  const isPhys = skill.k === '双攻'
+    ? ((state.atk ? (state.atk.patk || state.atk.pa || 0) : 0) >= (state.atk ? (state.atk.matk || state.atk.ma || 0) : 0))
+    : skill.k === '物攻';
+  setSkillType(isPhys ? 'physical' : 'magical');
+  state.skillAttr = skill.a;
+  state.selectedSkillName = skill.n;
+  document.querySelectorAll('.type-btn').forEach(b => b.classList.toggle('selected', b.textContent === skill.a));
+  syncModeBAutoFields();
+  updatePowerTip();
+  document.getElementById('skill-selected-info').textContent =
+    '已选：' + skill.n + ' | ' + skill.a + '属性 | ' + skill.k + ' | 基础威力 ' + skill.p;
+  calc();
+}
+
+// ============================================================
+// 变动威力提示
+// ============================================================
+const SPEED_DIFF_TABLE = [
+  { min: -Infinity, max: 0,   p: 60,  label: '≤ 0（不快于对方）' },
+  { min: 1,   max: 30,  p: 80,  label: '1 ~ 30'   },
+  { min: 31,  max: 60,  p: 100, label: '31 ~ 60'  },
+  { min: 61,  max: 90,  p: 120, label: '61 ~ 90'  },
+  { min: 91,  max: 120, p: 140, label: '91 ~ 120' },
+  { min: 121, max: 150, p: 150, label: '121 ~ 150' },
+  { min: 151, max: 180, p: 160, label: '151 ~ 180' },
+  { min: 181, max: 210, p: 170, label: '181 ~ 210' },
+  { min: 211, max: 240, p: 180, label: '211 ~ 240' },
+  { min: 241, max: 270, p: 190, label: '241 ~ 270' },
+  { min: 271, max: Infinity, p: 200, label: '≥ 271' }
+];
+const PDEF_DIFF_TABLE = SPEED_DIFF_TABLE;
+
+function diffTableLookup(table, atk, def) {
+  const diff = atk - def;
+  for (const row of table) {
+    if (diff >= row.min && diff <= row.max) return { p: row.p, diff };
+  }
+  return { p: table[table.length - 1].p, diff };
+}
+
+const MANA_BURST_TABLE = [
+  [0,45],[1,70],[2,90],[3,110],[4,135],[5,155],[6,165],[7,180],[8,190],[9,200],[10,210]
+];
+
+function tipWrap(icon, title, body) {
+  return `<div style="font-weight:700;margin-bottom:5px;color:var(--text)">${icon} ${title}</div>${body}`;
+}
+function tipTable(headers, rows) {
+  const th = headers.map(h=>`<th style="padding:1px 8px;text-align:left;color:var(--text2)">${h}</th>`).join('');
+  const tr = rows.map(([cells, active])=>{
+    const tds = cells.map((c,i)=>`<td style="padding:1px 8px;color:${active?(i===cells.length-1?'#c8960a':'var(--text)'):'var(--text2)'}">${c}</td>`).join('');
+    return `<tr style="${active?'background:rgba(255,200,80,.18);font-weight:700':''}">${tds}</tr>`;
+  }).join('');
+  return `<table style="border-collapse:collapse;font-size:11px;margin-top:4px"><tr>${th}</tr>${tr}</table>`;
+}
+function tipNote(text) {
+  return `<div style="color:var(--text2);font-size:11px;margin-top:4px">${text}</div>`;
+}
+function tipInfo(html) {
+  return `<div style="color:var(--text);line-height:1.7;margin-bottom:2px">${html}</div>`;
+}
+
+function updatePowerTip() {
+  const tipEl = document.getElementById('power-tip-b');
+  if (!tipEl) return;
+  const html = getFskPowerTipHTML(state.selectedSkillName);
+  if (html) { tipEl.innerHTML = html; tipEl.style.display = 'block'; }
+  else { tipEl.style.display = 'none'; }
+}
+
+function getFskPowerTipHTML(n) {
+  const panelVal = id => parseInt((document.getElementById(id)||{}).textContent) || 0;
+
+  if (n === '闪击') {
+    const atkV = panelVal('val-atk-spd'), defV = panelVal('val-def-spd');
+    const { p, diff } = diffTableLookup(SPEED_DIFF_TABLE, atkV, defV);
+    const rows = SPEED_DIFF_TABLE.map(row => [[row.label, row.p], diff >= row.min && diff <= row.max]);
+    return tipWrap('⚡','闪击：速度差决定威力',
+      tipInfo(`攻方速度 <b style="color:#ffd970">${atkV}</b> − 防方速度 <b style="color:#80c8ff">${defV}</b> = <b style="color:${diff>=0?'#80e080':'#ff7070'}">${diff}</b> → 威力 <b style="color:#ffd970;font-size:14px">${p}</b>`) +
+      tipTable(['速度差','威力'], rows));
+  }
+
+  if (n === '鸣沙陷阱') {
+    const atkV = panelVal('val-atk-pdef'), defV = panelVal('val-def-pdef');
+    const { p, diff } = diffTableLookup(PDEF_DIFF_TABLE, atkV, defV);
+    const rows = PDEF_DIFF_TABLE.map(row => [[row.label, row.p], diff >= row.min && diff <= row.max]);
+    return tipWrap('🏔️','鸣沙陷阱：物防差决定威力',
+      tipInfo(`攻方物防 <b style="color:#ffd970">${atkV}</b> − 防方物防 <b style="color:#80c8ff">${defV}</b> = <b style="color:${diff>=0?'#80e080':'#ff7070'}">${diff}</b> → 威力 <b style="color:#ffd970;font-size:14px">${p}</b>`) +
+      tipTable(['物防差','威力'], rows));
+  }
+
+  if (n === '魔能爆') {
+    const rows = MANA_BURST_TABLE.map(([e,p]) => [[`${e} 能量`, p], false]);
+    return tipWrap('✨','魔能爆：消耗所有能量，威力随能量变化',
+      tipInfo('使用时消耗所有能量，<b>请根据当前能量手动填入威力</b>') + tipTable(['当前能量','威力'], rows));
+  }
+
+  const positionSkills = {
+    '钢铁洪流': { base:70, bonus:90, trigger:'1号位', max:160, note:'传动2' },
+    '械斗':     { base:45, bonus:60, trigger:'1号位', max:105, note:'传动1' },
+    '离子震荡': { base:90, bonus:40, trigger:'3号位', max:130, note:'传动1' },
+    '磁暴':     { base:70, bonus:30, trigger:'1号或3号位', max:100, note:'传动1' },
+  };
+  if (positionSkills[n]) {
+    const { base, bonus, trigger, max, note } = positionSkills[n];
+    return tipWrap('📍',`${n}：位置加成`,
+      tipInfo(`位于 <b style="color:#ffd970">${trigger}</b> 时威力 +${bonus}（${note}）`) +
+      tipTable(['情况','威力'],[[['未处于触发位置（默认）', base], false],[[`处于${trigger}`, max], true]]) +
+      tipNote('请根据实际位置手动选择上方对应威力填入'));
+  }
+
+  const countertSkills = {
+    '偷袭':   { base:85,  mult:3,   note:'应对状态触发' },
+    '突袭':   { base:70,  mult:3,   note:'应对状态触发' },
+    '无影脚': { base:85,  mult:2,   note:'应对状态触发' },
+    '爆冲':   { base:65,  mult:5,   note:'应对状态触发' },
+    '技巧打击':{ base:35, mult:10,  note:'应对状态触发' },
+    '闪燃':   { base:40,  mult:4,   note:'应对状态触发' },
+    '龙卷风': { base:70,  mult:1.5, note:'应对状态触发，迅捷' },
+    '虫击':   { base:90,  mult:2,   note:'应对状态触发，且无视系别抵抗' },
+  };
+  if (countertSkills[n]) {
+    const { base, mult, note } = countertSkills[n];
+    const triggered = Math.round(base * mult);
+    return tipWrap('🛡️',`${n}：应对状态倍率`,
+      tipInfo(`${note}，威力变为 <b>×${mult}</b>`) +
+      tipTable(['情况','威力'],[[['普通使用', base], false],[['应对状态触发', triggered], false]]) +
+      tipNote('请根据是否应对触发，手动选择对应威力填入'));
+  }
+
+  if (n === '怨力打击') {
+    return tipWrap('💢','怨力打击：蓄力特殊机制',
+      tipInfo('蓄力1回合，若蓄力期间被攻击，威力变为<b>敌方技能威力的3倍</b>') +
+      tipTable(['情况','威力'],[[['正常释放（未被攻击）', 1], false],[['蓄力期被攻击', '敌方技能威力×3'], false]]) +
+      tipNote('若被打断，请手动计算并填入威力（敌方技能威力×3）'));
+  }
+
+  if (n === '垂死反击') {
+    const rows = [100,80,60,40,20,0].map(hp => [[`当前HP ${hp}%`, 80 + Math.floor((100-hp)/5)*5], hp === 100 || hp === 0]);
+    return tipWrap('💀','垂死反击：HP越低威力越高',
+      tipInfo('自己每失去5%生命，威力 <b>+5</b>（HP满=80，HP0%=180）') + tipTable(['HP百分比','威力'], rows) +
+      tipNote('请根据当前HP百分比手动填入对应威力'));
+  }
+  if (n === '彗星') {
+    const rows = [100,80,60,40,20,0].map(hp => [[`当前HP ${hp}%`, Math.max(0, 240 - Math.floor((100-hp)/5)*10)], hp === 100]);
+    return tipWrap('☄️','彗星：HP越低威力越低，使用后自杀',
+      tipInfo('每失去5%生命，威力 <b>-10</b>（HP满=240，HP0%≈0），<b style="color:#ff7070">使用后消耗全部生命</b>') +
+      tipTable(['HP百分比','威力'], rows) + tipNote('请根据当前HP百分比手动填入对应威力'));
+  }
+  if (n === '筛管奔流') {
+    return tipWrap('🌿','筛管奔流：高血量加成',
+      tipInfo('自身HP <b>> 80%</b> 时，威力 <b>+75</b>') +
+      tipTable(['情况','威力'],[[['HP ≤ 80%（默认）', 80], false],[['HP > 80%', 155], false]]) +
+      tipNote('请根据当前HP是否>80%选择对应威力'));
+  }
+  if (n === '彼岸之手') {
+    return tipWrap('✋','彼岸之手：低HP降低能耗',
+      tipInfo('自己每失去10%生命，<b>能耗 -1</b>（不影响威力，基础威力固定150）') +
+      tipNote('威力固定为150，此技能的浮动在于能耗降低，不影响伤害计算'));
+  }
+
+  if (n === '坟场搏击') {
+    const rows = [0,1,2,3,4,5,6,7,8,9,10].map(e => {
+      const mult = Math.max(0, 1 - e*0.1);
+      return [[`敌方 ${e} 能量`, `×${mult.toFixed(1)} = ${Math.round(180 * mult)}`], e === 0];
+    });
+    return tipWrap('⚰️','坟场搏击：敌方能量越高威力越低',
+      tipInfo('敌方每有1能量，本次技能威力 <b>-10%</b>（基础威力180）') + tipTable(['敌方能量','实际威力'], rows) +
+      tipNote('请根据敌方当前能量手动填入威力（不含本系加成）'));
+  }
+  if (n === '碎冰冰') {
+    const rows = [0,1,2,3,4,5].map(e => [[`${e}层冻结`, 40+e*20], e===0]);
+    return tipWrap('🧊','碎冰冰：敌方冻结层数加成',
+      tipInfo('敌方每有1层冻结，威力 <b>+20</b>（基础40）') + tipTable(['敌方冻结层数','威力'], rows) +
+      tipNote('请根据敌方冻结层数手动填入威力'));
+  }
+  if (n === '极寒领域') {
+    return tipWrap('❄️','极寒领域：敌方冻结触发加成',
+      tipInfo('若敌方有冻结，威力 <b>+60</b>；应对状态时冻结层数翻倍') +
+      tipTable(['情况','威力'],[[['敌方无冻结', 105], false],[['敌方有冻结', 165], false]]) +
+      tipNote('请根据敌方是否有冻结手动选择威力'));
+  }
+  if (n === '牵连') {
+    const rows = [0,1,2,3].map(e => [[`${e}只力竭精灵`, 85+e*30], e===0]);
+    return tipWrap('🔗','牵连：敌方力竭精灵数加成',
+      tipInfo('敌方每有1只力竭精灵，威力 <b>+30</b>（基础85）') + tipTable(['敌方力竭精灵数','威力'], rows) +
+      tipNote('请根据敌方力竭精灵数手动填入威力'));
+  }
+  if (n === '鸩毒') {
+    const rows = [0,1,2,3,4,5].map(e => [[`${e}层中毒（普通）`, 75+e*10], e===0]);
+    return tipWrap('🐦','鸩毒：敌方中毒层数加成',
+      tipInfo('敌方每有1层中毒，威力 <b>+10</b>（基础75）；应对状态时每层改为 <b>+20</b>') +
+      tipTable(['敌方中毒层数','普通威力'], rows) + tipNote('应对状态时：威力 = 75 + 中毒层×20'));
+  }
+  if (n === '燃尽') {
+    const rows = [100,80,60,40,20,0].map(hp => [[`敌方HP ${hp}%`, Math.max(0, 155 - Math.floor((100-hp)/5)*5)], hp===100]);
+    return tipWrap('🔥','燃尽：敌方HP越低威力越低',
+      tipInfo('敌方每失去5%生命，威力 <b>-5</b>（敌方满HP=155）') + tipTable(['敌方HP百分比','威力'], rows) +
+      tipNote('请根据敌方当前HP百分比手动填入威力'));
+  }
+  if (n === '毒液渗透') {
+    return tipWrap('☠️','毒液渗透：中毒层数降低能耗',
+      tipInfo('敌方每有1层中毒效果，<b>能耗 -1</b>，并使敌方获得1层中毒；基础威力固定120') +
+      tipNote('威力固定120，浮动为能耗降低，不影响伤害计算'));
+  }
+  if (n === '四维降解') {
+    return tipWrap('🌀','四维降解：敌方印记降低能耗',
+      tipInfo('敌方每有1层印记，<b>能耗 -1</b>（不影响威力，基础威力固定100）') +
+      tipNote('威力固定100，浮动为能耗降低，不影响伤害'));
+  }
+  if (n === '多维击打') {
+    const rows = [0,1,2,3,4,5].map(e => [[`${e}层星陨印记`, `1+${e} = ${1+e}连击`], e===0]);
+    return tipWrap('💫','多维击打：敌方星陨印记增加连击',
+      tipInfo('基础1连击，敌方每有1层星陨印记，<b>连击数+1</b>（单击威力15）') +
+      tipTable(['敌方星陨印记层数','总连击数'], rows) + tipNote('请根据星陨印记层数手动设置连击次数'));
+  }
+
+  if (n === '超级糖果') {
+    return tipWrap('🍬','超级糖果：萌化触发加成',
+      tipInfo('自己获得萌化时，本次威力 <b>+60</b>') +
+      tipTable(['情况','威力'],[[['无萌化', 100], false], [['有萌化', 160], false]]) + tipNote('请根据是否有萌化选择威力'));
+  }
+  if (n === '幼态延续') {
+    return tipWrap('🐣','幼态延续：萌化触发加成',
+      tipInfo('自身拥有萌化时，威力 <b>+60</b>') +
+      tipTable(['情况','威力'],[[['无萌化', 90], false], [['有萌化', 150], false]]));
+  }
+  if (n === '破罐破摔') {
+    return tipWrap('🏺','破罐破摔：自身有减益加成',
+      tipInfo('自己有减益时，威力 <b>+60</b>') +
+      tipTable(['情况','威力'],[[['无减益', 80], false], [['有减益', 140], false]]));
+  }
+
+  if (n === '逆袭') {
+    const rows = [3,4,5,6,7,8,9,10].map(c => [[`能耗 ${c}`, 100+(c-3)*50], c===3]);
+    return tipWrap('🔄','逆袭：能耗决定威力',
+      tipInfo('基础能耗3，威力100；能耗每 <b>+1</b>，威力 <b>+50</b>') + tipTable(['技能能耗','威力'], rows) +
+      tipNote('受能耗增益（如技能石）影响，请根据实际能耗填入威力'));
+  }
+  if (n === '涌泉') {
+    const rows = [6,5,4,3,2,1].map(c => [[`能耗 ${c}`, 60+(6-c)*10], c===6]);
+    return tipWrap('💧','涌泉：能耗越低威力越高',
+      tipInfo('基础能耗6，威力60；能耗每 <b>-1</b>，威力 <b>+10</b>') + tipTable(['技能能耗','威力'], rows) +
+      tipNote('受能耗降低效果影响，请根据实际能耗填入威力'));
+  }
+  if (n === '触底强击') {
+    return tipWrap('⚡','触底强击：能量耗尽加成',
+      tipInfo('使用后若能量耗尽（变为0），威力 <b>+110</b>') +
+      tipTable(['情况','威力'],[[['使用后有剩余能量', 65], false], [['使用后能量归零', 175], false]]) +
+      tipNote('请根据使用后能量是否耗尽选择威力'));
+  }
+
+  if (n === '气势一击') {
+    return tipWrap('💥','气势一击：上回合应对成功加成',
+      tipInfo('若上回合应对成功，本次威力 <b>+180</b>') +
+      tipTable(['情况','威力'],[[['上回合未应对', 80], false], [['上回合应对成功', 260], false]]));
+  }
+  if (n === '见招拆招') {
+    return tipWrap('🥋','见招拆招：上回合状态技能加成',
+      tipInfo('若上回合使用了状态技能，本次威力 <b>+55</b>') +
+      tipTable(['情况','威力'],[[['上回合非状态技能', 65], false], [['上回合用了状态技能', 120], false]]));
+  }
+  if (n === '当头棒喝') {
+    return tipWrap('🔨','当头棒喝：敌方换精灵加成',
+      tipInfo('若敌方本回合更换了精灵，本次威力 <b>+100</b>') +
+      tipTable(['情况','威力'],[[['敌方未换精灵', 80], false], [['敌方本回合换精灵', 180], false]]));
+  }
+  if (n === '草虫冲击') {
+    return tipWrap('🌿','草虫冲击：敌方换精灵加成',
+      tipInfo('若敌方本回合更换了精灵，威力 <b>+50</b> 且无视系别抵抗') +
+      tipTable(['情况','威力'],[[['敌方未换精灵', 80], false], [['敌方本回合换精灵', 130], false]]));
+  }
+  if (n === '天旋地转') {
+    return tipWrap('🌪️','天旋地转：迸发加成',
+      tipInfo('迸发触发时，威力 <b>+30</b>；先手+1') +
+      tipTable(['情况','威力'],[[['普通使用', 60], false], [['迸发触发', 90], false]]));
+  }
+  if (n === '扇风') {
+    return tipWrap('🌬️','扇风：先于敌方攻击加成',
+      tipInfo('若先于敌方攻击，威力 <b>+50%</b>（×1.5）') +
+      tipTable(['情况','威力'],[[['后攻或同速', 75], false], [['先于敌方行动', 112], false]]) +
+      tipNote('若先手，建议在「其他额外倍率」填入 1.5'));
+  }
+
+  if (n === '电弧') {
+    return tipWrap('⚡','电弧：迸发加成',
+      tipInfo('迸发触发时，威力 <b>+40</b>') +
+      tipTable(['情况','威力'],[[['普通使用', 80], false], [['迸发触发', 120], false]]));
+  }
+  if (n === '引雷') {
+    return tipWrap('⚡','引雷：迸发加成',
+      tipInfo('迸发触发时，本次威力 <b>+20</b>（2连击）') +
+      tipTable(['情况','单击威力（×2）'],[[['普通使用', 35], false], [['迸发触发', 55], false]]));
+  }
+  if (n === '雷暴') {
+    return tipWrap('⛈️','雷暴：累积迸发加成',
+      tipInfo('获得本场生效过的所有迸发，每获得1种，<b>能耗+1、威力+10</b>（基础威力55）') +
+      tipNote('威力视已累积迸发种类数而定，请手动填入。例如累积5种迸发：威力=105，能耗=6'));
+  }
+
+  if (n === '乘胜追击') {
+    return tipWrap('🏃','乘胜追击：连击数随使用次数增长',
+      tipInfo('初始1连击，每次使用后 <b>连击数永久+1</b>（本次威力40/击）') +
+      tipNote('请根据本场使用次数在「连击次数」里填入当前连击数'));
+  }
+  if (n === '趁火打劫') {
+    return tipWrap('🔥','趁火打劫：击败敌方连击永久增长',
+      tipInfo('2连击；若本次使用击败敌方，<b>连击数永久+2</b>（单击威力35）') +
+      tipNote('请在「连击次数」里填入当前连击数（初始2，每次击杀+2）'));
+  }
+  if (n === '孢子爆散') {
+    return tipWrap('🍄','孢子爆散：每次使用连击永久+2',
+      tipInfo('初始1连击，每次使用后 <b>连击数永久+2</b>（单击威力30）') +
+      tipNote('请在「连击次数」里填入当前连击数（初始1，每次+2）'));
+  }
+  if (n === '叠势') {
+    return tipWrap('🥊','叠势：每次应对成功连击永久+2',
+      tipInfo('初始2连击，每成功应对1次 <b>连击数永久+2</b>（单击威力25）') +
+      tipNote('请在「连击次数」里填入当前连击数（初始2，每次应对+2）'));
+  }
+  if (n === '月光合奏') {
+    return tipWrap('🌙','月光合奏：双方萌化层数决定连击',
+      tipInfo('初始1连击，双方携带的所有精灵每有1层萌化，<b>连击数+1</b>（单击威力30）') +
+      tipNote('请根据双方萌化总层数在「连击次数」里填入对应连击数'));
+  }
+  if (n === '飞断') {
+    return tipWrap('🪲','飞断：奉献加成',
+      tipInfo('己方队伍获得1次奉献效果时，威力 <b>+20</b>（基础威力20）') +
+      tipTable(['情况','威力'],[[['无奉献', 20], false], [['有奉献', 40], false]]));
+  }
+  if (n === '虫群') {
+    return tipWrap('🐛','虫群：受奉献影响',
+      tipInfo('本技能会受「奉献」效果影响（具体加成视奉献层数），基础1连击') +
+      tipNote('奉献增加的连击数请手动填入「连击次数」'));
+  }
+
+  return null;
+}
+
+// ============================================================
+// 属性选择器 / 精灵搜索
+// ============================================================
+function buildTypeSelector(containerId) {
+  const sel = document.getElementById(containerId);
+  if (!sel) return;
+  ALL_TYPES.forEach(t => {
+    const btn = document.createElement('button');
+    btn.className = 'type-btn' + (t === state.skillAttr ? ' selected' : '');
+    btn.textContent = t;
+    btn.style.borderColor = TYPE_COLORS[t] || '#ccc';
+    btn.onclick = () => {
+      state.skillAttr = t;
+      document.querySelectorAll('.type-btn').forEach(b => b.classList.toggle('selected', b.textContent === t));
+      syncModeBAutoFields();
+      calc();
+    };
+    sel.appendChild(btn);
+  });
+}
+
+function typeChip(type) {
+  if (!type) return '';
+  const bg = TYPE_COLORS[type] || '#888';
+  const tc = TYPE_TEXT_DARK.has(type) ? '#333' : '#fff';
+  return `<span class="type-chip" style="background:${bg};color:${tc}">${type}</span>`;
+}
+
+function getEmoji(type) {
+  return ({'草':'🌿','火':'🔥','水':'💧','光':'✨','地':'🌍','冰':'❄️','龙':'🐉','电':'⚡','毒':'☠️','虫':'🐛','武':'👊','翼':'🦅','萌':'💕','幽':'👻','恶':'😈','机械':'🤖','幻':'🔮','普通':'⭕'})[type] || '🔮';
+}
+
+function renderCard(side, spirit) {
+  const card    = document.getElementById(side + '-card');
+  const statsEl = document.getElementById(side + '-stats');
+  const lvRow   = document.getElementById(side === 'atk' ? 'atk-level-row' : 'def-level-row');
+  const natRow  = document.getElementById(side + '-nature-row');
+
+  if (!spirit) {
+    card.innerHTML = `<div class="no-spirit">请搜索并选择${side==='atk'?'攻击方':'防御方'}精灵</div>`;
+    [statsEl, lvRow, natRow].forEach(el => el && (el.style.display='none'));
+    return;
+  }
+  card.innerHTML = `
+    <div class="spirit-avatar">${spirit.img ? `<img src="${spirit.img}" alt="${spirit.n}" onerror="this.parentNode.innerHTML='<span class=\'avatar-fallback\'>${getEmoji(spirit.a1)}</span>'">` : `<span class="avatar-fallback">${getEmoji(spirit.a1)}</span>`}</div>
+    <div class="spirit-info">
+      <div class="spirit-name">${spirit.n}</div>
+      <div class="spirit-meta">${spirit.st||''}</div>
+      <div class="spirit-types">${typeChip(spirit.a1)}${spirit.a2?typeChip(spirit.a2):''}</div>
+      ${spirit.tr ? `<div style="font-size:11px;color:var(--text2);margin-top:4px">特性：${spirit.tr}</div>` : ''}
+    </div>
+  `;
+  statsEl.style.display = 'grid';
+  if (lvRow) lvRow.style.display = 'flex';
+  if (natRow) natRow.style.display = 'flex';
+  recalcStats(side);
+}
+
+function applySpirit(side, spirit) {
+  if (side === 'atk') state.atk = Object.assign({}, spirit);
+  else                state.def = Object.assign({}, spirit);
+  const input = document.getElementById(side + '-search');
+  const dd    = document.getElementById(side + '-dropdown');
+  const arrow = document.getElementById(side + '-search-arrow');
+  if (input) input.value = spirit.n;
+  if (dd) dd.classList.remove('open');
+  if (arrow) arrow.textContent = '▼';
+  renderCard(side, side === 'atk' ? state.atk : state.def);
+  if (side === 'atk') setAtkStat(state.skillType === 'physical' ? 'patk' : 'matk', false);
+  if (side === 'def') setDefStat(state.skillType === 'physical' ? 'pdef' : 'mdef', false);
+  syncModeBAutoFields();
+  calc();
+}
+
+function setupSearch(side) {
+  const input = document.getElementById(side + '-search');
+  const dd    = document.getElementById(side + '-dropdown');
+  const arrow = document.getElementById(side + '-search-arrow');
+
+  function renderDropdown(q) {
+    if (q) {
+      const res = SORTED_SPIRITS.filter(s => matchQuery(s.n, q)).slice(0, 40);
+      if (!res.length) {
+        dd.innerHTML = '<div style="padding:10px 14px;font-size:12px;color:var(--text2)">无匹配精灵</div>';
+        return;
+      }
+      dd.innerHTML = res.map(s => makeSpiritItem(s)).join('');
+    } else {
+      const groups = {};
+      const attrOrder = ['普通','草','火','水','光','地','冰','龙','电','毒','虫','武','翼','萌','幽','恶','机械','幻'];
+      attrOrder.forEach(a => { groups[a] = []; });
+      SORTED_SPIRITS.forEach(s => {
+        const key = s.a1 || '其他';
+        if (!groups[key]) groups[key] = [];
+        groups[key].push(s);
+      });
+      let html = '';
+      Object.keys(groups).filter(k => groups[k].length > 0).forEach(attr => {
+        const bg = TYPE_COLORS[attr] || '#888';
+        const tc = TYPE_TEXT_DARK.has(attr) ? '#333' : '#fff';
+        html += '<div class="dropdown-group-header" data-attr="' + attr + '" style="padding:4px 12px 2px;display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none">' +
+          '<span class="type-tag" style="background:' + bg + ';color:' + tc + '">' + attr + '</span>' +
+          '<span style="font-size:11px;color:var(--text2)">' + groups[attr].length + ' 只</span>' +
+          '<span style="font-size:10px;color:var(--text2);margin-left:auto" class="group-arrow">▶</span></div>' +
+          '<div class="dropdown-group-body" data-attr="' + attr + '" style="display:none">' +
+          groups[attr].map(s => makeSpiritItem(s)).join('') + '</div>';
+      });
+      dd.innerHTML = html;
+      dd.querySelectorAll('.dropdown-group-header').forEach(hdr => {
+        hdr.addEventListener('click', () => {
+          const attr = hdr.dataset.attr;
+          const body = dd.querySelector('.dropdown-group-body[data-attr="' + attr + '"]');
+          if (!body) return;
+          const arrowEl = hdr.querySelector('.group-arrow');
+          const isOpen = body.style.display !== 'none';
+          body.style.display = isOpen ? 'none' : 'block';
+          if (arrowEl) arrowEl.textContent = isOpen ? '▶' : '▼';
+        });
+      });
+    }
+
+    dd.querySelectorAll('.dropdown-item').forEach(item => {
+      item.addEventListener('mousedown', e => {
+        e.preventDefault();
+        const spirit = SPIRITS.find(s => s.n === item.dataset.name);
+        if (spirit) applySpirit(side, spirit);
+      });
+    });
+  }
+
+  function makeSpiritItem(s) {
+    const thumb = s.img
+      ? `<img src="${s.img}" alt="${s.n}" loading="lazy" style="width:28px;height:28px;object-fit:contain;border-radius:5px;vertical-align:middle" onerror="this.replaceWith(document.createTextNode('${getEmoji(s.a1)}'))">`
+      : getEmoji(s.a1);
+    const tag1 = `<span class="type-tag" style="background:${TYPE_COLORS[s.a1]||'#888'};color:${TYPE_TEXT_DARK.has(s.a1)?'#333':'#fff'}">${s.a1}</span>`;
+    const tag2 = s.a2 ? `<span class="type-tag" style="background:${TYPE_COLORS[s.a2]||'#888'};color:${TYPE_TEXT_DARK.has(s.a2)?'#333':'#fff'}">${s.a2}</span>` : '';
+    return `<div class="dropdown-item" data-name="${s.n}">
+      <span class="dd-thumb">${thumb}</span>
+      <span class="item-name">${s.n}</span>
+      ${tag1}${tag2}
+      <span class="item-stage">${s.st||''}</span>
+    </div>`;
+  }
+
+  input.addEventListener('focus', () => {
+    input.select();
+    renderDropdown(input.value.trim());
+    dd.classList.add('open');
+    if (arrow) arrow.textContent = '▲';
+    bindClose();
+  });
+
+  input.addEventListener('input', () => {
+    renderDropdown(input.value.trim());
+    if (!dd.classList.contains('open')) {
+      dd.classList.add('open');
+      if (arrow) arrow.textContent = '▲';
+    }
+  });
+
+  function bindClose() {
+    const handler = e => {
+      const wrap = document.getElementById(side + '-search-wrap');
+      if (wrap && !wrap.contains(e.target)) {
+        dd.classList.remove('open');
+        if (arrow) arrow.textContent = '▼';
+        const cur = side === 'atk' ? state.atk : state.def;
+        if (cur) input.value = cur.n;
+        document.removeEventListener('click', handler);
+      }
+    };
+    setTimeout(() => document.addEventListener('click', handler), 0);
+  }
+}
+
+// ============================================================
+// 主题
+// ============================================================
+function toggleTheme() {
+  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+  if (isLight) {
+    document.documentElement.removeAttribute('data-theme');
+    document.getElementById('theme-icon').textContent = '🌙';
+    document.getElementById('theme-label').textContent = '夜间';
+  } else {
+    document.documentElement.setAttribute('data-theme', 'light');
+    document.getElementById('theme-icon').textContent = '☀️';
+    document.getElementById('theme-label').textContent = '日间';
+  }
+}
+
+// ============================================================
+// 技能组（完整配招）
+// ============================================================
+function buildFullSkillRows(side) {
+  const container = document.getElementById(side === 'atk' ? 'full-atk-skills' : 'full-def-skills');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const header = document.createElement('div');
+  header.className = 'fsk-header-row';
+  ['', '类型', '属性', '能耗', '连击', '威力', '备注'].forEach(txt => {
+    const cell = document.createElement('span');
+    cell.className = 'fsk-header-cell';
+    cell.textContent = txt;
+    header.appendChild(cell);
+  });
+  container.appendChild(header);
+
+  for (let i = 0; i < 4; i++) {
+    const row = document.createElement('div');
+    row.className = 'fsk-row-bg' + (fullState[side + 'Sel'] === i ? ' selected' : '');
+    row.id = `fsk-${side}-${i}`;
+    row.onclick = (e) => {
+      if (e.target.closest('.fsk-combo-wrap') || e.target.closest('.fsk-hits') ||
+          e.target.closest('.fsk-power') || e.target.closest('.fsk-tip-icon')) return;
+      selectFullSkill(side, i);
+    };
+
+    const slotData = fullState[side][i];
+    const skillObj = slotData ? slotData.skill : null;
+    const hits = slotData ? slotData.hits : 1;
+
+    // 列1：序号 + 技能下拉
+    const comboWrap = document.createElement('div');
+    comboWrap.className = 'fsk-combo-wrap';
+    const idxBadge = document.createElement('span');
+    idxBadge.className = 'fsk-idx';
+    idxBadge.textContent = i + 1;
+    const comboInput = document.createElement('input');
+    comboInput.className = 'fsk-combo-input';
+    comboInput.id = `fsk-input-${side}-${i}`;
+    comboInput.placeholder = '选择技能…';
+    comboInput.value = skillObj ? skillObj.n : '';
+    comboInput.readOnly = true;
+    comboInput.autocomplete = 'off';
+    const comboArrow = document.createElement('span');
+    comboArrow.className = 'fsk-combo-arrow';
+    comboArrow.textContent = '▼';
+    const dropdown = document.createElement('div');
+    dropdown.className = 'fsk-combo-dropdown';
+    dropdown.id = `fsk-drop-${side}-${i}`;
+    comboInput.addEventListener('focus', () => { comboInput.readOnly = false; openFskDropdown(side, i); });
+    comboInput.addEventListener('input', () => openFskDropdown(side, i));
+    comboInput.addEventListener('blur', () => {
+      setTimeout(() => {
+        closeFskDropdown(side, i);
+        const sk = fullState[side][i];
+        comboInput.value = sk ? sk.skill.n : '';
+        comboInput.readOnly = true;
+      }, 150);
+    });
+    comboWrap.appendChild(idxBadge);
+    comboWrap.appendChild(comboInput);
+    comboWrap.appendChild(comboArrow);
+    comboWrap.appendChild(dropdown);
+    row.appendChild(comboWrap);
+
+    // 列2：类型标签
+    const tagSpan = document.createElement('span');
+    const skKind = skillObj ? skillObj.k : '';
+    const isStatusSkill = skKind === '状态';
+    tagSpan.className = 'fsk-tag' + (skKind === '物攻' ? ' phys' : skKind === '魔攻' ? ' magic' : isStatusSkill ? ' status' : '');
+    tagSpan.id = `fsk-tag-${side}-${i}`;
+    tagSpan.textContent = skKind || '—';
+    row.appendChild(tagSpan);
+
+    // 列3：属性标签
+    const attrSpan = document.createElement('span');
+    const skAttr = skillObj ? skillObj.a : '';
+    const attrBg = (skAttr && !isStatusSkill) ? (TYPE_COLORS[skAttr] || '#888') : 'transparent';
+    const attrTc = (skAttr && !isStatusSkill) ? (TYPE_TEXT_DARK.has(skAttr) ? '#333' : '#fff') : 'var(--text2)';
+    attrSpan.className = 'fsk-attr-tag';
+    attrSpan.style.cssText = `background:${attrBg};color:${attrTc}`;
+    attrSpan.id = `fsk-attr-${side}-${i}`;
+    attrSpan.textContent = isStatusSkill ? '—' : (skAttr || '—');
+    row.appendChild(attrSpan);
+
+    // 列4：能耗
+    const costSpan = document.createElement('span');
+    costSpan.className = 'fsk-tag';
+    costSpan.id = `fsk-cost-${side}-${i}`;
+    costSpan.style.cssText = 'color:#ffca28;border-color:rgba(255,202,40,.4);font-weight:700;text-align:center;';
+    costSpan.textContent = (skillObj && skillObj.c !== undefined) ? String(skillObj.c) : '—';
+    row.appendChild(costSpan);
+
+    // 列5：连击次数
+    const hitsInput = document.createElement('input');
+    hitsInput.type = 'number';
+    hitsInput.className = 'fsk-hits';
+    hitsInput.id = `fsk-hits-${side}-${i}`;
+    hitsInput.min = 1; hitsInput.max = 10;
+    hitsInput.value = hits;
+    hitsInput.title = '连击次数';
+    hitsInput.disabled = isStatusSkill;
+    if (isStatusSkill) hitsInput.style.opacity = '0.35';
+    hitsInput.oninput = () => {
+      if (fullState[side][i]) fullState[side][i].hits = Math.max(1, parseInt(hitsInput.value) || 1);
+      calcFull();
+    };
+    row.appendChild(hitsInput);
+
+    // 闪击/鸣沙陷阱/冰锋横扫：按实战数值差自动回填威力
+    if (slotData && skillObj && !isStatusSkill) {
+      const _aSide = side === 'atk' ? state.atk : state.def;
+      const _dSide = side === 'atk' ? state.def : state.atk;
+      if (_aSide && _dSide) {
+        if (skillObj.n === '闪击') {
+          slotData.power = diffTableLookup(SPEED_DIFF_TABLE,
+            _aSide.real_spd || _aSide.sp || 0, _dSide.real_spd || _dSide.sp || 0).p;
+        } else if (skillObj.n === '鸣沙陷阱') {
+          slotData.power = diffTableLookup(PDEF_DIFF_TABLE,
+            _aSide.real_pdef || _aSide.pd || 0, _dSide.real_pdef || _dSide.pd || 0).p;
+        } else if (skillObj.n === '冰锋横扫') {
+          const _defSlots = fullState[side === 'atk' ? 'def' : 'atk'];
+          slotData.power = _defSlots.reduce((s, sl) => s + (sl && sl.skill ? (sl.skill.c || 0) : 0), 0) * 10;
+        }
+      }
+    }
+
+    // 列6：威力
+    const powerInput = document.createElement('input');
+    powerInput.type = isStatusSkill ? 'text' : 'number';
+    powerInput.className = 'fsk-power';
+    powerInput.id = `fsk-power-${side}-${i}`;
+    if (!isStatusSkill) { powerInput.min = 0; powerInput.max = 9999; }
+    powerInput.value = isStatusSkill ? '--' : (slotData ? (slotData.power !== undefined ? slotData.power : (skillObj ? skillObj.p : 0)) : 0);
+    powerInput.title = isStatusSkill ? '状态技能，无伤害威力' : '技能威力（可手动修改）';
+    powerInput.disabled = isStatusSkill;
+    if (isStatusSkill) { powerInput.style.opacity = '0.45'; powerInput.style.textAlign = 'center'; }
+    powerInput.oninput = () => {
+      if (fullState[side][i]) fullState[side][i].power = Math.max(0, parseInt(powerInput.value) || 0);
+      calcFull();
+    };
+    row.appendChild(powerInput);
+
+    // 列7：备注
+    const remarkTip = document.createElement('span');
+    remarkTip.className = 'fsk-tip-icon';
+    remarkTip.id = `fsk-tip-${side}-${i}`;
+    const isYuanli = skillObj && skillObj.n === '愿力冲击';
+    const fskTipHtml = skillObj ? getFskPowerTipHTML(skillObj.n) : null;
+    if (isYuanli) {
+      const boost = slotData && slotData.yuanliBoost;
+      remarkTip.style.visibility = 'visible';
+      remarkTip.style.background = boost ? '#7c4dff' : '#444';
+      remarkTip.innerHTML = `?<span class="fsk-remark-tooltip">
+        <div style="font-weight:700;margin-bottom:6px;color:#ce93d8">愿力冲击</div>
+        <div style="font-size:11px;color:var(--text2);margin-bottom:8px">当目标使用状态技能时，威力×2.5（+150%）且必定先手</div>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px">
+          <input type="checkbox" ${boost ? 'checked' : ''} onchange="setYuanliBoost('${side}',${i},this.checked)" onclick="event.stopPropagation()">
+          对手本回合使用状态技能
+        </label>
+      </span>`;
+    } else if (fskTipHtml) {
+      remarkTip.innerHTML = `?<span class="fsk-remark-tooltip">${fskTipHtml}</span>`;
+    } else {
+      remarkTip.style.visibility = 'hidden';
+      remarkTip.textContent = '?';
+    }
+    row.appendChild(remarkTip);
+
+    // 隐藏的伤害/百分比（供 calcFull 使用，放在 row 外避免影响 grid）
+    const dmgSpan = document.createElement('span');
+    dmgSpan.className = 'fsk-dmg';
+    dmgSpan.id = `fsk-dmg-${side}-${i}`;
+    const pctSpan = document.createElement('span');
+    pctSpan.className = 'fsk-dmg-pct';
+    pctSpan.id = `fsk-pct-${side}-${i}`;
+
+    container.appendChild(row);
+    container.appendChild(dmgSpan);
+    container.appendChild(pctSpan);
+  }
+}
+
+function openFskDropdown(side, idx) {
+  const inputEl = document.getElementById(`fsk-input-${side}-${idx}`);
+  const drop = document.getElementById(`fsk-drop-${side}-${idx}`);
+  const q = inputEl.value.trim();
+  drop.innerHTML = '';
+
+  const spirit = side === 'atk' ? state.atk : state.def;
+  if (!spirit) {
+    drop.innerHTML = '<div style="padding:8px 12px;font-size:12px;color:var(--text2)">请先选择精灵</div>';
+    drop.classList.add('open');
+    return;
+  }
+
+  const filtered = q ? SKILLS.map(s => ({ skill: s })).filter(e => matchQuery(e.skill.n, q))
+                     : SKILLS.map(s => ({ skill: s }));
+  if (!filtered.length) {
+    drop.innerHTML = '<div style="padding:8px 12px;font-size:12px;color:var(--text2)">无匹配技能</div>';
+    drop.classList.add('open');
+    return;
+  }
+
+  let html = '';
+  if (!q) {
+    const groups = {};
+    const statusSkills = [];
+    filtered.forEach(e => {
+      if (e.skill.k === '状态') { statusSkills.push(e.skill); return; }
+      const a = e.skill.a;
+      if (!groups[a]) groups[a] = [];
+      groups[a].push(e.skill);
+    });
+    Object.keys(groups).sort().forEach(attr => {
+      const bg = TYPE_COLORS[attr] || '#888';
+      const tc = TYPE_TEXT_DARK.has(attr) ? '#333' : '#fff';
+      html += '<div class="skill-lib-separator" style="text-align:left">' +
+        '<span class="type-tag" style="background:' + bg + ';color:' + tc + '">' + attr + '</span>' +
+        '<span style="font-size:11px;color:var(--text2);margin-left:6px">' + groups[attr].length + ' 个</span></div>';
+      groups[attr].sort((a, b) => b.p - a.p).forEach(s => { html += makeSkillItem(s); });
+    });
+    if (statusSkills.length) {
+      html += '<div class="skill-lib-separator" style="text-align:left">' +
+        '<span style="font-size:11px;color:#80cbc4;font-weight:600">状态技能</span>' +
+        '<span style="font-size:11px;color:var(--text2);margin-left:6px">' + statusSkills.length + ' 个</span></div>';
+      statusSkills.sort((a, b) => a.n.localeCompare(b.n, 'zh')).forEach(s => { html += makeSkillItem(s); });
+    }
+  } else {
+    filtered.forEach(e => { html += makeSkillItem(e.skill); });
+  }
+
+  drop.innerHTML = html;
+  drop.querySelectorAll('.skill-lib-item').forEach(item => {
+    item.addEventListener('mousedown', e => {
+      e.preventDefault();
+      const sk = SKILLS.find(s => s.n === item.dataset.name);
+      if (sk) selectFskSkill(side, idx, sk);
+    });
+  });
+  drop.classList.add('open');
+}
+
+function closeFskDropdown(side, idx) {
+  const drop = document.getElementById(`fsk-drop-${side}-${idx}`);
+  if (drop) drop.classList.remove('open');
+}
+
+function setYuanliBoost(side, idx, val) {
+  if (fullState[side][idx]) {
+    fullState[side][idx].yuanliBoost = val;
+    buildFullSkillRows(side);
+    calcFull();
+  }
+}
+
+function selectFskSkill(side, idx, sk) {
+  fullState[side][idx] = { skill: sk, hits: fullState[side][idx] ? fullState[side][idx].hits : 1, power: sk.p };
+  buildFullSkillRows(side);
+  calcFull();
+}
+
+function selectFullSkill(side, idx) {
+  fullState[side + 'Sel'] = idx;
+  buildFullSkillRows(side);
+  buildFullSkillRows(side === 'atk' ? 'def' : 'atk');
+  renderFullResult();
+  // 同步攻击方选中技能到参数模式
+  if (side === 'atk') {
+    const slot = fullState.atk[idx];
+    if (slot && slot.skill && slot.skill.k !== '状态') applyQuickSkill(slot.skill);
+  }
+}
+
+// 计算单个技能伤害（技能组）
+function calcOneFskDmg(atkSpirit, defSpirit, skillSlot) {
+  if (!atkSpirit || !defSpirit || !skillSlot || !skillSlot.skill) return null;
+  const sk = skillSlot.skill;
+  if (sk.k === '状态') return { isStatus: true, skillName: sk.n };
+  const hits = skillSlot.hits || 1;
+  // 双攻技能：取攻击方物攻/魔攻较高一项
+  const isPhys = sk.k === '双攻'
+    ? ((atkSpirit.patk || atkSpirit.pa || 0) >= (atkSpirit.matk || atkSpirit.ma || 0))
+    : sk.k === '物攻';
+  const isYuanliSkill = sk.n === '愿力冲击';
+  const atkBaseRaw = atkSpirit[isPhys ? 'patk' : 'matk'] || atkSpirit.pa || atkSpirit.ma;
+  const defBaseRaw = defSpirit[isPhys ? 'pdef' : 'mdef'] || defSpirit.pd || defSpirit.md;
+  // 能级倍率：按精灵身份 × 当前角色（攻/防）分别取对应等级
+  const atkLvMult = levelMult(atkSpirit === state.atk ? state.atkAtkLevel : state.defAtkLevel);
+  const defLvMult = levelMult(defSpirit === state.def ? state.defDefLevel : state.atkDefLevel);
+  const atkBase = atkBaseRaw * atkLvMult;
+  const defBase = defBaseRaw * defLvMult;
+  const defHp = defSpirit.real_hp || defSpirit.hp;
+
+  const typeEff  = getTypeEff(sk.a || '', defSpirit.a1, defSpirit.a2 || '');
+  const stabMult = hasStab(atkSpirit, sk.a || '') ? 1.25 : 1.0;
+  const reducePct = parseFloat(document.getElementById('def-reduce-full').value) || 0;
+  const reduceMult = 1 - Math.min(99, Math.max(0, reducePct)) / 100;
+
+  // 特性倍率（自动计算，冰钻自动注入防方总能耗）
+  const _traitOpts = readTraitOptsByMode('full');
+  if (atkSpirit && atkSpirit.tr === '冰钻') {
+    const _defSide = defSpirit === state.def ? 'def' : 'atk';
+    let _defCost = 0;
+    fullState[_defSide].forEach(slot => { if (slot && slot.skill) _defCost += (slot.skill.c || 0); });
+    if (_defCost > 0) _traitOpts.enemyTotalCost = _defCost;
+  }
+  const _atkTrMult = calcAtkTraitMult(atkSpirit, defSpirit, sk, _traitOpts).mult;
+  const _defTrMult = calcDefTraitMult(atkSpirit, defSpirit, sk, _traitOpts).mult;
+  const traitMult = _atkTrMult * _defTrMult;
+  const extraMult = parseFloat(document.getElementById('extra-mult-full').value) || 1;
+
+  // 闪击/鸣沙陷阱/冰锋横扫：按攻防双方数值差自动查表
+  let power = (skillSlot.power !== undefined ? skillSlot.power : sk.p) || 0;
+  if (sk.n === '闪击') {
+    power = diffTableLookup(SPEED_DIFF_TABLE,
+      atkSpirit.real_spd || atkSpirit.sp || 0, defSpirit.real_spd || defSpirit.sp || 0).p;
+    skillSlot.power = power;
+  } else if (sk.n === '鸣沙陷阱') {
+    power = diffTableLookup(PDEF_DIFF_TABLE,
+      atkSpirit.real_pdef || atkSpirit.pd || 0, defSpirit.real_pdef || defSpirit.pd || 0).p;
+    skillSlot.power = power;
+  } else if (sk.n === '冰锋横扫') {
+    const _defSide2 = defSpirit === state.def ? 'def' : 'atk';
+    let _defCost2 = 0;
+    fullState[_defSide2].forEach(sl => { if (sl && sl.skill) _defCost2 += (sl.skill.c || 0); });
+    power = _defCost2 * 10;
+    skillSlot.power = power;
+  }
+  const yuanliPower = (isYuanliSkill && skillSlot.yuanliBoost) ? power * 2.5 : power;
+  const singleDmg = (atkBase / defBase) * (37/41) * yuanliPower * typeEff * stabMult * reduceMult * traitMult * extraMult;
+  const dmg = Math.floor(singleDmg * hits);
+  const pct = defHp > 0 ? dmg / defHp * 100 : 0;
+
+  // 星陨伤害（幻系技能不触发）
+  const isPhantom = (sk.a || '') === '幻';
+  const starMarks = isPhantom ? 0 : Math.max(0, Math.min(100,
+    parseInt((document.getElementById('star-marks-full') || {}).value) || 0));
+  let starDmg = 0, starPower = 0;
+  if (starMarks > 0) {
+    starPower = starMarks * starMarks + 24 * starMarks - 24;
+    const starTypeEff = getTypeEff('幻', defSpirit.a1, defSpirit.a2 || '');
+    starDmg = Math.floor((atkBase / defBase) * (37/41) * starPower * starTypeEff * reduceMult * traitMult * extraMult);
+  }
+  const totalDmg = dmg + starDmg;
+  const totalPct = defHp > 0 ? totalDmg / defHp * 100 : 0;
+
+  return { dmg, pct, totalDmg, totalPct, typeEff, stabMult, reduceMult, power: yuanliPower, hits, isPhys,
+           starMarks, starPower, starDmg, starPct: defHp > 0 ? starDmg / defHp * 100 : 0,
+           isYuanliSkill, yuanliBoost: !!(isYuanliSkill && skillSlot.yuanliBoost),
+           atkTrMult: _atkTrMult, defTrMult: _defTrMult };
+}
+
+function calcFull() {
+  if (!state.atk || !state.def) return;
+  // 每次计算前先刷新特性面板（渲染条件框、更新倍率显示）
+  if (!calcFull._updating) {
+    calcFull._updating = true;
+    const skillB = state.selectedSkillName ? SKILLS.find(s => s.n === state.selectedSkillName) : null;
+    let skillFull = skillB;
+    const selIdx = fullState.atkSel >= 0 ? fullState.atkSel : 0;
+    for (let i = selIdx; i < 4; i++) {
+      if (fullState.atk[i] && fullState.atk[i].skill) { skillFull = fullState.atk[i].skill; break; }
+    }
+    updateTraitPanelForMode('full', skillFull);
+    calcFull._updating = false;
+  }
+
+  const atkNameEl = document.getElementById('full-atk-name');
+  const defNameEl = document.getElementById('full-def-name');
+  if (atkNameEl) atkNameEl.textContent = state.atk.n;
+  if (defNameEl) defNameEl.textContent = state.def.n;
+
+  ['atk', 'def'].forEach(side => {
+    const atkSp = side === 'atk' ? state.atk : state.def;
+    const defSp = side === 'atk' ? state.def : state.atk;
+    for (let i = 0; i < 4; i++) {
+      const res = calcOneFskDmg(atkSp, defSp, fullState[side][i]);
+      const dmgEl = document.getElementById(`fsk-dmg-${side}-${i}`);
+      const pctEl = document.getElementById(`fsk-pct-${side}-${i}`);
+      if (dmgEl) dmgEl.textContent = res ? (res.isStatus ? '—' : f1(res.dmg)) : '—';
+      if (pctEl) pctEl.textContent = res && !res.isStatus ? res.pct.toFixed(1) + '%' : '';
+    }
+  });
+
+  renderFullResult();
+}
+
+function renderFullResult() {
+  const rp = document.getElementById('full-result-panel');
+  if (!rp) return;
+  if (!state.atk || !state.def) return;
+
+  const atkSel = fullState.atkSel;
+  const defSel = fullState.defSel;
+
+  function buildResultSide(side, label, color) {
+    const atkSp = side === 'atk' ? state.atk : state.def;
+    const defSp = side === 'atk' ? state.def : state.atk;
+    const selIdx = fullState[side + 'Sel'];
+    let rows = '';
+    for (let i = 0; i < 4; i++) {
+      const res = calcOneFskDmg(atkSp, defSp, fullState[side][i]);
+      const skName = fullState[side][i] ? fullState[side][i].skill.n : `技能${i+1}`;
+      const isStatus = res && res.isStatus;
+      const pct = (res && !isStatus) ? res.totalPct : 0;
+      const barW = (res && !isStatus) ? Math.min(100, res.totalPct).toFixed(1) : 0;
+      const pctColor = pct >= 50 ? '#ef5350' : pct >= 25 ? '#ffa726' : '#66bb6a';
+      const isSel = selIdx === i;
+      rows += `
+        <div class="frs-row${isSel ? ' selected' : ''}" onclick="selectFullSkill('${side}', ${i})">
+          <span class="frs-name" style="font-weight:${isSel?'700':'500'}">${skName}</span>
+          <div class="frs-bar-wrap"><div class="frs-bar" style="width:${barW}%;background:${color}"></div></div>
+          <span class="frs-pct" style="color:${(res && !isStatus) ? pctColor : 'var(--text2)'}">${isStatus ? '<span style="color:var(--text2);font-size:11px">状态</span>' : (res ? pct.toFixed(1)+'%' : '—')}</span>
+        </div>`;
+    }
+    return `
+      <div class="full-result-side">
+        <div class="full-result-side-title" style="color:${color}">${label}</div>
+        ${rows}
+      </div>`;
+  }
+
+  const atkColor = 'var(--atk-color)';
+  const defColor = 'var(--def-color)';
+  let detailHtml = '';
+
+  const selSide = atkSel >= 0 ? 'atk' : (defSel >= 0 ? 'def' : null);
+  const selIdx = selSide ? fullState[selSide + 'Sel'] : -1;
+  if (selSide !== null && selIdx >= 0) {
+    const atkSp = selSide === 'atk' ? state.atk : state.def;
+    const defSp = selSide === 'atk' ? state.def : state.atk;
+    const res = calcOneFskDmg(atkSp, defSp, fullState[selSide][selIdx]);
+    if (res && res.isStatus) {
+      const sk = fullState[selSide][selIdx].skill;
+      detailHtml = `
+        <div style="margin-top:14px;border-top:1px solid var(--border);padding-top:14px">
+          <div style="font-size:11px;color:var(--text2);margin-bottom:10px;display:flex;align-items:center;gap:6px">
+            ${atkSp.n} <span style="font-size:13px">→</span> ${defSp.n}
+            <b style="color:var(--text)">${sk.n}</b>
+            <span style="background:rgba(128,203,196,.15);color:#80cbc4;border:1px solid rgba(128,203,196,.35);font-size:10px;padding:1px 8px;border-radius:8px">状态技能</span>
+          </div>
+          <div style="text-align:center;padding:18px;color:var(--text2);font-size:13px">
+            「${sk.n}」是状态技能，不造成直接伤害
+          </div>
+        </div>`;
+    } else if (res) {
+      const defHp = defSp.real_hp || defSp.hp;
+      const barW = Math.min(100, res.pct).toFixed(1);
+      const barCls = res.pct >= 50 ? 'fill-red' : res.pct >= 25 ? 'fill-yellow' : 'fill-green';
+      const pctColor = res.totalPct >= 50 ? '#ef5350' : res.totalPct >= 25 ? '#ffa726' : '#66bb6a';
+      const sk = fullState[selSide][selIdx].skill;
+      const asLabel = res.isPhys ? '物攻' : '魔攻';
+      const dsLabel = res.isPhys ? '物防' : '魔防';
+      const atkBaseRaw = atkSp[res.isPhys ? 'patk' : 'matk'] || atkSp.pa || atkSp.ma;
+      const defBaseRaw = defSp[res.isPhys ? 'pdef' : 'mdef'] || defSp.pd || defSp.md;
+      const atkLv = atkSp === state.atk ? state.atkAtkLevel : state.defAtkLevel;
+      const defLv = defSp === state.def ? state.defDefLevel : state.atkDefLevel;
+      const atkLvM = levelMult(atkLv);
+      const defLvM = levelMult(defLv);
+      const atkBase = atkBaseRaw * atkLvM;
+      const defBase = defBaseRaw * defLvM;
+      const yuanliTag = res.isYuanliSkill
+        ? `<span class="eff-tag" style="background:rgba(206,147,216,.2);color:#ce93d8;border:1px solid rgba(206,147,216,.4)">${res.isPhys?'物攻':'魔攻'}（取较高）</span>`
+          + (res.yuanliBoost ? `<span class="eff-tag" style="background:rgba(255,167,38,.2);color:#ffa726;border:1px solid rgba(255,167,38,.4)">对手用状态技能 威力×2.5</span>` : '')
+        : '';
+
+      let effLabel = '', effCls = '';
+      if (res.typeEff >= 3) { effLabel = '双重克制 ×3'; effCls = 'eff-4x'; }
+      else if (res.typeEff === 2) { effLabel = '克制 ×2'; effCls = 'eff-2x'; }
+      else if (res.typeEff <= 0.25) { effLabel = '双重抵抗 ×0.25'; effCls = 'eff-025x'; }
+      else if (res.typeEff < 1) { effLabel = '抵抗 ×0.5'; effCls = 'eff-05x'; }
+      else { effLabel = '普通效果'; effCls = 'eff-1x'; }
+
+      const atkLvStr = atkLv >= 0 ? '+' + atkLv : '' + atkLv;
+      const defLvStr = defLv >= 0 ? '+' + defLv : '' + defLv;
+      const formulaStr = `(${f1(atkBase)} / ${f1(defBase)}) × 37/41 × ${res.power}`
+        + (res.typeEff !== 1 ? ` × ${res.typeEff}(克制)` : '')
+        + (res.stabMult > 1 ? ` × 1.25(本系)` : '')
+        + (res.atkTrMult && res.atkTrMult !== 1 ? ` × ${f2(res.atkTrMult)}(攻方特性)` : '')
+        + (res.defTrMult && res.defTrMult !== 1 ? ` × ${f2(res.defTrMult)}(防方特性)` : '')
+        + (res.reduceMult < 1 ? ` × ${f2(res.reduceMult)}(减伤)` : '')
+        + (res.hits > 1 ? ` × ${res.hits}连击` : '')
+        + ` = ${f1(res.dmg)}`;
+
+      const starSection = res.starMarks > 0 ? `
+        <div style="margin-top:10px;padding:8px 10px;background:rgba(206,147,216,.08);border:1px solid rgba(206,147,216,.25);border-radius:8px">
+          <div style="font-size:11px;color:#ce93d8;font-weight:700;margin-bottom:6px">⭐ 星陨追加伤害（${res.starMarks}层 · 幻系 ${asLabel}）</div>
+          <div style="display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;margin-bottom:6px">
+            <span style="font-size:24px;font-weight:900;color:#ce93d8">${f1(res.starDmg)}</span>
+            <span style="font-size:12px;color:var(--text2)">星陨伤害</span>
+            <span style="font-size:13px;font-weight:700;color:#ce93d8">${res.starPct.toFixed(1)}%</span>
+            <span style="font-size:11px;background:rgba(206,147,216,.18);color:#ce93d8;border:1px solid rgba(206,147,216,.35);padding:1px 8px;border-radius:8px">威力 ${res.starPower}</span>
+          </div>
+          <div class="hp-bar-track" style="margin-bottom:6px">
+            <div class="hp-bar-fill" style="width:${Math.min(100, res.starPct).toFixed(1)}%;background:linear-gradient(90deg,#9c27b0,#ce93d8)"></div>
+            <span class="hp-pct">${res.starPct.toFixed(1)}%</span>
+          </div>
+          <div style="font-size:10px;color:var(--text2)">
+            威力 = ${res.starMarks}²+24×${res.starMarks}−24 = ${res.starPower} &nbsp;|&nbsp;
+            合计伤害：<b style="color:var(--text)">${f1(res.totalDmg)}</b>（HP <b style="color:${pctColor}">${res.totalPct.toFixed(1)}%</b>）
+          </div>
+        </div>` : '';
+
+      detailHtml = `
+        <div style="margin-top:14px;border-top:1px solid var(--border);padding-top:14px">
+          <div style="font-size:11px;color:var(--text2);margin-bottom:6px;display:flex;align-items:center;gap:6px">
+            ${atkSp.n} <span style="font-size:13px">→</span> ${defSp.n}
+            <b style="color:var(--text)">${sk.n}</b>
+            <span class="eff-tag ${effCls}">${effLabel}</span>
+            ${res.stabMult > 1 ? '<span class="eff-tag" style="background:rgba(255,200,0,.25);color:#ffd700;border:1px solid rgba(255,200,0,.4)">本系 ×1.25</span>' : ''}
+            ${yuanliTag}
+          </div>
+          <div style="display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+            <span style="font-size:32px;font-weight:900;color:var(--text)">${f1(res.dmg)}</span>
+            <span style="font-size:13px;color:var(--text2)">伤害</span>
+            <span style="font-size:16px;font-weight:700;color:${pctColor}">${res.pct.toFixed(1)}%</span>
+          </div>
+          <div class="hp-section">
+            <div class="hp-header">
+              <span>${defSp.n} HP：<b>${defHp}</b></span>
+              <span style="font-weight:700;color:${pctColor}">${res.pct.toFixed(1)}%</span>
+            </div>
+            <div class="hp-bar-track">
+              <div class="hp-bar-fill ${barCls}" style="width:${barW}%"></div>
+              <span class="hp-pct">${res.pct.toFixed(1)}%</span>
+            </div>
+          </div>
+          ${starSection}
+          <div class="breakdown" style="margin-top:10px">
+            <div class="breakdown-item"><span class="bi-label">${asLabel}（等级${atkLvStr}）</span><span class="bi-val highlight">${f1(atkBaseRaw)} × ${f2(atkLvM)} = ${f1(atkBase)}</span></div>
+            <div class="breakdown-item"><span class="bi-label">${dsLabel}（等级${defLvStr}）</span><span class="bi-val highlight">${f1(defBaseRaw)} × ${f2(defLvM)} = ${f1(defBase)}</span></div>
+            <div class="breakdown-item"><span class="bi-label">基础威力</span><span class="bi-val">${res.power}</span></div>
+            ${res.typeEff !== 1 ? `<div class="breakdown-item"><span class="bi-label">克制</span><span class="bi-val">×${res.typeEff}</span></div>` : ''}
+            ${res.stabMult > 1 ? `<div class="breakdown-item"><span class="bi-label">本系</span><span class="bi-val">×1.25</span></div>` : ''}
+            ${res.atkTrMult && res.atkTrMult !== 1 ? `<div class="breakdown-item"><span class="bi-label">攻方特性</span><span class="bi-val highlight" style="color:#a5d6a7">×${f2(res.atkTrMult)}</span></div>` : ''}
+            ${res.defTrMult && res.defTrMult !== 1 ? `<div class="breakdown-item"><span class="bi-label">防方特性</span><span class="bi-val highlight" style="color:#90caf9">×${f2(res.defTrMult)}</span></div>` : ''}
+            ${res.hits > 1 ? `<div class="breakdown-item"><span class="bi-label">连击</span><span class="bi-val">×${res.hits}</span></div>` : ''}
+          </div>
+          <div class="formula-row">${formulaStr}</div>
+        </div>`;
+    }
+  }
+
+  rp.innerHTML = `
+    <div class="full-result-header">${state.atk.n} vs ${state.def.n} — 点击技能查看详细伤害</div>
+    <div class="full-result-grid">
+      ${buildResultSide('atk', '⚔️ ' + state.atk.n + ' 的技能（打 ' + state.def.n + '）', atkColor)}
+      ${buildResultSide('def', '🛡️ ' + state.def.n + ' 的技能（打 ' + state.atk.n + '）', defColor)}
+    </div>
+    ${detailHtml}`;
+}
+
+// ============================================================
+// INIT
+// ============================================================
+buildTypeSelector('skill-type-selector-a');
+buildTypeSelector('skill-type-selector-b');
+setupSearch('atk');
+setupSearch('def');
+setAtkStat('patk', false);
+setDefStat('pdef', false);
+switchMode(state.mode);
+rebuildQuickSkillSelect();
+buildFullSkillRows('atk');
+buildFullSkillRows('def');
+</script>
+</body>
+</html>
