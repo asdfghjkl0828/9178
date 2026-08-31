@@ -1403,11 +1403,27 @@ function onTraitCondChange(mode, side) {
 // ============================================================
 let _comboAllSkills = [];
 
+function getSpiritSkillPool(spirit) {
+  if (!spirit) return null;
+  const names = (typeof SPIRIT_SKILLS !== 'undefined') ? (SPIRIT_SKILLS[spirit.n] || null) : null;
+  if (names && names.length) {
+    const list = names.map(n => SKILLS.find(s => s.n === n)).filter(Boolean);
+    return list.length ? list : null;
+  }
+  return null;
+}
+
 function rebuildQuickSkillSelect() {
   const input = document.getElementById('skill-combo-input');
   if (!input) return;
-  _comboAllSkills = SKILLS.map(s => ({ skill: s }));
-  input.placeholder = '搜索技能… （' + SKILLS.length + ' 个）';
+  const pool = getSpiritSkillPool(state.atk);
+  const baseList = pool || SKILLS;
+  _comboAllSkills = baseList.map(s => ({ skill: s }));
+  if (pool && state.atk) {
+    input.placeholder = '仅显示「' + state.atk.n + '」可学技能（' + baseList.length + ' 个，总 ' + SKILLS.length + '）';
+  } else {
+    input.placeholder = '搜索技能… （' + SKILLS.length + ' 个）';
+  }
   input.readOnly = false;
   renderComboPanel('');
 }
@@ -1931,6 +1947,14 @@ function applySpirit(side, spirit) {
   renderCard(side, side === 'atk' ? state.atk : state.def);
   if (side === 'atk') setAtkStat(state.skillType === 'physical' ? 'patk' : 'matk', false);
   if (side === 'def') setDefStat(state.skillType === 'physical' ? 'pdef' : 'mdef', false);
+  if (side === 'atk' && state.selectedSkillName) {
+    const pool = getSpiritSkillPool(state.atk);
+    if (pool && !pool.some(s => s.n === state.selectedSkillName)) {
+      state.selectedSkillName = '';
+      const info = document.getElementById('skill-selected-info');
+      if (info) info.textContent = '已切换精灵，请重新选择技能';
+    }
+  }
   syncModeBAutoFields();
   calc();
 }
@@ -2250,8 +2274,10 @@ function openFskDropdown(side, idx) {
     return;
   }
 
-  const filtered = q ? SKILLS.map(s => ({ skill: s })).filter(e => matchQuery(e.skill.n, q))
-                     : SKILLS.map(s => ({ skill: s }));
+  const pool = getSpiritSkillPool(spirit);
+  const baseList = pool || SKILLS;
+  const filtered = q ? baseList.filter(s => matchQuery(s.n, q)).map(s => ({ skill: s }))
+                     : baseList.map(s => ({ skill: s }));
   if (!filtered.length) {
     drop.innerHTML = '<div style="padding:8px 12px;font-size:12px;color:var(--text2)">无匹配技能</div>';
     drop.classList.add('open');
