@@ -18,7 +18,7 @@
   .egg-field .val small { font-size:11px; color:var(--text2); font-weight:600; margin-left:3px; }
   .egg-field input[type=range] { width:100%; accent-color:var(--accent); cursor:pointer; }
   .egg-num { display:flex; align-items:center; gap:8px; margin-top:10px; }
-  .egg-num input { width:110px; background:var(--bg); border:1px solid var(--border); border-radius:9px; padding:9px 12px; color:var(--text); font-size:15px; font-family:inherit; font-weight:700; }
+  .egg-num input { width:120px; background:var(--bg); border:1px solid var(--border); border-radius:9px; padding:9px 12px; color:var(--text); font-size:15px; font-family:inherit; font-weight:700; }
   .egg-num input:focus { outline:none; border-color:var(--accent); }
   .egg-num .unit { font-size:13px; color:var(--text2); }
 
@@ -34,34 +34,36 @@
   .egg-warn { display:none; font-size:12px; color:#ff9a9a; background:rgba(255,80,80,.1); border:1px solid rgba(255,80,80,.3); border-radius:9px; padding:8px 12px; margin-top:12px; line-height:1.6; }
   .egg-warn.show { display:block; }
 
-  .stat-line { font-size:12px; color:var(--text2); margin:4px 2px 12px; }
-  .stat-line b { color:var(--text); }
+  .stat-line { font-size:13px; color:var(--text2); margin:4px 2px 12px; line-height:1.6; }
+  .stat-line b { color:var(--accent); }
+  .stat-line .note { color:var(--text2); font-size:12px; }
 
   .result-list { display:flex; flex-direction:column; gap:10px; }
   .result-card { display:flex; align-items:center; gap:13px; background:var(--card); border:1px solid var(--border); border-radius:13px; padding:11px 14px; transition:.12s; cursor:pointer; text-decoration:none; }
   .result-card:hover { border-color:var(--accent); background:var(--card2); }
-  .result-card .rank { font-size:16px; font-weight:800; color:var(--text2); width:30px; text-align:center; flex-shrink:0; }
+  .result-card .rank { font-size:15px; font-weight:800; color:var(--text2); width:28px; text-align:center; flex-shrink:0; }
   .result-card .rank.top { color:var(--accent); }
   .result-main { flex:1; min-width:0; }
   .result-name { font-size:15px; font-weight:800; color:var(--text); display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
   .attr-tag { font-size:10px; font-weight:700; color:#fff; padding:1px 7px; border-radius:6px; }
-  .result-prob { display:flex; align-items:center; gap:9px; margin-top:5px; }
-  .prob-bar-wrap { flex:1; max-width:220px; height:8px; border-radius:5px; background:var(--bg); overflow:hidden; }
-  .prob-bar { height:100%; border-radius:5px; background:linear-gradient(90deg,var(--accent),#4FBD72); }
-  .prob-val { font-size:13px; font-weight:800; color:var(--text); min-width:46px; }
+  .result-meta { display:flex; align-items:center; gap:9px; margin-top:5px; flex-wrap:wrap; }
   .prob-label { font-size:10px; font-weight:700; padding:1px 7px; border-radius:6px; flex-shrink:0; }
-  .l-lock { background:rgba(79,189,114,.2); color:#4FBD72; }
-  .l-high { background:rgba(124,107,255,.22); color:var(--accent); }
-  .l-pos { background:rgba(255,255,255,.08); color:var(--text2); }
+  .m-full { background:rgba(79,189,114,.2); color:#4FBD72; }
+  .m-part { background:rgba(124,107,255,.22); color:var(--accent); }
+  .m-approx { background:rgba(255,255,255,.1); color:var(--text2); }
   .result-pct { font-size:11px; color:var(--text2); margin-top:4px; }
   .result-pct b { color:var(--text); font-weight:700; }
   .ava-wrap { position:relative; width:46px; height:46px; border-radius:50%; overflow:hidden; flex-shrink:0; background:var(--bg); }
   .ava-wrap img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
   .ava-wrap .fallback { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--text2); font-size:17px; }
-  .empty-row { text-align:center; color:var(--text2); padding:30px; background:var(--card); border:1px dashed var(--border); border-radius:13px; }
   .copy-btn { margin-left:auto; font-size:12px; color:var(--text2); background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:6px 12px; cursor:pointer; flex-shrink:0; }
   .copy-btn:hover { color:var(--accent); border-color:var(--accent); }
-  @media (max-width:560px){ .egg-inputs { gap:16px; } .prob-bar-wrap { max-width:none; } }
+  /* Top1 强调卡 */
+  .top-result { border-color:var(--accent); background:linear-gradient(180deg, rgba(124,107,255,.12), var(--card)); padding:14px 16px; }
+  .top-result .result-name { font-size:17px; }
+  .top-badge { font-size:11px; font-weight:800; color:#fff; background:var(--accent); border-radius:6px; padding:2px 8px; }
+  .empty-row { text-align:center; color:var(--text2); padding:30px; background:var(--card); border:1px dashed var(--border); border-radius:13px; }
+  @media (max-width:560px){ .egg-inputs { gap:16px; } }
 </style>
 </head>
 <body>
@@ -83,25 +85,26 @@
 
 <div class="main">
   <div class="egg-intro">
-    把蛋的<b>尺寸</b>（米）和<b>重量</b>（千克）填进去，按每只可孵化精灵的蛋尺寸/重量区间估算<b>契合度</b>，从高到低排出最可能孵出的精灵。
-    数据基于 roco-eggs 公开数据集（共 <b id="totalN">0</b> 只可孵化精灵），用区间高斯契合度近似，<b>仅供参考</b>。
+    把蛋的<b>尺寸</b>（米）和<b>重量</b>（千克）填进去，按每只可孵化精灵的蛋尺寸/重量<b>范围</b>判断「范围是否吻合」并排序，最吻合的排最前。
+    例如喵喵蛋：尺寸 <b>0.27</b> 米、重量 <b>1.562</b> 千克。数据基于 roco-eggs 公开数据集（共 <b id="totalN">0</b> 只可孵化精灵）。
+    <b>注意：</b>不同精灵的蛋尺寸/重量范围有重叠，一个蛋值可能对应多只精灵，列表都可能是答案，仅供参考。
   </div>
 
   <div class="egg-panel">
     <div class="egg-inputs">
       <div class="egg-field">
-        <label>蛋尺寸 <span class="val" id="sizeVal">0.30<small>m</small></span></label>
-        <input type="range" id="sizeRange" min="0.1" max="3.0" step="0.01" value="0.30">
+        <label>蛋尺寸 <span class="val" id="sizeVal">0.27<small>m</small></span></label>
+        <input type="range" id="sizeRange" min="0.1" max="3.0" step="0.01" value="0.27">
         <div class="egg-num">
-          <input type="number" id="sizeNum" min="0.1" max="3.0" step="0.01" value="0.30">
+          <input type="number" id="sizeNum" min="0.1" max="3.0" step="0.01" value="0.27">
           <span class="unit">米 (0.1 ~ 3.0)</span>
         </div>
       </div>
       <div class="egg-field">
-        <label>蛋重量 <span class="val" id="weightVal">3.17<small>kg</small></span></label>
-        <input type="range" id="weightRange" min="0.1" max="720" step="0.01" value="3.17">
+        <label>蛋重量 <span class="val" id="weightVal">1.562<small>kg</small></span></label>
+        <input type="range" id="weightRange" min="0.1" max="720" step="0.01" value="1.562">
         <div class="egg-num">
-          <input type="number" id="weightNum" min="0.1" max="720" step="0.01" value="3.17">
+          <input type="number" id="weightNum" min="0.1" max="720" step="0.01" value="1.562">
           <span class="unit">千克 (0.1 ~ 720)</span>
         </div>
       </div>
@@ -127,7 +130,7 @@
 <script src="data/type.js"></script>
 <script src="data/egg_spirits.js"></script>
 <script>
-const state = { size:0.30, weight:3.17, egg:'any' };
+const state = { size:0.27, weight:1.562, egg:'any' };
 
 // 示例预设（取自数据集中各精灵真实蛋区间内的代表值）
 const PRESETS = [
@@ -147,40 +150,32 @@ function validList(){
   });
 }
 
-// 固定容差匹配：用「输入点到该精灵尺寸×重量区间矩形的距离」算契合度，
-// 不再按区间宽度缩放带宽（否则超宽区间会对任意输入都高匹配=乱七八糟）。
-// 落在区间内=满分，区间外按到最近边的固定容差衰减；区间内再按居中度微调，使同档结果有区分。
-const TOL = 0.28; // 综合容差（米与千克的归一并距离）
-function scoreOne(e, S, W){
+// 匹配：判断输入是否落在精灵蛋的尺寸/重量区间内，并算「到区间中心的距离」用于排序。
+// level: 2=尺寸和重量都在范围内（蛋范围吻合）；1=仅一个维度吻合（部分吻合）；0=都不吻合（近似，按到最近边距离排）。
+function evalMatch(e, S, W){
   const smin=e.s[0], smax=e.s[1], wmin=e.w[0], wmax=e.w[1];
-  const ds = S<smin ? smin-S : (S>smax ? S-smax : 0);
-  const dw = W<wmin ? wmin-W : (W>wmax ? W-wmax : 0);
-  const outside = Math.sqrt(ds*ds + dw*dw);
-  const fit = Math.exp(-0.5*Math.pow(outside/TOL, 2));
-  // 区间内中心偏好（0.75~1），区间外保持 1 不影响衰减
-  let center = 1;
-  if (smax>smin){ const cs=(S-smin)/(smax-smin); if (cs>=0 && cs<=1) center = Math.min(center, 1-Math.abs(cs-0.5)*0.5); }
-  if (wmax>wmin){ const cw=(W-wmin)/(wmax-wmin); if (cw>=0 && cw<=1) center = Math.min(center, 1-Math.abs(cw-0.5)*0.5); }
-  const score = fit * (0.82 + 0.18*center);
-  let sizePct, weightPct;
-  if (S>=smin && S<=smax) sizePct=Math.round((S-smin)/(smax-smin)*100);
-  else sizePct = S<smin ? -1 : 101;
-  if (W>=wmin && W<=wmax) weightPct=Math.round((W-wmin)/(wmax-wmin)*100);
-  else weightPct = W<wmin ? -1 : 101;
-  return { score:score, sizePct:sizePct, weightPct:weightPct };
+  const inS = (S>=smin && S<=smax);
+  const inW = (W>=wmin && W<=wmax);
+  const cS=(smin+smax)/2, cW=(wmin+wmax)/2;
+  const dC = Math.sqrt((S-cS)*(S-cS) + (W-cW)*(W-cW)); // 到区间中心距离（越小越像）
+  const gS = inS ? 0 : (S<smin ? smin-S : S-smax);
+  const gW = inW ? 0 : (W<wmin ? wmin-W : W-wmax);
+  const gap = Math.sqrt(gS*gS + gW*gW); // 到最近边距离（区间外才有）
+  const level = (inS && inW) ? 2 : (inS || inW) ? 1 : 0;
+  return { e:e, level:level, dC:dC, gap:gap, inS:inS, inW:inW };
 }
 
 function compute(){
   const S=state.size, W=state.weight;
-  const list=validList();
-  const scored=list.map(function(e){
-    const r=scoreOne(e,S,W);
-    return { e:e, score:r.score, sizePct:r.sizePct, weightPct:r.weightPct };
-  }).filter(function(x){ return x.score >= 0.30; })
-    .sort(function(a,b){ return b.score-a.score || a.e.n.localeCompare(b.e.n,'zh'); });
-  const top=scored.slice(0,12);
-  top.forEach(function(x){ x.prob = x.score; });
-  return top;
+  const ranked = validList().map(function(e){ return evalMatch(e,S,W); })
+    .sort(function(a,b){
+      if (b.level !== a.level) return b.level - a.level;       // 吻合层级高优先
+      if (a.level === 2) return a.dC - b.dC;                    // 双吻合内：离中心近优先
+      return a.gap - b.gap;                                     // 其余：离边界近优先
+    });
+  const matched = ranked.filter(function(x){ return x.level >= 1; });
+  const display = matched.length ? matched : ranked.slice(0, 6); // 无吻合则取最近 6 只近似
+  return { ranked:ranked, display:display };
 }
 
 function avatar(en){
@@ -198,41 +193,56 @@ function attrTags(en){
 }
 
 function pctText(v){
-  if (v<0) return '↓不足';
-  if (v>100) return '↑超出';
+  if (v<0) return '偏低';
+  if (v>100) return '偏高';
   return v+'%';
 }
 
 function render(){
-  const top=compute();
+  const res=compute();
+  const display=res.display;
+  const fullN=res.ranked.filter(function(x){ return x.level===2; }).length;
+  const partN=res.ranked.filter(function(x){ return x.level===1; }).length;
   const list=document.getElementById('resultList');
-  if (!top.length){
-    list.innerHTML='<div class="empty-row">当前尺寸 / 重量下没有契合度 ≥30% 的精灵，可能落在数据盲区，或数值超出合理范围。<br>确认单位（米 / 千克）后微调，或切换到「不限」蛋类型再试。</div>';
-    document.getElementById('statLine').innerHTML='';
+  const stat=document.getElementById('statLine');
+
+  if (!display.length){
+    list.innerHTML='<div class="empty-row">没有可用数据，请稍后再试。</div>';
+    stat.innerHTML='';
     return;
   }
-  const best=top[0].prob;
-  document.getElementById('statLine').innerHTML='共 <b>'+validList().length+'</b> 只候选精灵参与匹配 · 命中 <b>'+top.length+'</b> 只（契合度≥30%）· 最可能：<b>'+top[0].e.n+'</b>';
 
-  list.innerHTML=top.map(function(x, i){
-    const p=Math.round(x.prob*100);
-    const rank=i+1;
-    const rkCls = rank<=3 ? 'rank top' : 'rank';
+  // 统计行
+  if (fullN > 0){
+    let note = fullN > 1 ? '<span class="note">（这些精灵的蛋尺寸/重量范围重叠，都可能是答案）</span>' : '';
+    stat.innerHTML='蛋尺寸和重量都落在 <b>'+fullN+'</b> 只精灵的蛋范围内 '+note;
+  } else if (partN > 0){
+    stat.innerHTML='尺寸或重量落在 <b>'+partN+'</b> 只精灵的蛋范围内（部分吻合），没有完全吻合的。';
+  } else {
+    stat.innerHTML='没有完全吻合的精灵，以下是尺寸/重量最接近的近似候选。';
+  }
+
+  list.innerHTML=display.map(function(x, i){
+    const top1 = (i === 0);
+    const rankCls = top1 ? 'rank top' : 'rank';
     let label, lcls;
-    if (x.prob>=0.85){ label='绝对锁定'; lcls='l-lock'; }
-    else if (x.prob>=0.55){ label='高潜目标'; lcls='l-high'; }
-    else { label='可能'; lcls='l-pos'; }
-    return '<a class="result-card" href="pokedex.html?spirit='+encodeURIComponent(x.e.n)+'">'+
-      '<div class="'+rkCls+'">'+rank+'</div>'+
+    if (x.level === 2){ label='蛋范围吻合'; lcls='m-full'; }
+    else if (x.level === 1){ label='部分吻合'; lcls='m-part'; }
+    else { label='最接近'; lcls='m-approx'; }
+    const sizePos = x.inS ? ('区间内 ' + pctText(Math.round((state.size-x.e.s[0])/(x.e.s[1]-x.e.s[0])*100))) : (state.size<x.e.s[0]?'低于范围':'高于范围');
+    const weightPos = x.inW ? ('区间内 ' + pctText(Math.round((state.weight-x.e.w[0])/(x.e.w[1]-x.e.w[0])*100))) : (state.weight<x.e.w[0]?'低于范围':'高于范围');
+    const topCls = top1 ? ' top-result' : '';
+    const badge = top1 ? '<span class="top-badge">🎯 最可能</span>' : '';
+    return '<a class="result-card'+topCls+'" href="pokedex.html?spirit='+encodeURIComponent(x.e.n)+'">'+
+      '<div class="'+rankCls+'">'+(i+1)+'</div>'+
       avatar(x.e)+
       '<div class="result-main">'+
-        '<div class="result-name">'+x.e.n+attrTags(x.e)+'</div>'+
-        '<div class="result-prob">'+
-          '<div class="prob-bar-wrap"><div class="prob-bar" style="width:'+Math.max(4,p)+'%"></div></div>'+
-          '<span class="prob-val">'+p+'%</span>'+
+        '<div class="result-name">'+badge+x.e.n+attrTags(x.e)+'</div>'+
+        '<div class="result-meta">'+
           '<span class="prob-label '+lcls+'">'+label+'</span>'+
+          '<span class="result-pct" style="margin:0">范围 '+x.e.s[0]+'~'+x.e.s[1]+'m / '+x.e.w[0]+'~'+x.e.w[1]+'kg</span>'+
         '</div>'+
-        '<div class="result-pct">尺寸命中 <b>'+pctText(x.sizePct)+'</b> · 重量命中 <b>'+pctText(x.weightPct)+'</b> · 区间 '+x.e.s[0]+'~'+x.e.s[1]+'m / '+x.e.w[0]+'~'+x.e.w[1]+'kg</div>'+
+        '<div class="result-pct">你的输入：尺寸 <b>'+sizePos+'</b> · 重量 <b>'+weightPos+'</b></div>'+
       '</div>'+
     '</a>';
   }).join('');
@@ -291,9 +301,12 @@ presetsEl.addEventListener('click', function(e){
 
 // 复制结果
 document.getElementById('copyBtn').addEventListener('click', function(){
-  const top=compute(); if(!top.length){ alert('暂无匹配结果'); return; }
-  let txt='【孵蛋查询结果】尺寸 '+state.size.toFixed(2)+'m / 重量 '+state.weight.toFixed(2)+'kg\n';
-  top.forEach(function(x,i){ txt+=(i+1)+'. '+x.e.n+' '+(Math.round(x.prob*100))+'%\n'; });
+  const res=compute(); if(!res.display.length){ alert('暂无匹配结果'); return; }
+  let txt='【孵蛋查询】尺寸 '+state.size.toFixed(2)+'m / 重量 '+state.weight.toFixed(2)+'kg\n';
+  res.display.forEach(function(x,i){
+    const tag = x.level===2?'蛋范围吻合':(x.level===1?'部分吻合':'最接近');
+    txt+=(i+1)+'. '+x.e.n+' ['+tag+'] 范围 '+x.e.s[0]+'~'+x.e.s[1]+'m/'+x.e.w[0]+'~'+x.e.w[1]+'kg\n';
+  });
   navigator.clipboard.writeText(txt).then(function(){ alert('已复制结果'); }, function(){ alert('复制失败，请手动选择'); });
 });
 
