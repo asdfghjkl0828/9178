@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>远行商人 · 实时货架 - Roke 伤害计算工具箱</title>
+<link rel="stylesheet" href="css/head.css">
+<style>
+  .mch-intro { font-size:13px; color:var(--text2); line-height:1.7; margin-bottom:14px; background:rgba(124,107,255,.07); border:1px solid rgba(124,107,255,.22); border-radius:10px; padding:10px 14px; }
+  .mch-intro b { color:var(--accent); }
+  .mch-intro code { background:var(--bg); padding:1px 6px; border-radius:5px; color:var(--text); font-size:12px; }
+
+  .mch-status { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px; margin-bottom:14px; display:flex; flex-wrap:wrap; gap:18px; align-items:center; }
+  .mch-round { font-size:14px; }
+  .mch-round .badge { display:inline-block; font-size:14px; font-weight:800; color:#fff; background:var(--accent); border-radius:8px; padding:5px 12px; }
+  .mch-round .sub { color:var(--text2); font-size:12px; margin-top:6px; display:block; }
+  .mch-count { margin-left:auto; text-align:right; }
+  .mch-count .lbl { font-size:11px; color:var(--text2); }
+  .mch-count .val { font-size:26px; font-weight:800; color:var(--accent); font-variant-numeric:tabular-nums; }
+  .mch-count .next { font-size:12px; color:var(--text2); margin-top:2px; }
+
+  .mch-watch { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 16px; margin-bottom:14px; }
+  .mch-watch .ttl { font-size:13px; font-weight:700; color:var(--text); margin-bottom:10px; }
+  .chips { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+  .chip { display:inline-flex; align-items:center; gap:6px; font-size:13px; color:var(--text); background:var(--bg); border:1px solid var(--border); border-radius:18px; padding:5px 12px; }
+  .chip .x { cursor:pointer; color:var(--text2); font-weight:700; }
+  .chip .x:hover { color:#ff8080; }
+  .chip.hit { border-color:var(--accent); color:var(--accent); background:rgba(124,107,255,.12); }
+  .chip-add { background:transparent; border:1px dashed var(--border); color:var(--text2); border-radius:18px; padding:5px 12px; font-size:13px; font-family:inherit; cursor:pointer; }
+  .chip-add:focus { outline:none; border-color:var(--accent); color:var(--accent); }
+  .watch-hint { font-size:11px; color:var(--text2); margin-top:8px; }
+
+  .sec-ttl { font-size:15px; font-weight:800; color:var(--text); margin:18px 2px 10px; display:flex; align-items:center; gap:8px; }
+  .sec-ttl .cnt { font-size:12px; font-weight:600; color:var(--text2); }
+
+  .goods-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; }
+  .good { display:flex; align-items:center; gap:12px; background:var(--card); border:1px solid var(--border); border-radius:13px; padding:11px 13px; transition:.12s; }
+  .good:hover { border-color:var(--accent); }
+  .good.hit { border-color:var(--accent); background:linear-gradient(180deg, rgba(124,107,255,.12), var(--card)); }
+  .good .ico-box { position:relative; width:44px; height:44px; flex-shrink:0; }
+  .good .ico { position:absolute; inset:0; width:44px; height:44px; border-radius:10px; object-fit:contain; }
+  .good .ico-fb { position:absolute; inset:0; width:44px; height:44px; border-radius:10px; background:var(--bg); display:flex; align-items:center; justify-content:center; font-weight:800; color:var(--text2); }
+  .good .info { flex:1; min-width:0; }
+  .good .nm { font-size:14px; font-weight:700; color:var(--text); display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+  .good .meta { font-size:11px; color:var(--text2); margin-top:3px; display:flex; gap:8px; flex-wrap:wrap; }
+  .good .price { color:var(--accent); font-weight:700; }
+  .good .origin { text-decoration:line-through; opacity:.6; }
+  .good .star { font-size:11px; font-weight:800; color:#fff; background:var(--accent); border-radius:6px; padding:1px 7px; }
+  .good .pet { font-size:10px; font-weight:700; color:#4FBD72; background:rgba(79,189,114,.18); border-radius:6px; padding:1px 7px; }
+
+  .empty-row { text-align:center; color:var(--text2); padding:28px; background:var(--card); border:1px dashed var(--border); border-radius:13px; }
+  .mch-err { font-size:13px; color:#ff9a9a; background:rgba(255,80,80,.1); border:1px solid rgba(255,80,80,.3); border-radius:10px; padding:12px 14px; margin-bottom:14px; line-height:1.6; display:none; }
+  .mch-err.show { display:block; }
+  .mch-err code { background:rgba(0,0,0,.25); padding:1px 6px; border-radius:4px; }
+
+  details.guide { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 14px; margin-top:8px; }
+  details.guide summary { cursor:pointer; font-size:13px; font-weight:700; color:var(--accent); }
+  details.guide ol { margin:10px 0 2px; padding-left:20px; color:var(--text2); font-size:12.5px; line-height:1.8; }
+  details.guide code { background:var(--bg); padding:1px 6px; border-radius:4px; color:var(--text); }
+  .raw { white-space:pre-wrap; word-break:break-all; font-size:11px; color:var(--text2); background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:10px; max-height:280px; overflow:auto; margin-top:8px; }
+  @media (max-width:560px){ .mch-count { margin-left:0; text-align:left; width:100%; } .mch-count .val{ font-size:22px; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>远行商人</h1>
+  <span>实时货架 · 查当前轮次上架的商品</span>
+  <nav class="dex-nav">
+    <a href="9178.html">伤害计算器</a>
+    <a href="pokedex.html">精灵图鉴</a>
+    <a href="skilldex.html">技能图鉴</a>
+    <a href="restraint.html">克制计算器</a>
+    <a href="speed.html">速度榜单</a>
+    <a href="eggs.html">孵蛋查询</a>
+    <a href="merchant.html" class="active">远行商人</a>
+    <a href="home.html">家园查询</a>
+  </nav>
+  <div class="header-actions">
+    <div class="theme-toggle" id="themeToggle"><span class="tt-icon">🌙</span><span class="tt-text">深色</span></div>
+  </div>
+</header>
+
+<div class="main">
+  <div class="mch-intro">
+    远行商人每天 <b>08:00 / 12:00 / 16:00 / 20:00</b> 四轮刷新，每轮货架保留 <b>4 小时</b>（08:00–24:00 营业）。本页通过代理拉取<b>当前轮次</b>的真实货架，并把你关注的商品高亮标出，方便蹲点抢购。
+    <details class="guide">
+      <summary>还没配置代理？点开看部署指引</summary>
+      <ol>
+        <li>申请 <b>WeGame API Key</b>：登录 <code>https://rocom.shallow.ink/</code> → 开发者平台 / API Key 页面申请（需 WeGame 作用域）。</li>
+        <li>部署代理（Cloudflare Worker，免费）：把本仓库 <code>worker.js</code> 内容粘贴到 Worker 编辑器中，在 Worker <b>设置 → 变量</b> 里加环境变量 <code>API_KEY</code> = 你的 Key。</li>
+        <li>部署后得到地址如 <code>https://rocom-proxy.xxx.workers.dev</code>，把它填入本页脚本顶部的 <code>WORKER_URL</code> 常量（或发给助理代填），推送上线即可。</li>
+        <li>为什么必须代理：后端 <code>wegame.shallow.ink</code> 无 CORS 头、且 Key 不能暴露在前端，必须由服务端代理转发。</li>
+      </ol>
+    </details>
+  </div>
+
+  <div class="mch-err" id="mchErr"></div>
+
+  <div class="mch-status">
+    <div class="mch-round">
+      <span class="badge" id="roundBadge">—</span>
+      <span class="sub" id="roundSub">计算中…</span>
+    </div>
+    <div class="mch-count">
+      <div class="lbl">距下一轮刷新</div>
+      <div class="val" id="countVal">--:--:--</div>
+      <div class="next" id="countNext"></div>
+    </div>
+  </div>
+
+  <div class="mch-watch">
+    <div class="ttl">⭐ 关注清单（命中即高亮，自动保存）</div>
+    <div class="chips" id="watchChips"></div>
+    <input class="chip-add" id="watchInput" placeholder="+ 添加关注商品" style="margin-top:8px">
+    <div class="watch-hint">示例：国王球 / 棱镜球 / 炫彩精灵蛋 / 首领血脉秘药 / 经验果</div>
+  </div>
+
+  <div class="sec-ttl">本轮随机货架 <span class="cnt" id="rgCnt"></span></div>
+  <div class="goods-grid" id="randomGoods"></div>
+
+  <div class="sec-ttl">轮换 / 活动商品 <span class="cnt" id="actCnt"></span></div>
+  <div class="goods-grid" id="activities"></div>
+
+  <div id="debugWrap" style="display:none">
+    <div class="sec-ttl">接口原始返回（调试）</div>
+    <div class="raw" id="rawJson"></div>
+  </div>
+</div>
+
+<script>
+// ====== 配置：部署代理后把地址填到这里 ======
+const WORKER_URL = ""; // 例如 "https://rocom-proxy.xxx.workers.dev"
+
+const ROUNDS = [8, 12, 16, 20]; // 每日刷新整点（本地时区）
+const REFRESH_MS = 60000;       // 自动刷新间隔
+
+// ---------- 倒计时 ----------
+function currentRound(){
+  const h = new Date().getHours();
+  if (h < ROUNDS[0]) return { idx:-1, label:'未营业', sub:'远行商人 08:00 才开始营业' };
+  let r = ROUNDS[0];
+  for (const x of ROUNDS){ if (h >= x) r = x; }
+  return { idx:r, label:r+':00 轮', sub:'本类商品将持续到下一轮刷新' };
+}
+function nextRefreshDate(){
+  const now = new Date();
+  const h = now.getHours();
+  let next = null;
+  for (const x of ROUNDS){ if (h < x){ next = x; break; } }
+  const t = new Date(now);
+  if (next === null){ t.setDate(t.getDate()+1); t.setHours(ROUNDS[0],0,0,0); }
+  else t.setHours(next,0,0,0);
+  return t;
+}
+function tick(){
+  const r = currentRound();
+  document.getElementById('roundBadge').textContent = r.label;
+  document.getElementById('roundSub').textContent = r.sub;
+  const diff = nextRefreshDate() - new Date();
+  const s = Math.max(0, Math.floor(diff/1000));
+  const hh = String(Math.floor(s/3600)).padStart(2,'0');
+  const mm = String(Math.floor((s%3600)/60)).padStart(2,'0');
+  const ss = String(s%60).padStart(2,'0');
+  document.getElementById('countVal').textContent = hh+':'+mm+':'+ss;
+  document.getElementById('countNext').textContent = '下一轮：' + (nextRefreshDate().getHours()) + ':00';
+}
+
+// ---------- 关注清单 ----------
+let watch = [];
+try { watch = JSON.parse(localStorage.getItem('mch_watch') || '["国王球","棱镜球","炫彩精灵蛋"]'); } catch(e){ watch = ['国王球','棱镜球','炫彩精灵蛋']; }
+if (!Array.isArray(watch)) watch = [];
+function saveWatch(){ localStorage.setItem('mch_watch', JSON.stringify(watch)); }
+function renderWatch(){
+  const el = document.getElementById('watchChips');
+  el.innerHTML = watch.map(function(w,i){
+    return '<span class="chip" data-i="'+i+'">'+escapeHtml(w)+'<span class="x" data-x="'+i+'">×</span></span>';
+  }).join('');
+}
+function hitWatch(name){ return watch.some(function(w){ return name && name.indexOf(w) >= 0; }); }
+document.getElementById('watchChips').addEventListener('click', function(e){
+  const x = e.target.getAttribute('data-x');
+  if (x !== null){ watch.splice(+x, 1); saveWatch(); renderWatch(); render(); }
+});
+document.getElementById('watchInput').addEventListener('keydown', function(e){
+  if (e.key === 'Enter'){
+    const v = this.value.trim();
+    if (v && watch.indexOf(v) < 0){ watch.push(v); saveWatch(); renderWatch(); render(); }
+    this.value = '';
+  }
+});
+
+// ---------- 数据解析（字段名在开源客户端里不完全统一，做容错） ----------
+function pick(o, keys){ for (const k of keys){ if (o && o[k] !== undefined && o[k] !== null && o[k] !== '') return o[k]; } return undefined; }
+function normItem(it){
+  if (!it || typeof it !== 'object') return null;
+  const name = pick(it, ['goods_name','name','goodsName','goodsname']);
+  if (!name) return null;
+  return {
+    name: String(name),
+    icon: pick(it, ['icon_url','iconUrl','image','img']),
+    price: pick(it, ['price','cost']),
+    origin: pick(it, ['origin_price','originPrice']),
+    limit: pick(it, ['buy_limit_num','limit_num','limitNum','buyLimitNum']),
+    num: pick(it, ['item_num','itemNum']),
+    type: pick(it, ['Type','type']),
+    id: pick(it, ['id','item_id','itemId'])
+  };
+}
+function extract(json){
+  let root = json;
+  if (json && json.data && typeof json.data === 'object') root = json.data;
+  if (!root || typeof root !== 'object') root = {};
+  const randomGoods = Array.isArray(root.random_goods) ? root.random_goods
+                    : Array.isArray(root.randomGoods) ? root.randomGoods : [];
+  const acts = Array.isArray(root.merchantActivities) ? root.merchantActivities
+            : Array.isArray(root.merchant_activities) ? root.merchant_activities
+            : (root.merchantActivities || root.merchant_activities ? [root.merchantActivities || root.merchant_activities] : []);
+  const groups = ['get_pets','getPets','get_props','getProps','get_extra_props','getExtraProps','products'];
+  const activityItems = [];
+  acts.forEach(function(a){
+    if (!a || typeof a !== 'object') return;
+    groups.forEach(function(k){
+      const g = a[k];
+      if (Array.isArray(g)){
+        g.forEach(function(it){
+          const n = normItem(it);
+          if (n){ n.pet = (k.toLowerCase().indexOf('pet') >= 0); activityItems.push(n); }
+        });
+      }
+    });
+  });
+  return {
+    random: randomGoods.map(normItem).filter(Boolean),
+    activities: activityItems
+  };
+}
+
+// ---------- 渲染 ----------
+function goodCard(g, isRandom){
+  const ch = (g.name || '?').charAt(0);
+  const ico = '<span class="ico-box"><span class="ico-fb">'+ch+'</span>'+
+    (g.icon ? '<img class="ico" src="'+g.icon+'" alt="" loading="lazy" onerror="this.style.display=\'none\'">' : '')+'</span>';
+  const hit = hitWatch(g.name);
+  let priceHtml = '';
+  if (g.price !== undefined && g.price !== ''){
+    priceHtml = '<span class="price">' + fmtNum(g.price) + ' 洛克贝</span>';
+    if (g.origin !== undefined && g.origin !== '' && Number(g.origin) > Number(g.price)) priceHtml += ' <span class="origin">' + fmtNum(g.origin) + '</span>';
+  }
+  let meta = [];
+  if (g.limit !== undefined && g.limit !== '') meta.push('限购 ' + g.limit);
+  if (g.num !== undefined && g.num !== '') meta.push('×' + g.num);
+  if (g.type !== undefined && g.type !== '') meta.push('类型 ' + g.type);
+  const tags = (hit ? '<span class="star">⭐ 关注</span>' : '') + (g.pet ? '<span class="pet">宠物</span>' : '');
+  return '<div class="good'+(hit?' hit':'')+'">'+ico+
+    '<div class="info"><div class="nm">'+escapeHtml(g.name)+tags+'</div>'+
+    '<div class="meta">'+priceHtml + (meta.length? ' '+meta.join(' · ') : '')+'</div></div></div>';
+}
+function fmtNum(v){ const n = Number(v); if (isNaN(n)) return v; return n.toLocaleString('zh-CN'); }
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+
+function render(){
+  const rg = document.getElementById('randomGoods');
+  const ac = document.getElementById('activities');
+  if (!lastData){ rg.innerHTML = '<div class="empty-row">等待数据加载…</div>'; ac.innerHTML=''; return; }
+  if (!lastData.random.length && !lastData.activities.length){
+    rg.innerHTML = '<div class="empty-row">当前接口未返回商品（可能本轮无随机货架，或 Key 权限不足）。</div>';
+    ac.innerHTML = '';
+    return;
+  }
+  rg.innerHTML = lastData.random.length ? lastData.random.map(function(g){ return goodCard(g, true); }).join('')
+                                       : '<div class="empty-row">本轮无随机货架数据。</div>';
+  ac.innerHTML = lastData.activities.length ? lastData.activities.map(function(g){ return goodCard(g, false); }).join('')
+                                         : '<div class="empty-row">无轮换/活动商品。</div>';
+  document.getElementById('rgCnt').textContent = '(' + lastData.random.length + ')';
+  document.getElementById('actCnt').textContent = '(' + lastData.activities.length + ')';
+}
+
+// ---------- 拉取 ----------
+let lastData = null;
+function showErr(msg, raw){
+  const el = document.getElementById('mchErr');
+  el.innerHTML = msg;
+  el.classList.add('show');
+  if (raw !== undefined){
+    document.getElementById('debugWrap').style.display = 'block';
+    document.getElementById('rawJson').textContent = (typeof raw === 'string') ? raw : JSON.stringify(raw, null, 2);
+  }
+}
+function clearErr(){ document.getElementById('mchErr').classList.remove('show'); }
+
+async function load(){
+  if (!WORKER_URL){
+    showErr('⚠ 尚未配置代理地址 <code>WORKER_URL</code>。请按页面顶部「部署指引」申请 Key、部署 Cloudflare Worker，并把地址填入脚本顶部常量后推送。倒计时仍可正常使用。', 'WORKER_URL 为空');
+    render();
+    return;
+  }
+  clearErr();
+  try {
+    const resp = await fetch(WORKER_URL.replace(/\/$/,'') + '/merchant', { cache:'no-store' });
+    const text = await resp.text();
+    let json;
+    try { json = JSON.parse(text); } catch(e){ showErr('⚠ 代理返回的不是合法 JSON（HTTP ' + resp.status + '）。可能是 Worker 未部署、Key 未配置，或后端限流。', text); render(); return; }
+    if (!resp.ok){ showErr('⚠ 代理请求失败（HTTP ' + resp.status + '）。请检查 Worker 是否已部署、<code>API_KEY</code> 是否正确。', json); render(); return; }
+    lastData = extract(json);
+    document.getElementById('debugWrap').style.display = 'block';
+    document.getElementById('rawJson').textContent = JSON.stringify(json, null, 2);
+    render();
+  } catch(e){
+    showErr('⚠ 无法连接代理 <code>' + WORKER_URL + '</code>：' + e.message + '。请确认 Worker 地址正确且已部署。', String(e));
+    render();
+  }
+}
+
+// ---------- 主题 ----------
+(function(){
+  const t = document.getElementById('themeToggle');
+  const saved = localStorage.getItem('theme');
+  if (saved === 'light') document.documentElement.setAttribute('data-theme','light');
+  function sync(){
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    t.querySelector('.tt-icon').textContent = isLight ? '☀️' : '🌙';
+    t.querySelector('.tt-text').textContent = isLight ? '浅色' : '深色';
+  }
+  sync();
+  t.addEventListener('click', function(){
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    if (isLight){ document.documentElement.removeAttribute('data-theme'); localStorage.setItem('theme','dark'); }
+    else { document.documentElement.setAttribute('data-theme','light'); localStorage.setItem('theme','light'); }
+    sync();
+  });
+})();
+
+// ---------- 启动 ----------
+renderWatch();
+tick();
+setInterval(tick, 1000);
+load();
+setInterval(load, REFRESH_MS);
+</script>
+</body>
+</html>
