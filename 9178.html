@@ -2648,6 +2648,20 @@ switchMode(state.mode);
 rebuildQuickSkillSelect();
 buildFullSkillRows('atk');
 buildFullSkillRows('def');
+
+// ============================================================
+// 深链：?spirit= 自动预选攻击方精灵（来自图鉴页“去伤害计算”）
+// ============================================================
+(function () {
+  try {
+    const sp = new URLSearchParams(location.search).get('spirit');
+    if (sp && typeof SPIRITS !== 'undefined') {
+      const s = SPIRITS.find(x => x.n === sp);
+      if (s) { applySpirit('atk', s); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+    }
+  } catch (e) {}
+})();
+
 </script>
 </body>
 </html>
