@@ -1,1 +1,1 @@
-{"code":401,"message":"请提供有效的认证凭证: API Key (X-API-Key) / 访问令牌 (Authorization: Bearer) / 匿名令牌 (X-Anonymous-Token)"}
+{"code":402,"message":"余额不足，本次请求需要 5 积分"}
