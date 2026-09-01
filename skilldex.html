@@ -34,6 +34,13 @@
   .skill-meta b { color:var(--text); font-size:15px; }
   .skill-desc { margin-top:8px; font-size:12.5px; color:var(--text2); line-height:1.5; }
   .card-hint { margin-top:11px; font-size:11px; color:var(--accent); }
+  .card-top { display:flex; gap:10px; align-items:center; }
+  .card-top .name { flex:1; }
+  .skill-ico { width:46px; height:46px; border-radius:10px; background:var(--bg); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:19px; overflow:hidden; position:relative; flex-shrink:0; }
+  .skill-ico img { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; }
+  .skill-ico-big { width:74px; height:74px; border-radius:14px; background:var(--bg); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:30px; overflow:hidden; position:relative; flex-shrink:0; }
+  .skill-ico-big img { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; }
+  .detail-head-text { display:flex; flex-direction:column; gap:7px; }
   /* modal */
   .modal-overlay { position:fixed; inset:0; background:rgba(8,8,16,.62); display:none; align-items:flex-start; justify-content:center; padding:48px 16px; z-index:1000; overflow:auto; }
   .modal-overlay.open { display:flex; }
@@ -103,6 +110,7 @@
 </div>
 
 <script src="data/skills.js"></script>
+<script src="data/skill_images.js"></script>
 <script src="data/type.js"></script>
 <script src="data/pinyin.js"></script>
 <script src="data/spirit_skills.js"></script>
@@ -163,11 +171,20 @@
     return '<div class="mini-avatar" style="position:relative"><span class="mini-fallback">' + ch + '</span>' + img + '</div>';
   }
 
+  function skillImg(s, cls) {
+    const url = (typeof SKILL_IMAGES !== 'undefined') ? SKILL_IMAGES[s.n] : null;
+    const ch = (s.n || '?').charAt(0);
+    if (!url) return '<div class="' + cls + '"><span class="mini-fallback">' + ch + '</span></div>';
+    return '<div class="' + cls + '"><span class="mini-fallback">' + ch + '</span>' +
+      '<img src="' + url + '" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain" ' +
+      'onerror="this.style.display=\'none\'" onload="this.previousElementSibling.style.display=\'none\'"></div>';
+  }
+
   function cardHTML(s) {
     const catCls = ['物攻', '魔攻', '状态', '防御'].includes(s.k) ? s.k : '状态';
     const meta = '<span class="skill-meta">威力 <b>' + (s.p != null ? s.p : '—') + '</b> ｜ 耗能 <b>' + (s.c != null ? s.c : '—') + '</b></span>';
     return '<div class="dex-card" data-name="' + s.n + '">' +
-             '<div class="name">' + s.n + '</div>' +
+             '<div class="card-top">' + skillImg(s, 'skill-ico') + '<div class="name">' + s.n + '</div></div>' +
              '<div class="types">' + typeChip(s.a) +
                '<span class="cat-badge cat-' + catCls + '">' + s.k + '</span></div>' +
              meta +
@@ -196,10 +213,12 @@
     if (!sk) return;
     const catCls = ['物攻', '魔攻', '状态', '防御'].includes(sk.k) ? sk.k : '状态';
 
-    let body = '<div class="detail-head">' +
-                 '<div class="name">' + sk.n + '</div>' +
-                 typeChip(sk.a) +
-                 '<span class="cat-badge cat-' + catCls + '">' + sk.k + '</span>' +
+    let body = '<div class="detail-head">' + skillImg(sk, 'skill-ico-big') +
+                 '<div class="detail-head-text">' +
+                   '<div class="name">' + sk.n + '</div>' +
+                   '<div class="types">' + typeChip(sk.a) +
+                     '<span class="cat-badge cat-' + catCls + '">' + sk.k + '</span></div>' +
+                 '</div>' +
                '</div>';
     body += '<div class="skill-lead">威力 <b>' + (sk.p != null ? sk.p : '—') + '</b> ｜ 耗能 <b>' + (sk.c != null ? sk.c : '—') + '</b></div>';
     if (sk.desc) body += '<div class="skill-detail-desc">' + sk.desc + '</div>';
