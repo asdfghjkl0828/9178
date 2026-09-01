@@ -89,7 +89,7 @@
   <div class="home-intro">
     由于 rocom.shallow.ink 的家园接口<b>按积分计费</b>（每次查询 20 积分）且需 API Key，纯静态站<b>不充钱无法实时查他人家园</b>。本页改用两种<b>零成本</b>方式：
     <b>① 本地备忘录</b>——你自己记录同学 / 朋友的精灵与菜园，存浏览器本地（仅你本机可见）；
-    <b>② 粘贴导入</b>——把从 rocom 或同学处导出的家园 JSON 粘进来，自动结构化展示。
+    <b>② 粘贴导入</b>——把同学从 rocom 家园页<b>复制的文字</b>（或导出的 JSON）粘进来，自动卡片化 / 结构化展示，<b>不消耗你的积分</b>。
   </div>
 
   <div class="tabs">
@@ -109,20 +109,20 @@
 
   <div id="paneImport" style="display:none">
     <div class="home-intro" style="margin-bottom:12px">
-      把从 <code>rocom.shallow.ink</code>（或同学发来的）家园数据 JSON 粘到下方，点解析即可结构化查看。兼容 <code>home/info</code> 返回结构（含 <code>home_info</code> / <code>home_pets</code> / <code>home_plant_info</code> 等字段）。
+      把同学从 <code>rocom.shallow.ink</code> 家园页<b>选中的文字</b>（或导出的 JSON）粘到下方，点解析即可查看：能识别 JSON 就结构化展示，否则按行卡片化呈现。<b>不消耗你的积分</b>。
     </div>
-    <textarea class="import-box" id="importBox" placeholder='粘贴 JSON，例如 {"data":{"home_info":{"home_name":"小明の家",...}}}'></textarea>
+    <textarea class="import-box" id="importBox" placeholder="粘贴同学发来的家园内容，例如：家名：小明の家 / 防守精灵：迪莫 Lv.45 / 菜园：星光花、魔力蘑菇（每行一项即可卡片化；也可直接粘 home/info 返回的 JSON）"></textarea>
     <div style="margin-top:10px"><button class="btn" id="importBtn">解析查看</button></div>
     <div class="mch-err" id="importErr"></div>
     <div id="result"></div>
   </div>
 
   <details class="guide">
-    <summary>怎么拿到可粘贴的家园 JSON？（点击展开）</summary>
+    <summary>同学怎么把家园数据发给你？（点击展开，两种办法）</summary>
     <ol>
-      <li>同学自己登录 <code>rocom.shallow.ink</code> → 家园查询，F12 打开网络面板，复制接口返回的 JSON。</li>
-      <li>或同学在网页里把数据导出，发给你，你粘进「粘贴导入」即可可视化查看——<b>不消耗你的积分</b>。</li>
-      <li>若你日后充了积分：把 Key 存进仓库 Secrets 的 <code>ROCOM_API_KEY</code>，到 Actions 页 <b>Run workflow</b> 即可抓真实数据（自动调度已默认关闭以免浪费）。</li>
+      <li><b>复制文字（最省事，推荐）</b>：同学登录 <code>rocom.shallow.ink</code> → 家园查询 → 用鼠标选中页面上的精灵 / 菜园文字 → <code>Ctrl+C</code> 复制 → 发给你（微信 / QQ 都行）。你粘进「粘贴导入」点解析即可卡片化查看。</li>
+      <li><b>导 JSON（进阶）</b>：会玩开发者工具的同学，F12 → Network → 刷新家园页 → 找 <code>home/info</code> 那条请求 → 复制 Response 里的 JSON 发你，粘进来会结构化展示（精灵 / 菜园分块）。</li>
+      <li>两种方式都<b>不消耗你的积分</b>。若日后你充了积分：把 Key 存进仓库 Secrets 的 <code>ROCOM_API_KEY</code>，到 Actions 页 <b>Run workflow</b> 即可自动抓真实数据（自动调度已默认关闭以免浪费）。</li>
     </ol>
   </details>
 </div>
@@ -300,13 +300,24 @@ $('noteList').addEventListener('click', function(e){ const x=e.target.getAttribu
 $('importBtn').addEventListener('click', function(){
   hideErr();
   const txt = $('importBox').value.trim();
-  if(!txt){ showErr('⚠ 请先粘贴家园 JSON。'); return; }
-  let j;
-  try { j = JSON.parse(txt); }
-  catch(e){ showErr('⚠ 不是合法 JSON：'+esc(e.message)); $('result').innerHTML=''; return; }
+  if(!txt){ showErr('⚠ 请先粘贴同学发来的家园内容（文字或 JSON）。'); return; }
+  let j=null;
+  try { j = JSON.parse(txt); } catch(e){ j = null; }
   if(j && j.code && j.code!==0){ showErr('⚠ 这是接口错误响应（'+esc(j.message||'')+'），不是家园数据。'); $('result').innerHTML=''; return; }
-  try { render(j); }
-  catch(e){ showErr('⚠ 解析渲染失败：'+esc(e.message)); }
+  if(j && typeof j==='object'){
+    try { render(j); }
+    catch(e){ showErr('⚠ 解析渲染失败：'+esc(e.message)); }
+    return;
+  }
+  // 纯文本：按行卡片化展示（兼容同学复制的网页文字）
+  const lines = txt.split(/\n+/).map(s=>s.trim()).filter(Boolean);
+  if(!lines.length){ showErr('⚠ 内容为空。'); return; }
+  let html = '<div class="sec-ttl">粘贴内容（原文）</div><div class="goods-grid">';
+  for(const ln of lines){
+    html += '<div class="good" style="grid-column:1/-1"><div class="ico-box"><div class="ico-fb">·</div></div><div class="info"><div class="nm" style="font-weight:600">'+esc(ln)+'</div></div></div>';
+  }
+  html += '</div>';
+  $('result').innerHTML = html;
 });
 
 // ---------- Tab 切换 ----------
