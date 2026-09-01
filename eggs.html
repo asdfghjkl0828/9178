@@ -31,6 +31,8 @@
   .presets { display:flex; flex-wrap:wrap; gap:7px; margin-top:14px; }
   .preset { font-size:12px; color:var(--text2); background:var(--bg); border:1px solid var(--border); border-radius:18px; padding:5px 12px; cursor:pointer; transition:.15s; }
   .preset:hover { color:var(--accent); border-color:var(--accent); }
+  .egg-warn { display:none; font-size:12px; color:#ff9a9a; background:rgba(255,80,80,.1); border:1px solid rgba(255,80,80,.3); border-radius:9px; padding:8px 12px; margin-top:12px; line-height:1.6; }
+  .egg-warn.show { display:block; }
 
   .stat-line { font-size:12px; color:var(--text2); margin:4px 2px 12px; }
   .stat-line b { color:var(--text); }
@@ -89,18 +91,18 @@
     <div class="egg-inputs">
       <div class="egg-field">
         <label>蛋尺寸 <span class="val" id="sizeVal">0.30<small>m</small></span></label>
-        <input type="range" id="sizeRange" min="0.01" max="1.0" step="0.01" value="0.30">
+        <input type="range" id="sizeRange" min="0.1" max="3.0" step="0.01" value="0.30">
         <div class="egg-num">
-          <input type="number" id="sizeNum" min="0.01" max="1.0" step="0.01" value="0.30">
-          <span class="unit">米 (0.01 ~ 1.0)</span>
+          <input type="number" id="sizeNum" min="0.1" max="3.0" step="0.01" value="0.30">
+          <span class="unit">米 (0.1 ~ 3.0)</span>
         </div>
       </div>
       <div class="egg-field">
         <label>蛋重量 <span class="val" id="weightVal">3.17<small>kg</small></span></label>
-        <input type="range" id="weightRange" min="0.01" max="100" step="0.01" value="3.17">
+        <input type="range" id="weightRange" min="0.1" max="720" step="0.01" value="3.17">
         <div class="egg-num">
-          <input type="number" id="weightNum" min="0.01" max="100" step="0.01" value="3.17">
-          <span class="unit">千克 (0.01 ~ 100)</span>
+          <input type="number" id="weightNum" min="0.1" max="720" step="0.01" value="3.17">
+          <span class="unit">千克 (0.1 ~ 720)</span>
         </div>
       </div>
     </div>
@@ -115,6 +117,7 @@
     </div>
 
     <div class="presets" id="presets"></div>
+    <div class="egg-warn" id="eggWarn"></div>
   </div>
 
   <div class="stat-line" id="statLine"></div>
@@ -144,13 +147,21 @@ function validList(){
   });
 }
 
+// 固定容差匹配：用「输入点到该精灵尺寸×重量区间矩形的距离」算契合度，
+// 不再按区间宽度缩放带宽（否则超宽区间会对任意输入都高匹配=乱七八糟）。
+// 落在区间内=满分，区间外按到最近边的固定容差衰减；区间内再按居中度微调，使同档结果有区分。
+const TOL = 0.28; // 综合容差（米与千克的归一并距离）
 function scoreOne(e, S, W){
   const smin=e.s[0], smax=e.s[1], wmin=e.w[0], wmax=e.w[1];
-  const meanS=(smin+smax)/2, halfS=Math.max((smax-smin)/2, 0.02);
-  const meanW=(wmin+wmax)/2, halfW=Math.max((wmax-wmin)/2, 0.05);
-  const ss=Math.exp(-0.5*Math.pow((S-meanS)/(halfS*1.3),2));
-  const ws=Math.exp(-0.5*Math.pow((W-meanW)/(halfW*1.3),2));
-  const score=ss*ws;
+  const ds = S<smin ? smin-S : (S>smax ? S-smax : 0);
+  const dw = W<wmin ? wmin-W : (W>wmax ? W-wmax : 0);
+  const outside = Math.sqrt(ds*ds + dw*dw);
+  const fit = Math.exp(-0.5*Math.pow(outside/TOL, 2));
+  // 区间内中心偏好（0.75~1），区间外保持 1 不影响衰减
+  let center = 1;
+  if (smax>smin){ const cs=(S-smin)/(smax-smin); if (cs>=0 && cs<=1) center = Math.min(center, 1-Math.abs(cs-0.5)*0.5); }
+  if (wmax>wmin){ const cw=(W-wmin)/(wmax-wmin); if (cw>=0 && cw<=1) center = Math.min(center, 1-Math.abs(cw-0.5)*0.5); }
+  const score = fit * (0.82 + 0.18*center);
   let sizePct, weightPct;
   if (S>=smin && S<=smax) sizePct=Math.round((S-smin)/(smax-smin)*100);
   else sizePct = S<smin ? -1 : 101;
@@ -165,7 +176,7 @@ function compute(){
   const scored=list.map(function(e){
     const r=scoreOne(e,S,W);
     return { e:e, score:r.score, sizePct:r.sizePct, weightPct:r.weightPct };
-  }).filter(function(x){ return x.score >= 0.03; })
+  }).filter(function(x){ return x.score >= 0.30; })
     .sort(function(a,b){ return b.score-a.score || a.e.n.localeCompare(b.e.n,'zh'); });
   const top=scored.slice(0,12);
   top.forEach(function(x){ x.prob = x.score; });
@@ -196,20 +207,20 @@ function render(){
   const top=compute();
   const list=document.getElementById('resultList');
   if (!top.length){
-    list.innerHTML='<div class="empty-row">当前尺寸 / 重量下没有 ≥3% 契合度的精灵，可能落在数据盲区。<br>试着微调尺寸或重量，或切换到「不限」。</div>';
+    list.innerHTML='<div class="empty-row">当前尺寸 / 重量下没有契合度 ≥30% 的精灵，可能落在数据盲区，或数值超出合理范围。<br>确认单位（米 / 千克）后微调，或切换到「不限」蛋类型再试。</div>';
     document.getElementById('statLine').innerHTML='';
     return;
   }
   const best=top[0].prob;
-  document.getElementById('statLine').innerHTML='共 <b>'+validList().length+'</b> 只候选精灵参与匹配 · 命中 <b>'+top.length+'</b> 只（契合度≥3%）· 最可能：<b>'+top[0].e.n+'</b>';
+  document.getElementById('statLine').innerHTML='共 <b>'+validList().length+'</b> 只候选精灵参与匹配 · 命中 <b>'+top.length+'</b> 只（契合度≥30%）· 最可能：<b>'+top[0].e.n+'</b>';
 
   list.innerHTML=top.map(function(x, i){
     const p=Math.round(x.prob*100);
     const rank=i+1;
     const rkCls = rank<=3 ? 'rank top' : 'rank';
     let label, lcls;
-    if (x.prob>=0.8){ label='绝对锁定'; lcls='l-lock'; }
-    else if (x.prob>=0.4){ label='高潜目标'; lcls='l-high'; }
+    if (x.prob>=0.85){ label='绝对锁定'; lcls='l-lock'; }
+    else if (x.prob>=0.55){ label='高潜目标'; lcls='l-high'; }
     else { label='可能'; lcls='l-pos'; }
     return '<a class="result-card" href="pokedex.html?spirit='+encodeURIComponent(x.e.n)+'">'+
       '<div class="'+rkCls+'">'+rank+'</div>'+
@@ -236,16 +247,29 @@ function syncInputs(){
   document.getElementById('weightVal').innerHTML=state.weight.toFixed(2)+'<small>kg</small>';
 }
 
+// 超范围警告（输入超出已知蛋范围时提示，并自动按边界计算）
+const RANGE = { size:{min:0.1, max:3.0}, weight:{min:0.1, max:720} };
+function showWarn(kind, raw){
+  const r=RANGE[kind];
+  const el=document.getElementById('eggWarn');
+  el.textContent='⚠ '+ (kind==='size'?'蛋尺寸':'蛋重量') +'应在 '+r.min+' ~ '+r.max+(kind==='size'?'m':'kg')+' 之间，你输入的 '+raw+' 已超出范围，结果按最近边界计算，可能不准。';
+  el.classList.add('show');
+}
+function hideWarn(){ document.getElementById('eggWarn').classList.remove('show'); }
+function clampVal(v, min, max){ return Math.min(max, Math.max(min, v)); }
+
 // 控件绑定
 document.getElementById('sizeRange').addEventListener('input', function(){ state.size=parseFloat(this.value); syncInputs(); render(); });
 document.getElementById('sizeNum').addEventListener('input', function(){
   let v=parseFloat(this.value); if(isNaN(v)) return;
-  v=Math.min(1.0,Math.max(0.01,v)); state.size=v; syncInputs(); render();
+  if (v<RANGE.size.min || v>RANGE.size.max) showWarn('size', this.value); else hideWarn();
+  state.size=clampVal(v, RANGE.size.min, RANGE.size.max); syncInputs(); render();
 });
 document.getElementById('weightRange').addEventListener('input', function(){ state.weight=parseFloat(this.value); syncInputs(); render(); });
 document.getElementById('weightNum').addEventListener('input', function(){
   let v=parseFloat(this.value); if(isNaN(v)) return;
-  v=Math.min(100,Math.max(0.01,v)); state.weight=v; syncInputs(); render();
+  if (v<RANGE.weight.min || v>RANGE.weight.max) showWarn('weight', this.value); else hideWarn();
+  state.weight=clampVal(v, RANGE.weight.min, RANGE.weight.max); syncInputs(); render();
 });
 document.getElementById('eggSeg').addEventListener('click', function(e){
   const btn=e.target.closest('button'); if(!btn) return;
