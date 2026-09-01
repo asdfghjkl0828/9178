@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>远行商人 · 实时货架 - Roke 伤害计算工具箱</title>
+<title>远行商人 · 蹲点助手 - Roke 伤害计算工具箱</title>
 <link rel="stylesheet" href="css/head.css">
 <style>
   .mch-intro { font-size:13px; color:var(--text2); line-height:1.7; margin-bottom:14px; background:rgba(124,107,255,.07); border:1px solid rgba(124,107,255,.22); border-radius:10px; padding:10px 14px; }
@@ -31,40 +31,41 @@
   .watch-hint { font-size:11px; color:var(--text2); margin-top:8px; }
 
   .sec-ttl { font-size:15px; font-weight:800; color:var(--text); margin:18px 2px 10px; display:flex; align-items:center; gap:8px; }
-  .sec-ttl .cnt { font-size:12px; font-weight:600; color:var(--text2); }
 
-  .goods-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; }
-  .good { display:flex; align-items:center; gap:12px; background:var(--card); border:1px solid var(--border); border-radius:13px; padding:11px 13px; transition:.12s; }
-  .good:hover { border-color:var(--accent); }
-  .good.hit { border-color:var(--accent); background:linear-gradient(180deg, rgba(124,107,255,.12), var(--card)); }
-  .good .ico-box { position:relative; width:44px; height:44px; flex-shrink:0; }
-  .good .ico { position:absolute; inset:0; width:44px; height:44px; border-radius:10px; object-fit:contain; }
-  .good .ico-fb { position:absolute; inset:0; width:44px; height:44px; border-radius:10px; background:var(--bg); display:flex; align-items:center; justify-content:center; font-weight:800; color:var(--text2); }
-  .good .info { flex:1; min-width:0; }
-  .good .nm { font-size:14px; font-weight:700; color:var(--text); display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
-  .good .meta { font-size:11px; color:var(--text2); margin-top:3px; display:flex; gap:8px; flex-wrap:wrap; }
-  .good .price { color:var(--accent); font-weight:700; }
-  .good .origin { text-decoration:line-through; opacity:.6; }
-  .good .star { font-size:11px; font-weight:800; color:#fff; background:var(--accent); border-radius:6px; padding:1px 7px; }
-  .good .pet { font-size:10px; font-weight:700; color:#4FBD72; background:rgba(79,189,114,.18); border-radius:6px; padding:1px 7px; }
+  .tip-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; }
+  .tip { background:var(--card); border:1px solid var(--border); border-radius:13px; padding:12px 14px; }
+  .tip.now { border-color:var(--accent); background:linear-gradient(180deg, rgba(124,107,255,.12), var(--card)); }
+  .tip .th { font-size:14px; font-weight:800; color:var(--accent); margin-bottom:6px; }
+  .tip .td { font-size:12.5px; color:var(--text2); line-height:1.6; }
 
-  .empty-row { text-align:center; color:var(--text2); padding:28px; background:var(--card); border:1px dashed var(--border); border-radius:13px; }
-  .mch-err { font-size:13px; color:#ff9a9a; background:rgba(255,80,80,.1); border:1px solid rgba(255,80,80,.3); border-radius:10px; padding:12px 14px; margin-bottom:14px; line-height:1.6; display:none; }
-  .mch-err.show { display:block; }
-  .mch-err code { background:rgba(0,0,0,.25); padding:1px 6px; border-radius:4px; }
+  .manual-box { background:var(--card); border:1px solid var(--border); border-radius:13px; padding:14px; }
+  .manual-box .mb-ttl { font-size:13px; font-weight:700; color:var(--text); margin-bottom:8px; }
+  .manual-box textarea { width:100%; min-height:96px; box-sizing:border-box; background:var(--bg); border:1px solid var(--border); border-radius:10px; color:var(--text); padding:10px 12px; font-family:inherit; font-size:13px; resize:vertical; }
+  .manual-box textarea:focus { outline:none; border-color:var(--accent); }
+  .manual-actions { display:flex; gap:10px; margin-top:10px; align-items:center; flex-wrap:wrap; }
+  .btn { height:38px; padding:0 18px; border:none; border-radius:9px; background:var(--accent); color:#fff; font-weight:700; cursor:pointer; font-family:inherit; }
+  .btn.ghost { background:var(--bg); color:var(--text); border:1px solid var(--border); }
+  .manual-hint { font-size:11px; color:var(--text2); margin-left:auto; }
+  .manual-list { margin-top:12px; display:flex; flex-direction:column; gap:8px; }
+  .manual-item { display:flex; align-items:flex-start; gap:10px; background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:9px 12px; font-size:13px; }
+  .manual-item .mi-name { font-weight:700; color:var(--text); }
+  .manual-item .mi-note { color:var(--text2); margin-left:8px; }
+  .manual-item .mi-x { margin-left:auto; cursor:pointer; color:var(--text2); font-weight:700; flex-shrink:0; }
+  .manual-item .mi-x:hover { color:#ff8080; }
 
-  details.guide { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 14px; margin-top:8px; }
+  .empty-row { text-align:center; color:var(--text2); padding:24px; background:var(--bg); border:1px dashed var(--border); border-radius:13px; font-size:13px; line-height:1.6; }
+
+  details.guide { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 14px; margin-top:14px; }
   details.guide summary { cursor:pointer; font-size:13px; font-weight:700; color:var(--accent); }
   details.guide ol { margin:10px 0 2px; padding-left:20px; color:var(--text2); font-size:12.5px; line-height:1.8; }
   details.guide code { background:var(--bg); padding:1px 6px; border-radius:4px; color:var(--text); }
-  .raw { white-space:pre-wrap; word-break:break-all; font-size:11px; color:var(--text2); background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:10px; max-height:280px; overflow:auto; margin-top:8px; }
   @media (max-width:560px){ .mch-count { margin-left:0; text-align:left; width:100%; } .mch-count .val{ font-size:22px; } }
 </style>
 </head>
 <body>
 <header>
   <h1>远行商人</h1>
-  <span>实时货架 · 查当前轮次上架的商品</span>
+  <span>蹲点助手 · 倒计时 + 轮次规律 + 手动记货架</span>
   <nav class="dex-nav">
     <a href="9178.html">伤害计算器</a>
     <a href="pokedex.html">精灵图鉴</a>
@@ -82,19 +83,10 @@
 
 <div class="main">
   <div class="mch-intro">
-    远行商人每天 <b>08:00 / 12:00 / 16:00 / 20:00</b> 四轮刷新，每轮货架保留 <b>4 小时</b>（08:00–24:00 营业）。本页通过代理拉取<b>当前轮次</b>的真实货架，并把你关注的商品高亮标出，方便蹲点抢购。
-    <details class="guide">
-      <summary>数据怎么来的？（点击展开）</summary>
-      <ol>
-        <li>本页数据由 GitHub Actions 定时任务（每 15 分钟）从游戏接口自动抓取，存为 <code>data/merchant.json</code>，前端直接读取——<b>无需任何代理、无 CORS 问题</b>，大陆访问无障碍。</li>
-        <li>WeGame API Key 仅保存在 GitHub 仓库 <b>Secrets</b>（<code>ROCOM_API_KEY</code>），从不进前端代码或公开仓库。</li>
-        <li>远行商人每 4 小时刷新一次货架，本页 15 分钟同步一次，对蹲点完全够用。</li>
-        <li>想立即刷新？去仓库 <b>Actions</b> 页点 <b>Run workflow</b> 手动触发一次。</li>
-      </ol>
-    </details>
+    远行商人每天 <b>08:00 / 12:00 / 16:00 / 20:00</b> 四轮刷新，每轮货架保留 <b>4 小时</b>（08:00–24:00 营业）。
+    由于 rocom.shallow.ink 的实时接口<b>按积分计费</b>（每次 5 积分）、不充钱无法调用，本页改为 <b>零成本版</b>：
+    用「倒计时 + 每轮品类规律」帮你判断<b>这轮大概卖什么类型</b>，并支持你进游戏看一眼后<b>手动记录今日货架</b>随时回看。
   </div>
-
-  <div class="mch-err" id="mchErr"></div>
 
   <div class="mch-status">
     <div class="mch-round">
@@ -109,28 +101,40 @@
   </div>
 
   <div class="mch-watch">
-    <div class="ttl">⭐ 关注清单（命中即高亮，自动保存）</div>
+    <div class="ttl">⭐ 关注清单（命中即高亮提示，自动保存）</div>
     <div class="chips" id="watchChips"></div>
-    <input class="chip-add" id="watchInput" placeholder="+ 添加关注商品" style="margin-top:8px">
+    <input class="chip-add" id="watchInput" placeholder="+ 添加关注商品（如 国王球）" style="margin-top:8px">
     <div class="watch-hint">示例：国王球 / 棱镜球 / 炫彩精灵蛋 / 首领血脉秘药 / 经验果</div>
   </div>
 
-  <div class="sec-ttl">本轮随机货架 <span class="cnt" id="rgCnt"></span></div>
-  <div class="goods-grid" id="randomGoods"></div>
+  <div class="sec-ttl">本轮大概卖什么（按刷新规律）</div>
+  <div class="tip-grid" id="tips"></div>
 
-  <div class="sec-ttl">轮换 / 活动商品 <span class="cnt" id="actCnt"></span></div>
-  <div class="goods-grid" id="activities"></div>
-
-  <div id="debugWrap" style="display:none">
-    <div class="sec-ttl">接口原始返回（调试）</div>
-    <div class="raw" id="rawJson"></div>
+  <div class="sec-ttl">📝 手动记录今日货架（进游戏看一眼记下来）</div>
+  <div class="manual-box">
+    <div class="mb-ttl">每行一个商品，可附价格 / 备注（用空格隔开）</div>
+    <textarea id="manualInput" placeholder="国王球 1200洛克贝&#10;炫彩精灵蛋 限量&#10;首领血脉秘药"></textarea>
+    <div class="manual-actions">
+      <button class="btn" id="manualAdd">保存记录</button>
+      <button class="btn ghost" id="manualClear">清空</button>
+      <span class="manual-hint">仅存你本机浏览器，不上传</span>
+    </div>
+    <div class="manual-list" id="manualList"></div>
   </div>
+
+  <details class="guide">
+    <summary>为什么看不到实时精确货架？（点击展开）</summary>
+    <ol>
+      <li>实时货架来自 <code>wegame.shallow.ink</code>，需经 rocom.shallow.ink 代理，<b>按积分计费</b>（merchant 5 / home 20 每次），不充钱无法调用，纯静态站也无法免费取数。</li>
+      <li>因此本页提供「轮次规律 + 倒计时」帮你蹲点，配合「手动记录」自己记货架，<b>完全免费、零依赖</b>。</li>
+      <li>若日后充了积分：把 Key 存进仓库 Secrets 的 <code>ROCOM_API_KEY</code>，到 Actions 页 <b>Run workflow</b> 即可抓真实货架（自动调度已默认关闭以免浪费）。</li>
+    </ol>
+  </details>
 </div>
 
 <script>
 // ====== 配置 ======
 const ROUNDS = [8, 12, 16, 20]; // 每日刷新整点（本地时区）
-const REFRESH_MS = 60000;       // 自动刷新间隔
 
 // ---------- 倒计时 ----------
 function currentRound(){
@@ -177,132 +181,72 @@ function renderWatch(){
 function hitWatch(name){ return watch.some(function(w){ return name && name.indexOf(w) >= 0; }); }
 document.getElementById('watchChips').addEventListener('click', function(e){
   const x = e.target.getAttribute('data-x');
-  if (x !== null){ watch.splice(+x, 1); saveWatch(); renderWatch(); render(); }
+  if (x !== null){ watch.splice(+x, 1); saveWatch(); renderWatch(); }
 });
 document.getElementById('watchInput').addEventListener('keydown', function(e){
   if (e.key === 'Enter'){
     const v = this.value.trim();
-    if (v && watch.indexOf(v) < 0){ watch.push(v); saveWatch(); renderWatch(); render(); }
+    if (v && watch.indexOf(v) < 0){ watch.push(v); saveWatch(); renderWatch(); }
     this.value = '';
   }
 });
 
-// ---------- 数据解析（字段名在开源客户端里不完全统一，做容错） ----------
-function pick(o, keys){ for (const k of keys){ if (o && o[k] !== undefined && o[k] !== null && o[k] !== '') return o[k]; } return undefined; }
-function normItem(it){
-  if (!it || typeof it !== 'object') return null;
-  const name = pick(it, ['goods_name','name','goodsName','goodsname']);
-  if (!name) return null;
-  return {
-    name: String(name),
-    icon: pick(it, ['icon_url','iconUrl','image','img']),
-    price: pick(it, ['price','cost']),
-    origin: pick(it, ['origin_price','originPrice']),
-    limit: pick(it, ['buy_limit_num','limit_num','limitNum','buyLimitNum']),
-    num: pick(it, ['item_num','itemNum']),
-    type: pick(it, ['Type','type']),
-    id: pick(it, ['id','item_id','itemId'])
-  };
-}
-function extract(json){
-  let root = json;
-  if (json && json.data && typeof json.data === 'object') root = json.data;
-  if (!root || typeof root !== 'object') root = {};
-  const randomGoods = Array.isArray(root.random_goods) ? root.random_goods
-                    : Array.isArray(root.randomGoods) ? root.randomGoods : [];
-  const acts = Array.isArray(root.merchantActivities) ? root.merchantActivities
-            : Array.isArray(root.merchant_activities) ? root.merchant_activities
-            : (root.merchantActivities || root.merchant_activities ? [root.merchantActivities || root.merchant_activities] : []);
-  const groups = ['get_pets','getPets','get_props','getProps','get_extra_props','getExtraProps','products'];
-  const activityItems = [];
-  acts.forEach(function(a){
-    if (!a || typeof a !== 'object') return;
-    groups.forEach(function(k){
-      const g = a[k];
-      if (Array.isArray(g)){
-        g.forEach(function(it){
-          const n = normItem(it);
-          if (n){ n.pet = (k.toLowerCase().indexOf('pet') >= 0); activityItems.push(n); }
-        });
-      }
-    });
-  });
-  return {
-    random: randomGoods.map(normItem).filter(Boolean),
-    activities: activityItems
-  };
+// ---------- 轮次规律卡（基于玩家攻略站总结的刷新规律） ----------
+const ROUND_TIPS = [
+  { h:8,  t:'08:00 首轮', d:'高价值概率最高：国王球、炫彩精灵蛋、首领血脉秘药大概率上架。每日最值得蹲守的一轮。' },
+  { h:12, t:'12:00 次轮', d:'基础养成材料、体力恢复药剂、矿石为主，适合中午上线补给储备。' },
+  { h:16, t:'16:00 三轮', d:'精灵捕捉类道具概率提升：棱镜球、调温球、美妙球等，适配赛季捕捉节奏。' },
+  { h:20, t:'20:00 末轮', d:'综合物资轮次；部分限时道具在此轮结束后下架，抓紧最后购买窗口。' }
+];
+function renderTips(){
+  const cur = currentRound().idx;
+  const el = document.getElementById('tips');
+  el.innerHTML = ROUND_TIPS.map(function(r){
+    const now = (r.h === cur) ? ' now' : '';
+    return '<div class="tip'+now+'"><div class="th">'+r.t+(r.h===cur?' · 当前':'')+'</div><div class="td">'+r.d+'</div></div>';
+  }).join('');
 }
 
-// ---------- 渲染 ----------
-function goodCard(g, isRandom){
-  const ch = (g.name || '?').charAt(0);
-  const ico = '<span class="ico-box"><span class="ico-fb">'+ch+'</span>'+
-    (g.icon ? '<img class="ico" src="'+g.icon+'" alt="" loading="lazy" onerror="this.style.display=\'none\'">' : '')+'</span>';
-  const hit = hitWatch(g.name);
-  let priceHtml = '';
-  if (g.price !== undefined && g.price !== ''){
-    priceHtml = '<span class="price">' + fmtNum(g.price) + ' 洛克贝</span>';
-    if (g.origin !== undefined && g.origin !== '' && Number(g.origin) > Number(g.price)) priceHtml += ' <span class="origin">' + fmtNum(g.origin) + '</span>';
-  }
-  let meta = [];
-  if (g.limit !== undefined && g.limit !== '') meta.push('限购 ' + g.limit);
-  if (g.num !== undefined && g.num !== '') meta.push('×' + g.num);
-  if (g.type !== undefined && g.type !== '') meta.push('类型 ' + g.type);
-  const tags = (hit ? '<span class="star">⭐ 关注</span>' : '') + (g.pet ? '<span class="pet">宠物</span>' : '');
-  return '<div class="good'+(hit?' hit':'')+'">'+ico+
-    '<div class="info"><div class="nm">'+escapeHtml(g.name)+tags+'</div>'+
-    '<div class="meta">'+priceHtml + (meta.length? ' '+meta.join(' · ') : '')+'</div></div></div>';
-}
-function fmtNum(v){ const n = Number(v); if (isNaN(n)) return v; return n.toLocaleString('zh-CN'); }
-function escapeHtml(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
-
-function render(){
-  const rg = document.getElementById('randomGoods');
-  const ac = document.getElementById('activities');
-  if (!lastData){ rg.innerHTML = '<div class="empty-row">等待数据加载…</div>'; ac.innerHTML=''; return; }
-  if (!lastData.random.length && !lastData.activities.length){
-    rg.innerHTML = '<div class="empty-row">当前接口未返回商品（可能本轮无随机货架，或 Key 权限不足）。</div>';
-    ac.innerHTML = '';
+// ---------- 手动记录今日货架 ----------
+let manual = [];
+try { manual = JSON.parse(localStorage.getItem('mch_manual') || '[]'); } catch(e){ manual = []; }
+if (!Array.isArray(manual)) manual = [];
+function saveManual(){ localStorage.setItem('mch_manual', JSON.stringify(manual)); }
+function renderManual(){
+  const el = document.getElementById('manualList');
+  if (!manual.length){
+    el.innerHTML = '<div class="empty-row">还没有记录。进游戏看一眼远行商人，把本轮商品名（可附价格）一行一个填到上方，保存后即可随时回看。</div>';
     return;
   }
-  rg.innerHTML = lastData.random.length ? lastData.random.map(function(g){ return goodCard(g, true); }).join('')
-                                       : '<div class="empty-row">本轮无随机货架数据。</div>';
-  ac.innerHTML = lastData.activities.length ? lastData.activities.map(function(g){ return goodCard(g, false); }).join('')
-                                         : '<div class="empty-row">无轮换/活动商品。</div>';
-  document.getElementById('rgCnt').textContent = '(' + lastData.random.length + ')';
-  document.getElementById('actCnt').textContent = '(' + lastData.activities.length + ')';
+  el.innerHTML = manual.map(function(m,i){
+    return '<div class="manual-item"><span class="mi-name">'+escapeHtml(m.name)+'</span>'+(m.note?'<span class="mi-note">'+escapeHtml(m.note)+'</span>':'')+'<span class="mi-x" data-i="'+i+'">×</span></div>';
+  }).join('');
 }
+function addManual(){
+  const ta = document.getElementById('manualInput');
+  const lines = ta.value.split('\n').map(function(s){ return s.trim(); }).filter(Boolean);
+  let added = 0;
+  lines.forEach(function(line){
+    let cut = Infinity;
+    const sp = line.indexOf(' '), tab = line.indexOf('\t');
+    if (sp >= 0) cut = Math.min(cut, sp);
+    if (tab >= 0) cut = Math.min(cut, tab);
+    if (cut === Infinity){ manual.push({ name:line }); }
+    else { manual.push({ name:line.slice(0,cut), note:line.slice(cut+1).trim() }); }
+    added++;
+  });
+  if (added){ saveManual(); renderManual(); }
+  ta.value = '';
+}
+function delManual(i){ manual.splice(i,1); saveManual(); renderManual(); }
+document.getElementById('manualAdd').addEventListener('click', addManual);
+document.getElementById('manualClear').addEventListener('click', function(){ if(manual.length && confirm('确定清空所有手动记录？')){ manual=[]; saveManual(); renderManual(); } });
+document.getElementById('manualList').addEventListener('click', function(e){
+  const x = e.target.getAttribute('data-i');
+  if (x !== null) delManual(+x);
+});
 
-// ---------- 拉取 ----------
-let lastData = null;
-function showErr(msg, raw){
-  const el = document.getElementById('mchErr');
-  el.innerHTML = msg;
-  el.classList.add('show');
-  if (raw !== undefined){
-    document.getElementById('debugWrap').style.display = 'block';
-    document.getElementById('rawJson').textContent = (typeof raw === 'string') ? raw : JSON.stringify(raw, null, 2);
-  }
-}
-function clearErr(){ document.getElementById('mchErr').classList.remove('show'); }
-
-async function load(){
-  clearErr();
-  try {
-    const resp = await fetch('data/merchant.json', { cache:'no-store' });
-    const text = await resp.text();
-    if (!resp.ok){ showErr('⚠ 数据文件加载失败（HTTP ' + resp.status + '）。请稍后刷新，或到仓库 Actions 页手动 Run workflow 触发一次抓取。', text); render(); return; }
-    let json;
-    try { json = JSON.parse(text); } catch(e){ showErr('⚠ 数据文件不是合法 JSON。可能抓取任务正在运行，请稍候刷新。', text); render(); return; }
-    lastData = extract(json);
-    document.getElementById('debugWrap').style.display = 'block';
-    document.getElementById('rawJson').textContent = JSON.stringify(json, null, 2);
-    render();
-  } catch(e){
-    showErr('⚠ 无法加载数据：' + e.message + '。请确认 GitHub Actions 定时任务已启用（见页面说明）。', String(e));
-    render();
-  }
-}
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
 
 // ---------- 主题 ----------
 (function(){
@@ -325,10 +269,11 @@ async function load(){
 
 // ---------- 启动 ----------
 renderWatch();
+renderTips();
+renderManual();
 tick();
 setInterval(tick, 1000);
-load();
-setInterval(load, REFRESH_MS);
+setInterval(renderTips, 60000); // 跨轮次后规律卡高亮自动更新
 </script>
 </body>
 </html>
