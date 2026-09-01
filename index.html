@@ -1,12 +1,82 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <title>伤害计算器</title>
-  <meta http-equiv="refresh" content="0; url=9178.html">
-  <link rel="canonical" href="9178.html">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>洛克王国 PVP 工具箱</title>
+<link rel="stylesheet" href="css/head.css">
+<style>
+  .hub-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px; margin-top:6px; }
+  .hub-card { display:block; text-decoration:none; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:20px; transition:transform .15s,border-color .15s; }
+  .hub-card:hover { transform:translateY(-3px); border-color:var(--accent); }
+  .hub-ico { font-size:34px; }
+  .hub-title { font-size:18px; font-weight:700; color:var(--text); margin-top:10px; }
+  .hub-desc { font-size:13px; color:var(--text2); margin-top:6px; line-height:1.5; }
+  .sub { color:var(--text2); font-size:13px; margin-bottom:16px; }
+</style>
 </head>
 <body>
-  <p>正在打开 <a href="9178.html">伤害计算器</a>…</p>
+<header>
+  <div style="font-size:24px">🛠️</div>
+  <div style="display:flex;flex-direction:column;gap:2px">
+    <h1>洛克王国 PVP 工具箱</h1>
+  </div>
+  <div class="header-actions">
+    <div class="theme-toggle" onclick="toggleTheme()">
+      <span class="tt-icon" id="theme-icon">🌙</span>
+      <span id="theme-label">夜间</span>
+    </div>
+  </div>
+</header>
+
+<div class="main">
+  <p class="sub">选择一个工具开始：</p>
+  <div class="hub-grid">
+    <a class="hub-card" href="9178.html">
+      <div class="hub-ico">⚔️</div>
+      <div class="hub-title">伤害计算器</div>
+      <div class="hub-desc">攻防双面板，支持快捷 / 参数 / 配招三种模式，模拟实战伤害。</div>
+    </a>
+    <a class="hub-card" href="pokedex.html">
+      <div class="hub-ico">📕</div>
+      <div class="hub-title">精灵图鉴</div>
+      <div class="hub-desc" id="pokeDesc">全精灵的种族值、属性与特性一览。</div>
+    </a>
+    <a class="hub-card" href="skilldex.html">
+      <div class="hub-ico">📗</div>
+      <div class="hub-title">技能图鉴</div>
+      <div class="hub-desc" id="skillDesc">全技能的威力、能耗、分类与效果说明。</div>
+    </a>
+  </div>
+</div>
+
+<script src="data/spirits.js"></script>
+<script src="data/skills.js"></script>
+<script>
+  function toggleTheme() {
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    if (isLight) {
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem('theme', 'dark');
+      document.getElementById('theme-icon').textContent = '🌙';
+      document.getElementById('theme-label').textContent = '夜间';
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+      localStorage.setItem('theme', 'light');
+      document.getElementById('theme-icon').textContent = '☀️';
+      document.getElementById('theme-label').textContent = '日间';
+    }
+  }
+  (function () {
+    const t = localStorage.getItem('theme');
+    if (t === 'light') {
+      document.documentElement.setAttribute('data-theme', 'light');
+      document.getElementById('theme-icon').textContent = '☀️';
+      document.getElementById('theme-label').textContent = '日间';
+    }
+    if (typeof SPIRITS !== 'undefined') document.getElementById('pokeDesc').textContent = '全 ' + SPIRITS.length + ' 只精灵的种族值、属性与特性一览。';
+    if (typeof SKILLS !== 'undefined') document.getElementById('skillDesc').textContent = '全 ' + SKILLS.length + ' 个技能的威力、能耗、分类与效果说明。';
+  })();
+</script>
 </body>
 </html>
