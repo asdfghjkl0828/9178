@@ -1,0 +1,73 @@
+name: Refresh Rocom Data
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'   # 每 15 分钟（GitHub Actions 最低粒度，远行商人 4h 一变，足够）
+  workflow_dispatch:        # 手动立即触发
+  repository_dispatch:
+    types: [refresh-rocom]
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Fetch merchant (random goods)
+        run: |
+          curl -sS --max-time 40 \
+            -H "X-API-Key: ${{ secrets.ROCOM_API_KEY }}" \
+            "https://wegame.shallow.ink/api/v1/games/rocom/merchant/info?refresh=false&random_goods=all" \
+            -o data/merchant.json
+          echo "merchant.json bytes: $(wc -c < data/merchant.json)"
+
+      - name: Fetch homes for each preset UID
+        run: |
+          uids=$(jq -r '.[].uid' data/uids.json 2>/dev/null)
+          for uid in $uids; do
+            [ -z "$uid" ] && continue
+            out="data/home_${uid}.json"
+            code=$(curl -sS --max-time 40 -w "%{http_code}" \
+              -H "X-API-Key: ${{ secrets.ROCOM_API_KEY }}" \
+              "https://wegame.shallow.ink/api/v1/games/rocom/ingame/home/info?uid=${uid}" \
+              -o "$out")
+            echo "uid=${uid} http=${code}"
+            # 异步任务：返回 202 或含 task_id 时轮询 tasks/{id}
+            if [ "$code" = "202" ] || grep -q "task_id" "$out" 2>/dev/null; then
+              tid=$(jq -r '.task_id // .data.task_id // empty' "$out" 2>/dev/null)
+              echo "  task_id=${tid}"
+              if [ -n "$tid" ]; then
+                for i in $(seq 1 12); do
+                  sleep 3
+                  curl -sS --max-time 40 \
+                    -H "X-API-Key: ${{ secrets.ROCOM_API_KEY }}" \
+                    "https://wegame.shallow.ink/api/v1/games/rocom/tasks/${tid}" \
+                    -o "${out}.tmp"
+                  st=$(jq -r '.status // .data.status // empty' "${out}.tmp" 2>/dev/null)
+                  echo "  poll $i status=${st}"
+                  if [ "$st" = "done" ] || [ "$st" = "success" ] || [ "$st" = "complete" ] || [ "$st" = "finished" ]; then
+                    mv "${out}.tmp" "$out"
+                    break
+                  fi
+                done
+              fi
+            fi
+          done
+
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/merchant.json data/home_*.json
+          if git diff --cached --quiet; then
+            echo "no changes"
+          else
+            git commit -m "auto: refresh rocom data ($(date -u +%Y-%m-%dT%H:%M:%SZ))"
+            git push
+          fi
