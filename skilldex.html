@@ -19,8 +19,10 @@
   .fchip:hover { border-color:var(--accent); }
   .fchip.active { background:var(--accent); border-color:var(--accent); color:#fff; }
   .count { font-size:12px; color:var(--text2); margin-bottom:10px; }
+  .sub { color:var(--text2); font-size:13px; margin-bottom:12px; }
   .dex-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:14px; }
-  .dex-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px; display:flex; flex-direction:column; }
+  .dex-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px; display:flex; flex-direction:column; cursor:pointer; transition:transform .12s, box-shadow .12s, border-color .12s; }
+  .dex-card:hover { transform:translateY(-2px); border-color:var(--accent); box-shadow:0 6px 22px rgba(0,0,0,.22); }
   .dex-card .name { font-size:17px; font-weight:700; line-height:1.2; }
   .dex-card .types { display:flex; gap:6px; margin-top:7px; flex-wrap:wrap; align-items:center; }
   .cat-badge { font-size:11px; padding:2px 9px; border-radius:12px; font-weight:700; }
@@ -31,7 +33,31 @@
   .skill-meta { margin-top:11px; font-size:13px; color:var(--text2); }
   .skill-meta b { color:var(--text); font-size:15px; }
   .skill-desc { margin-top:8px; font-size:12.5px; color:var(--text2); line-height:1.5; }
-  .sub { color:var(--text2); font-size:13px; margin-bottom:14px; }
+  .card-hint { margin-top:11px; font-size:11px; color:var(--accent); }
+  /* modal */
+  .modal-overlay { position:fixed; inset:0; background:rgba(8,8,16,.62); display:none; align-items:flex-start; justify-content:center; padding:48px 16px; z-index:1000; overflow:auto; }
+  .modal-overlay.open { display:flex; }
+  .modal-box { background:var(--card); border:1px solid var(--border); border-radius:16px; max-width:820px; width:100%; margin:auto; padding:22px 24px 26px; position:relative; box-shadow:0 24px 70px rgba(0,0,0,.45); }
+  .modal-close { position:absolute; top:14px; right:14px; width:30px; height:30px; border:none; border-radius:50%; background:var(--card2); color:var(--text); font-size:15px; cursor:pointer; line-height:1; }
+  .modal-close:hover { background:var(--accent); color:#fff; }
+  .detail-head { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+  .detail-head .name { font-size:22px; font-weight:800; }
+  .detail-head .types { display:flex; gap:6px; margin-top:7px; flex-wrap:wrap; align-items:center; }
+  .detail-sec-title { margin-top:20px; font-size:15px; font-weight:700; color:var(--text); display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .detail-sec-title .hint { font-size:11px; color:var(--text2); font-weight:400; }
+  .badge-count { background:var(--accent); color:#fff; padding:1px 9px; border-radius:10px; font-size:12px; }
+  .skill-lead { margin-top:10px; font-size:13px; color:var(--text2); }
+  .skill-lead b { color:var(--text); font-size:15px; }
+  .skill-detail-desc { margin-top:8px; font-size:13px; color:var(--text2); line-height:1.6; }
+  .spirit-link-grid { margin-top:11px; display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:10px; }
+  .spirit-link { cursor:pointer; background:var(--card2); border:1px solid var(--border); border-radius:10px; padding:10px 8px; display:flex; flex-direction:column; align-items:center; gap:6px; text-align:center; transition:border-color .12s; }
+  .spirit-link:hover { border-color:var(--accent); }
+  .mini-avatar { width:48px; height:48px; border-radius:9px; background:var(--bg); display:flex; align-items:center; justify-content:center; font-size:20px; overflow:hidden; position:relative; flex-shrink:0; }
+  .mini-avatar img { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; }
+  .spirit-link .sl-name { font-weight:700; font-size:14px; }
+  .spirit-link .types { display:flex; gap:4px; }
+  .spirit-link .no { font-size:11px; color:var(--text2); }
+  .detail-empty { margin-top:12px; color:var(--text2); font-size:13px; }
 </style>
 </head>
 <body>
@@ -65,12 +91,22 @@
     <div class="chip-row" id="catFilter"></div>
   </div>
   <div class="count" id="count"></div>
+  <div class="sub">点击任意技能卡片 → 查看哪些精灵能学它 ✦</div>
   <div class="dex-grid" id="grid"></div>
+</div>
+
+<div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modal-body"></div>
+  </div>
 </div>
 
 <script src="data/skills.js"></script>
 <script src="data/type.js"></script>
 <script src="data/pinyin.js"></script>
+<script src="data/spirit_skills.js"></script>
+<script src="data/spirits.js"></script>
 <script>
   // ---------- theme ----------
   function toggleTheme() {
@@ -107,17 +143,96 @@
     return n.split('').map(ch => PINYIN_MAP[ch] || ch).join('');
   }
 
+  const SKILL_BY_NAME  = Object.fromEntries(SKILLS.map(s => [s.n, s]));
+  const SPIRIT_BY_NAME = (typeof SPIRITS !== 'undefined') ? Object.fromEntries(SPIRITS.map(s => [s.n, s])) : {};
+  // reverse map: skill name -> [spirit names that can learn it]
+  const SKILL_SPIRITS = {};
+  if (typeof SPIRIT_SKILLS !== 'undefined') {
+    for (const [sp, arr] of Object.entries(SPIRIT_SKILLS)) {
+      (arr || []).forEach(nm => {
+        (SKILL_SPIRITS[nm] = SKILL_SPIRITS[nm] || []).push(sp);
+      });
+    }
+  }
+
+  function miniAvatar(s) {
+    const ch = (s.n || '?').charAt(0);
+    const img = s.img
+      ? '<img src="' + s.img + '" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain" onerror="this.style.display=\'none\'" onload="this.previousElementSibling.style.display=\'none\'">'
+      : '';
+    return '<div class="mini-avatar" style="position:relative"><span class="mini-fallback">' + ch + '</span>' + img + '</div>';
+  }
+
   function cardHTML(s) {
     const catCls = ['物攻', '魔攻', '状态', '防御'].includes(s.k) ? s.k : '状态';
     const meta = '<span class="skill-meta">威力 <b>' + (s.p != null ? s.p : '—') + '</b> ｜ 耗能 <b>' + (s.c != null ? s.c : '—') + '</b></span>';
-    return '<div class="dex-card">' +
+    return '<div class="dex-card" data-name="' + s.n + '">' +
              '<div class="name">' + s.n + '</div>' +
              '<div class="types">' + typeChip(s.a) +
                '<span class="cat-badge cat-' + catCls + '">' + s.k + '</span></div>' +
              meta +
              '<div class="skill-desc">' + (s.desc || '—') + '</div>' +
+             '<div class="card-hint">点击查看可学精灵 →</div>' +
            '</div>';
   }
+
+  // ---------- modal ----------
+  function showModal(html) {
+    document.getElementById('modal-body').innerHTML = html;
+    document.getElementById('modal').classList.add('open');
+  }
+  function closeModal() {
+    document.getElementById('modal').classList.remove('open');
+    document.getElementById('modal-body').innerHTML = '';
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  function goSpirit(name) {
+    location.href = 'pokedex.html?spirit=' + encodeURIComponent(name);
+  }
+
+  function openSkillDetail(name) {
+    const sk = SKILL_BY_NAME[name];
+    if (!sk) return;
+    const catCls = ['物攻', '魔攻', '状态', '防御'].includes(sk.k) ? sk.k : '状态';
+
+    let body = '<div class="detail-head">' +
+                 '<div class="name">' + sk.n + '</div>' +
+                 typeChip(sk.a) +
+                 '<span class="cat-badge cat-' + catCls + '">' + sk.k + '</span>' +
+               '</div>';
+    body += '<div class="skill-lead">威力 <b>' + (sk.p != null ? sk.p : '—') + '</b> ｜ 耗能 <b>' + (sk.c != null ? sk.c : '—') + '</b></div>';
+    if (sk.desc) body += '<div class="skill-detail-desc">' + sk.desc + '</div>';
+
+    const spirits = (SKILL_SPIRITS[name] || []).map(n => SPIRIT_BY_NAME[n]).filter(Boolean);
+    spirits.sort((a, b) => (a.no || '').localeCompare(b.no || '', 'zh') || a.n.localeCompare(b.n, 'zh'));
+
+    if (spirits.length) {
+      body += '<div class="detail-sec-title">可学精灵 <span class="badge-count">' + spirits.length + '</span>' +
+              '<span class="hint">（点击精灵查看它的全部技能 →）</span></div>';
+      body += '<div class="spirit-link-grid">' + spirits.map(s => {
+        const types = (s.a1 ? typeChip(s.a1) : '') + (s.a2 ? typeChip(s.a2) : '');
+        return '<div class="spirit-link" data-spirit="' + s.n + '">' +
+                 miniAvatar(s) +
+                 '<div class="sl-name">' + s.n + '</div>' +
+                 '<div class="types">' + types + '</div>' +
+               '</div>';
+      }).join('') + '</div>';
+    } else {
+      body += '<div class="detail-empty">暂无精灵数据（该技能可能尚未收录到技能池中）。</div>';
+    }
+
+    showModal(body);
+    document.querySelectorAll('#modal-body .spirit-link').forEach(el => {
+      el.addEventListener('click', () => goSpirit(el.dataset.spirit));
+    });
+  }
+
+  // card click → open detail
+  document.getElementById('grid').addEventListener('click', e => {
+    const card = e.target.closest('.dex-card');
+    if (card) openSkillDetail(card.dataset.name);
+  });
 
   // ---------- state + render ----------
   let activeAttr = '';
@@ -185,6 +300,12 @@
     grid.innerHTML = list.map(cardHTML).join('');
   }
   render();
+
+  // ---------- deep link: ?skill= ----------
+  (function () {
+    const sk = new URLSearchParams(location.search).get('skill');
+    if (sk && SKILL_BY_NAME[sk]) openSkillDetail(sk);
+  })();
 </script>
 </body>
 </html>
