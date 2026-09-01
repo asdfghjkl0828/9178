@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>精灵图鉴 - 洛克王国 PVP 计算器</title>
+<link rel="stylesheet" href="css/head.css">
+<style>
+  .dex-nav { display:flex; gap:6px; margin-left:16px; align-items:center; flex-wrap:wrap; }
+  .dex-nav a { color:rgba(255,255,255,.82); text-decoration:none; font-size:13px; padding:5px 11px; border-radius:18px; border:1px solid rgba(255,255,255,.18); white-space:nowrap; }
+  .dex-nav a:hover { background:rgba(255,255,255,.15); }
+  .dex-nav a.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .toolbar { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:12px; }
+  .toolbar .search-wrap { margin-bottom:0; flex:1; min-width:200px; }
+  .toolbar .search-input { cursor:text; }
+  .filter-label { font-size:12px; color:var(--text2); }
+  .chip-row { display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
+  .fchip { cursor:pointer; font-size:12px; padding:3px 10px; border-radius:14px; border:1px solid var(--border); background:var(--card2); color:var(--text); user-select:none; }
+  .fchip:hover { border-color:var(--accent); }
+  .fchip.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .count { font-size:12px; color:var(--text2); margin-bottom:10px; }
+  .dex-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:14px; }
+  .dex-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px; display:flex; flex-direction:column; }
+  .dex-card .top { display:flex; gap:12px; align-items:center; }
+  .dex-card .no { font-size:11px; color:var(--text2); }
+  .dex-card .name { font-size:17px; font-weight:700; line-height:1.2; }
+  .dex-card .types { display:flex; gap:5px; margin-top:6px; flex-wrap:wrap; }
+  .stat-row { display:flex; align-items:center; gap:8px; margin-top:6px; font-size:12px; }
+  .stat-row .sl { width:42px; color:var(--text2); }
+  .stat-row .sv { width:36px; text-align:right; font-weight:700; }
+  .stat-bar { flex:1; height:7px; background:var(--bg); border-radius:4px; overflow:hidden; }
+  .stat-bar > i { display:block; height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2)); border-radius:4px; }
+  .trait { margin-top:11px; font-size:12px; }
+  .trait .tn { color:var(--accent2); font-weight:700; }
+  .trait .td { color:var(--text2); margin-top:3px; line-height:1.45; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+  .go-btn { margin-top:12px; align-self:flex-start; font-size:12px; color:#fff; background:linear-gradient(135deg,#7c5cbf,#5b3fa0); border:none; border-radius:8px; padding:6px 14px; cursor:pointer; text-decoration:none; }
+  .go-btn:hover { filter:brightness(1.1); }
+  .sub { color:var(--text2); font-size:13px; margin-bottom:14px; }
+</style>
+</head>
+<body>
+<header>
+  <div style="font-size:24px">📕</div>
+  <div style="display:flex;flex-direction:column;gap:2px">
+    <h1>精灵图鉴</h1>
+  </div>
+  <nav class="dex-nav">
+    <a href="9178.html">伤害计算器</a>
+    <a href="pokedex.html" class="active">精灵图鉴</a>
+    <a href="skilldex.html">技能图鉴</a>
+  </nav>
+  <div class="header-actions">
+    <div class="theme-toggle" onclick="toggleTheme()">
+      <span class="tt-icon" id="theme-icon">🌙</span>
+      <span id="theme-label">夜间</span>
+    </div>
+  </div>
+</header>
+
+<div class="main">
+  <div class="toolbar">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="search-input" id="search" placeholder="搜索精灵名称 / 拼音…">
+    </div>
+    <span class="filter-label">属性:</span>
+    <div class="chip-row" id="attrFilter"></div>
+  </div>
+  <div class="count" id="count"></div>
+  <div class="dex-grid" id="grid"></div>
+</div>
+
+<script src="data/spirits.js"></script>
+<script src="data/type.js"></script>
+<script src="data/pinyin.js"></script>
+<script>
+  // ---------- theme ----------
+  function toggleTheme() {
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    if (isLight) {
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem('theme', 'dark');
+      document.getElementById('theme-icon').textContent = '🌙';
+      document.getElementById('theme-label').textContent = '夜间';
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+      localStorage.setItem('theme', 'light');
+      document.getElementById('theme-icon').textContent = '☀️';
+      document.getElementById('theme-label').textContent = '日间';
+    }
+  }
+  (function () {
+    const t = localStorage.getItem('theme');
+    if (t === 'light') {
+      document.documentElement.setAttribute('data-theme', 'light');
+      document.getElementById('theme-icon').textContent = '☀️';
+      document.getElementById('theme-label').textContent = '日间';
+    }
+  })();
+
+  // ---------- helpers ----------
+  function typeChip(t) {
+    const bg = (typeof TYPE_COLORS !== 'undefined' && TYPE_COLORS[t]) || '#888';
+    const tc = (typeof TYPE_TEXT_DARK !== 'undefined' && TYPE_TEXT_DARK.has(t)) ? '#333' : '#fff';
+    return '<span class="type-tag" style="background:' + bg + ';color:' + tc + '">' + t + '</span>';
+  }
+  function pinyinOf(n) {
+    if (typeof PINYIN_MAP === 'undefined') return n;
+    return n.split('').map(ch => PINYIN_MAP[ch] || ch).join('');
+  }
+  const STAT_MAX = 200;
+  const STATS = [['hp', 'HP'], ['pa', '物攻'], ['ma', '魔攻'], ['pd', '物防'], ['md', '魔防'], ['sp', '速度']];
+
+  function avatarHTML(s) {
+    const ch = (s.n || '?').charAt(0);
+    const img = s.img
+      ? '<img src="' + s.img + '" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain" onerror="this.style.display=\'none\'" onload="this.previousElementSibling.style.display=\'none\'">'
+      : '';
+    return '<div class="spirit-avatar" style="position:relative">' +
+             '<span class="avatar-fallback">' + ch + '</span>' + img +
+           '</div>';
+  }
+
+  function cardHTML(s) {
+    const types = (s.a1 ? typeChip(s.a1) : '') + (s.a2 ? typeChip(s.a2) : '');
+    const stats = STATS.map(([k, label]) => {
+      const v = s[k] || 0;
+      const w = Math.max(4, Math.min(100, Math.round(v / STAT_MAX * 100)));
+      return '<div class="stat-row"><span class="sl">' + label + '</span>' +
+             '<span class="sv">' + v + '</span>' +
+             '<span class="stat-bar"><i style="width:' + w + '%"></i></span></div>';
+    }).join('');
+    const trait = s.tr
+      ? '<div class="trait"><span class="tn">' + s.tr + '</span>' +
+        (s.tr_desc ? '<div class="td" title="' + (s.tr_desc || '').replace(/"/g, '&quot;') + '">' + s.tr_desc + '</div>' : '') +
+        '</div>'
+      : '';
+    return '<div class="dex-card">' +
+             '<div class="top">' + avatarHTML(s) +
+               '<div><div class="no">NO.' + (s.no || '?') + '</div>' +
+               '<div class="name">' + s.n + '</div>' +
+               '<div class="types">' + types + '</div></div>' +
+             '</div>' +
+             stats + trait +
+             '<a class="go-btn" href="9178.html">去伤害计算 →</a>' +
+           '</div>';
+  }
+
+  // ---------- state + render ----------
+  let activeAttr = '';
+  let q = '';
+  const grid = document.getElementById('grid');
+  const attrs = [...new Set(SPIRITS.flatMap(s => [s.a1, s.a2].filter(Boolean)))].sort();
+
+  // attribute filter chips
+  const af = document.getElementById('attrFilter');
+  const chips = [];
+  function mkChip(label, onClick) {
+    const el = document.createElement('span');
+    el.className = 'fchip';
+    el.textContent = label;
+    el.onclick = onClick;
+    af.appendChild(el);
+    chips.push(el);
+    return el;
+  }
+  mkChip('全部', () => { activeAttr = ''; chips.forEach(c => c.classList.remove('active')); allChip.classList.add('active'); render(); });
+  const allChip = chips[0];
+  allChip.classList.add('active');
+  attrs.forEach(a => {
+    mkChip(a, () => {
+      activeAttr = (activeAttr === a) ? '' : a;
+      chips.forEach(c => c.classList.remove('active'));
+      if (activeAttr) { chips[attrs.indexOf(a) + 1].classList.add('active'); }
+      else { allChip.classList.add('active'); }
+      render();
+    });
+  });
+
+  document.getElementById('search').addEventListener('input', e => { q = e.target.value; render(); });
+
+  function render() {
+    const ql = q.trim().toLowerCase();
+    const list = SPIRITS.filter(s => {
+      if (activeAttr && s.a1 !== activeAttr && s.a2 !== activeAttr) return false;
+      if (ql) {
+        const hit = s.n.toLowerCase().includes(ql) || pinyinOf(s.n).toLowerCase().includes(ql);
+        if (!hit) return false;
+      }
+      return true;
+    });
+    document.getElementById('count').textContent = '共 ' + list.length + ' 只';
+    grid.innerHTML = list.map(cardHTML).join('');
+  }
+  render();
+</script>
+</body>
+</html>
