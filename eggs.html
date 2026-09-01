@@ -94,18 +94,18 @@
     <div class="egg-inputs">
       <div class="egg-field">
         <label>蛋尺寸 <span class="val" id="sizeVal">0.27<small>m</small></span></label>
-        <input type="range" id="sizeRange" min="0.1" max="3.0" step="0.01" value="0.27">
+        <input type="range" id="sizeRange" min="0" max="3.0" step="0.01" value="0.27">
         <div class="egg-num">
-          <input type="number" id="sizeNum" min="0.1" max="3.0" step="0.01" value="0.27">
-          <span class="unit">米 (0.1 ~ 3.0)</span>
+          <input type="number" id="sizeNum" step="0.01" value="0.27">
+          <span class="unit">米</span>
         </div>
       </div>
       <div class="egg-field">
         <label>蛋重量 <span class="val" id="weightVal">1.562<small>kg</small></span></label>
-        <input type="range" id="weightRange" min="0.1" max="720" step="0.01" value="1.562">
+        <input type="range" id="weightRange" min="0" max="720" step="0.01" value="1.562">
         <div class="egg-num">
-          <input type="number" id="weightNum" min="0.1" max="720" step="0.01" value="1.562">
-          <span class="unit">千克 (0.1 ~ 720)</span>
+          <input type="number" id="weightNum" step="0.01" value="1.562">
+          <span class="unit">千克</span>
         </div>
       </div>
     </div>
@@ -248,39 +248,47 @@ function render(){
   }).join('');
 }
 
+function fmtNum(v){ return (Math.round(v*1000)/1000).toString(); }
+
 function syncInputs(){
   document.getElementById('sizeRange').value=state.size;
   document.getElementById('sizeNum').value=state.size;
   document.getElementById('weightRange').value=state.weight;
   document.getElementById('weightNum').value=state.weight;
-  document.getElementById('sizeVal').innerHTML=state.size.toFixed(2)+'<small>m</small>';
-  document.getElementById('weightVal').innerHTML=state.weight.toFixed(2)+'<small>kg</small>';
+  document.getElementById('sizeVal').innerHTML=fmtNum(state.size)+'<small>m</small>';
+  document.getElementById('weightVal').innerHTML=fmtNum(state.weight)+'<small>kg</small>';
 }
 
-// 超范围警告（输入超出已知蛋范围时提示，并自动按边界计算）
-const RANGE = { size:{min:0.1, max:3.0}, weight:{min:0.1, max:720} };
+// 已知蛋范围（仅用于温和提示，输入下限不限制，下限为 0 即不设最小）
+const RANGE = { size:{min:0, max:3.0}, weight:{min:0, max:720} };
 function showWarn(kind, raw){
   const r=RANGE[kind];
   const el=document.getElementById('eggWarn');
-  el.textContent='⚠ '+ (kind==='size'?'蛋尺寸':'蛋重量') +'应在 '+r.min+' ~ '+r.max+(kind==='size'?'m':'kg')+' 之间，你输入的 '+raw+' 已超出范围，结果按最近边界计算，可能不准。';
+  el.textContent='⚠ '+ (kind==='size'?'蛋尺寸':'蛋重量') +'已知蛋最大约 '+r.max+(kind==='size'?'m':'kg')+'，你输入的 '+raw+' 已超出该上限，下方为最接近的近似候选，可能不准。';
   el.classList.add('show');
 }
 function hideWarn(){ document.getElementById('eggWarn').classList.remove('show'); }
-function clampVal(v, min, max){ return Math.min(max, Math.max(min, v)); }
+
+// 数字框自由输入：输入过程中不夹断、不回写输入框；只同步滑块与标签并实时渲染
+function bindNum(id, key, unit){
+  document.getElementById(id).addEventListener('input', function(){
+    const raw=this.value;
+    if (raw==='' || raw.endsWith('.')){ return; } // 仍在输入（如 "0."），不重算也不重置输入框
+    const v=parseFloat(raw);
+    if (isNaN(v)) return;
+    if (v>RANGE[key].max) showWarn(key, raw); else hideWarn();
+    state[key]=v;
+    document.getElementById(key==='size'?'sizeRange':'weightRange').value = Math.min(RANGE[key].max, Math.max(RANGE[key].min, v));
+    document.getElementById(key==='size'?'sizeVal':'weightVal').innerHTML = fmtNum(v)+'<small>'+unit+'</small>';
+    render();
+  });
+}
 
 // 控件绑定
 document.getElementById('sizeRange').addEventListener('input', function(){ state.size=parseFloat(this.value); syncInputs(); render(); });
-document.getElementById('sizeNum').addEventListener('input', function(){
-  let v=parseFloat(this.value); if(isNaN(v)) return;
-  if (v<RANGE.size.min || v>RANGE.size.max) showWarn('size', this.value); else hideWarn();
-  state.size=clampVal(v, RANGE.size.min, RANGE.size.max); syncInputs(); render();
-});
 document.getElementById('weightRange').addEventListener('input', function(){ state.weight=parseFloat(this.value); syncInputs(); render(); });
-document.getElementById('weightNum').addEventListener('input', function(){
-  let v=parseFloat(this.value); if(isNaN(v)) return;
-  if (v<RANGE.weight.min || v>RANGE.weight.max) showWarn('weight', this.value); else hideWarn();
-  state.weight=clampVal(v, RANGE.weight.min, RANGE.weight.max); syncInputs(); render();
-});
+bindNum('sizeNum', 'size', 'm');
+bindNum('weightNum', 'weight', 'kg');
 document.getElementById('eggSeg').addEventListener('click', function(e){
   const btn=e.target.closest('button'); if(!btn) return;
   state.egg=btn.dataset.egg;
