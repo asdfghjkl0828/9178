@@ -8,17 +8,32 @@
 <style>
   .home-intro { font-size:13px; color:var(--text2); line-height:1.7; margin-bottom:14px; background:rgba(124,107,255,.07); border:1px solid rgba(124,107,255,.22); border-radius:10px; padding:10px 14px; }
   .home-intro b { color:var(--accent); }
-  .search { display:flex; gap:10px; margin-bottom:14px; }
-  .search input { flex:1; min-width:0; height:44px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text); padding:0 14px; font-size:15px; font-family:inherit; }
-  .search input:focus { outline:none; border-color:var(--accent); }
-  .search button { height:44px; padding:0 22px; border:none; border-radius:10px; background:var(--accent); color:#fff; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; flex-shrink:0; }
-  .search button:hover { opacity:.9; }
-  .search button:disabled { opacity:.5; cursor:wait; }
+  .home-intro code { background:var(--bg); padding:1px 6px; border-radius:5px; color:var(--text); }
 
-  .mch-err { font-size:13px; color:#ff9a9a; background:rgba(255,80,80,.1); border:1px solid rgba(255,80,80,.3); border-radius:10px; padding:12px 14px; margin-bottom:14px; line-height:1.6; display:none; }
+  .tabs { display:flex; gap:8px; margin-bottom:14px; }
+  .tab { padding:7px 16px; border-radius:9px; border:1px solid var(--border); background:var(--bg); color:var(--text2); cursor:pointer; font-size:13px; font-weight:700; font-family:inherit; }
+  .tab.active { color:var(--accent); border-color:var(--accent); background:rgba(124,107,255,.12); }
+
+  .note-form { background:var(--card); border:1px solid var(--border); border-radius:13px; padding:14px; margin-bottom:14px; }
+  .note-form input, .note-form textarea { width:100%; box-sizing:border-box; background:var(--bg); border:1px solid var(--border); border-radius:9px; color:var(--text); padding:9px 12px; font-family:inherit; font-size:13px; margin-bottom:8px; }
+  .note-form input:focus, .note-form textarea:focus { outline:none; border-color:var(--accent); }
+  .note-form textarea { min-height:62px; resize:vertical; }
+  .btn { height:38px; padding:0 18px; border:none; border-radius:9px; background:var(--accent); color:#fff; font-weight:700; cursor:pointer; font-family:inherit; }
+
+  .note-list { display:flex; flex-direction:column; gap:10px; }
+  .note-card { background:var(--card); border:1px solid var(--border); border-radius:11px; padding:11px 13px; }
+  .note-card .nc-top { display:flex; align-items:center; gap:8px; }
+  .note-card .nc-name { font-weight:800; color:var(--text); font-size:14px; }
+  .note-card .nc-x { margin-left:auto; cursor:pointer; color:var(--text2); font-weight:700; flex-shrink:0; }
+  .note-card .nc-x:hover { color:#ff8080; }
+  .note-card .nc-sub { font-size:12px; color:var(--text2); margin-top:6px; line-height:1.6; white-space:pre-wrap; }
+
+  .import-box { width:100%; min-height:130px; box-sizing:border-box; background:var(--bg); border:1px solid var(--border); border-radius:10px; color:var(--text); padding:10px 12px; font-family:inherit; font-size:13px; resize:vertical; }
+  .import-box:focus { outline:none; border-color:var(--accent); }
+
+  .mch-err { font-size:13px; color:#ff9a9a; background:rgba(255,80,80,.1); border:1px solid rgba(255,80,80,.3); border-radius:10px; padding:12px 14px; margin:10px 0; line-height:1.6; display:none; }
   .mch-err.show { display:block; }
   .mch-err code { background:rgba(0,0,0,.25); padding:1px 6px; border-radius:4px; }
-
   .loading { text-align:center; color:var(--text2); padding:30px; font-size:14px; }
 
   .ov { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px; display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:10px; margin-bottom:14px; }
@@ -44,7 +59,7 @@
   .plant .rip { color:var(--text2); margin-left:6px; }
   .plant .ripe { color:#4FBD72; font-weight:700; }
 
-  .empty-row { text-align:center; color:var(--text2); padding:24px; background:var(--card); border:1px dashed var(--border); border-radius:13px; }
+  .empty-row { text-align:center; color:var(--text2); padding:24px; background:var(--bg); border:1px dashed var(--border); border-radius:13px; font-size:13px; }
   details.guide { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 14px; margin-top:14px; }
   details.guide summary { cursor:pointer; font-size:13px; font-weight:700; color:var(--accent); }
   details.guide ol { margin:10px 0 2px; padding-left:20px; color:var(--text2); font-size:12.5px; line-height:1.8; }
@@ -54,7 +69,7 @@
 <body>
 <header>
   <h1>家园查询</h1>
-  <span>输入洛克 UID，查 TA 的家园菜园 / 守卫精灵 / 室内精灵</span>
+  <span>本地备忘录 + 粘贴导入（免费替代方案）</span>
   <nav class="dex-nav">
     <a href="9178.html">伤害计算器</a>
     <a href="pokedex.html">精灵图鉴</a>
@@ -72,35 +87,42 @@
 
 <div class="main">
   <div class="home-intro">
-    选择预设同学的<b>洛克 UID</b>，即可查看 TA 的家园情况：菜园作物、守卫精灵、室内摆放精灵。数据由定时任务自动抓取，<b>无需同学本人登录</b>。
-    <details class="guide">
-      <summary>数据怎么来的？（点击展开）</summary>
-      <ol>
-        <li>本页由 GitHub Actions 定时任务（每 15 分钟）按预设 UID 列表自动抓取，存为 <code>data/home_&lt;uid&gt;.json</code>，前端直接读取——<b>无需代理、大陆可访问</b>。</li>
-        <li>想查某个同学？把 TA 的洛克 UID（和昵称）发给助理，助理加入 <code>data/uids.json</code> 并推送，约 15 分钟内自动出数据。</li>
-        <li>WeGame API Key 仅存于 GitHub 仓库 Secrets，不进前端。</li>
-      </ol>
-    </details>
+    由于 rocom.shallow.ink 的家园接口<b>按积分计费</b>（每次查询 20 积分）且需 API Key，纯静态站<b>不充钱无法实时查他人家园</b>。本页改用两种<b>零成本</b>方式：
+    <b>① 本地备忘录</b>——你自己记录同学 / 朋友的精灵与菜园，存浏览器本地（仅你本机可见）；
+    <b>② 粘贴导入</b>——把从 rocom 或同学处导出的家园 JSON 粘进来，自动结构化展示。
   </div>
 
-  <div class="search">
-    <select id="uidSelect" style="flex:1; min-width:0; height:44px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text); padding:0 14px; font-size:15px; font-family:inherit;">
-      <option value="">— 选择预设同学 UID —</option>
-    </select>
-    <button id="searchBtn">查询</button>
+  <div class="tabs">
+    <button class="tab active" id="tabNote">📝 本地备忘录</button>
+    <button class="tab" id="tabImport">📥 粘贴导入</button>
   </div>
-  <div style="font-size:11px;color:var(--text2);margin-top:8px;">没有同学？把 TA 的 UID 发给助理加入预设列表，约 15 分钟自动同步。</div>
 
-  <div class="mch-err" id="homeErr"></div>
-  <div id="result"></div>
+  <div id="paneNote">
+    <div class="note-form">
+      <input id="noteName" placeholder="朋友昵称 / UID，如 5678116 小明">
+      <textarea id="notePets" placeholder="守卫 / 室内精灵（一行一个，如：迪莫 Lv.45 / 火神 / 格兰球球）"></textarea>
+      <textarea id="notePlants" placeholder="菜园作物（一行一个，如：星光花 / 魔力蘑菇 / 七彩草）"></textarea>
+      <button class="btn" id="noteAdd">添加记录</button>
+    </div>
+    <div class="note-list" id="noteList"></div>
+  </div>
+
+  <div id="paneImport" style="display:none">
+    <div class="home-intro" style="margin-bottom:12px">
+      把从 <code>rocom.shallow.ink</code>（或同学发来的）家园数据 JSON 粘到下方，点解析即可结构化查看。兼容 <code>home/info</code> 返回结构（含 <code>home_info</code> / <code>home_pets</code> / <code>home_plant_info</code> 等字段）。
+    </div>
+    <textarea class="import-box" id="importBox" placeholder='粘贴 JSON，例如 {"data":{"home_info":{"home_name":"小明の家",...}}}'></textarea>
+    <div style="margin-top:10px"><button class="btn" id="importBtn">解析查看</button></div>
+    <div class="mch-err" id="importErr"></div>
+    <div id="result"></div>
+  </div>
 
   <details class="guide">
-    <summary>字段说明</summary>
+    <summary>怎么拿到可粘贴的家园 JSON？（点击展开）</summary>
     <ol>
-      <li><b>家园概况</b>：家名、家园等级、房间等级、舒适度、灵感经验（来自 <code>home/info</code>）。</li>
-      <li><b>守卫/室内精灵</b>：名称、等级、性别、性格、变异、血脉、精力、技能。</li>
-      <li><b>菜园</b>：各地块的作物及成熟时间。</li>
-      <li>接口为异步任务，查询后需等待上游数秒返回，请稍候。</li>
+      <li>同学自己登录 <code>rocom.shallow.ink</code> → 家园查询，F12 打开网络面板，复制接口返回的 JSON。</li>
+      <li>或同学在网页里把数据导出，发给你，你粘进「粘贴导入」即可可视化查看——<b>不消耗你的积分</b>。</li>
+      <li>若你日后充了积分：把 Key 存进仓库 Secrets 的 <code>ROCOM_API_KEY</code>，到 Actions 页 <b>Run workflow</b> 即可抓真实数据（自动调度已默认关闭以免浪费）。</li>
     </ol>
   </details>
 </div>
@@ -128,8 +150,8 @@
 // ---------- 工具函数 ----------
 function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 function $(id){ return document.getElementById(id); }
-function showErr(html){ const e=$('homeErr'); e.innerHTML=html; e.classList.add('show'); }
-function hideErr(){ $('homeErr').classList.remove('show'); }
+function showErr(html){ const e=$('importErr'); e.innerHTML=html; e.classList.add('show'); }
+function hideErr(){ $('importErr').classList.remove('show'); }
 
 function genderText(g){
   if(g===1||g==='1'||g==='male') return '♂';
@@ -145,9 +167,7 @@ function fmtTime(ts){
   const d = new Date(ms);
   if(isNaN(d.getTime())) return esc(ts);
   const now = Date.now();
-  if(ms <= now){
-    return '<span class="ripe">已成熟</span>';
-  }
+  if(ms <= now) return '<span class="ripe">已成熟</span>';
   const diff = ms - now;
   const h = Math.floor(diff/3600000), m = Math.floor((diff%3600000)/60000);
   return '<span class="rip">约 '+ (h>0? h+'h ':'') + m + 'm 后成熟</span>';
@@ -173,9 +193,8 @@ function attrText(attr){
   return parts.join(' · ');
 }
 
-// ---------- 解析 + 渲染 ----------
+// ---------- 解析 + 渲染（兼容 home/info 返回结构） ----------
 function parseHome(raw){
-  // raw 可能是 tasks 最终响应：{ status, data:{...} } 或 { data:{ home_info... } } 或直接 home_info
   let data = raw;
   if(raw && raw.data) data = raw.data;
   const info = (data && data.home_info) ? data.home_info : data;
@@ -185,12 +204,9 @@ function parseHome(raw){
   const lands = (cell.home_plant_info && cell.home_plant_info.home_plant_land_list) || [];
   return { brief, pets, lands };
 }
-
-function render(raw, uid){
+function render(raw){
   const { brief, pets, lands } = parseHome(raw);
   let html = '';
-
-  // 概览
   const ovItems = [
     ['家名', brief.home_name || brief.name || '—'],
     ['家园等级', brief.home_level ?? '—'],
@@ -204,7 +220,6 @@ function render(raw, uid){
   }
   html += '</div>';
 
-  // 精灵
   html += '<div class="sec-ttl">守卫 / 室内精灵（'+pets.length+'）</div>';
   if(pets.length){
     html += '<div class="goods-grid">';
@@ -216,7 +231,7 @@ function render(raw, uid){
       const lv = di.level ?? hi.level ?? '—';
       const meta1 = 'Lv.'+esc(lv)+' · '+genderText(di.gender)+' · 性格 '+esc(di.nature||'—')+' · 变异 '+esc(di.mutation_type||'—')+' · 血脉 '+esc(di.blood_id||'—')+' · 精力 '+esc(di.energy??'—');
       const skills = skillNames(di.skill).map(esc);
-      const attr = attrText(di.attribute_info || di.attribute_new_info && di.attribute_new_info.addi_attr_data);
+      const attr = attrText(di.attribute_info || (di.attribute_new_info && di.attribute_new_info.addi_attr_data));
       const egg = p.have_egg ? '🥚有蛋' + (p.predicted_egg_time? ' · '+fmtTime(p.predicted_egg_time):'') : '';
       const star = hi.status ? '<span class="star">'+esc(hi.status)+'</span>' : '';
       html += '<div class="good">'
@@ -231,10 +246,9 @@ function render(raw, uid){
     }
     html += '</div>';
   } else {
-    html += '<div class="empty-row">未查询到精灵数据</div>';
+    html += '<div class="empty-row">未查询到精灵数据（粘贴的 JSON 可能不含 home_pets 字段）</div>';
   }
 
-  // 菜园
   html += '<div class="sec-ttl">菜园（'+lands.length+' 块地）</div>';
   if(lands.length){
     lands.forEach((land, i)=>{
@@ -253,63 +267,61 @@ function render(raw, uid){
   } else {
     html += '<div class="empty-row">未查询到菜园数据</div>';
   }
-
   $('result').innerHTML = html;
 }
 
-// ---------- 加载预设 UID 列表 ----------
-async function loadUids(){
-  try {
-    const resp = await fetch('data/uids.json', { cache:'no-store' });
-    const list = await resp.json();
-    if(!Array.isArray(list)) return;
-    const sel = $('uidSelect');
-    list.forEach(function(item){
-      const uid = item.uid || item;
-      const name = item.name || uid;
-      const opt = document.createElement('option');
-      opt.value = String(uid);
-      opt.textContent = name + '（' + uid + '）';
-      sel.appendChild(opt);
-    });
-  } catch(e){ /* 忽略 */ }
+// ---------- 本地备忘录 ----------
+let notes = [];
+try { notes = JSON.parse(localStorage.getItem('home_notes') || '[]'); } catch(e){ notes = []; }
+if (!Array.isArray(notes)) notes = [];
+function saveNotes(){ localStorage.setItem('home_notes', JSON.stringify(notes)); }
+function renderNotes(){
+  const el = $('noteList');
+  if(!notes.length){ el.innerHTML = '<div class="empty-row">还没有记录。在上方填朋友的名字、精灵、菜园，点「添加记录」即可保存（仅存你本机浏览器）。</div>'; return; }
+  el.innerHTML = notes.map(function(n,i){
+    const sub = [n.pets, n.plants].filter(Boolean).join('\n\n');
+    return '<div class="note-card"><div class="nc-top"><span class="nc-name">'+esc(n.name)+'</span><span class="nc-x" data-i="'+i+'">×</span></div>'+(sub?'<div class="nc-sub">'+esc(sub)+'</div>':'')+'</div>';
+  }).join('');
 }
+function addNote(){
+  const name = $('noteName').value.trim();
+  const pets = $('notePets').value.trim();
+  const plants = $('notePlants').value.trim();
+  if(!name && !pets && !plants){ alert('至少填一项再保存'); return; }
+  notes.unshift({ name:name||'未命名', pets:pets, plants:plants });
+  saveNotes(); renderNotes();
+  $('noteName').value=''; $('notePets').value=''; $('notePlants').value='';
+}
+function delNote(i){ notes.splice(i,1); saveNotes(); renderNotes(); }
+$('noteAdd').addEventListener('click', addNote);
+$('noteList').addEventListener('click', function(e){ const x=e.target.getAttribute('data-i'); if(x!==null) delNote(+x); });
 
-// ---------- 查询 ----------
-async function doQuery(){
+// ---------- 粘贴导入 ----------
+$('importBtn').addEventListener('click', function(){
   hideErr();
-  const uid = ($('uidSelect').value||'').trim();
-  if(!uid){
-    showErr('⚠ 请先在下拉框选择一个预设同学的 UID。没有？把同学 UID 发给助理加入预设列表。');
-    return;
-  }
-  const btn = $('searchBtn');
-  btn.disabled = true;
-  $('result').innerHTML = '<div class="loading">读取 '+esc(uid)+' 的家园数据…（每 15 分钟自动同步）</div>';
-  try {
-    const resp = await fetch('data/home_' + encodeURIComponent(uid) + '.json', { cache:'no-store' });
-    if(resp.status === 404){
-      showErr('⚠ 该 UID 的数据尚未抓取（可能刚加入预设列表，请等下次自动同步，或到仓库 Actions 页手动 Run workflow 立即触发）。');
-      $('result').innerHTML = '';
-      return;
-    }
-    const j = await resp.json().catch(()=>({}));
-    if(!resp.ok){
-      showErr('⚠ 数据加载失败（HTTP '+resp.status+'）。');
-      $('result').innerHTML = '';
-      return;
-    }
-    render(j, uid);
-  } catch(e){
-    showErr('⚠ 无法加载数据：'+esc(e.message));
-    $('result').innerHTML = '';
-  } finally {
-    btn.disabled = false;
-  }
+  const txt = $('importBox').value.trim();
+  if(!txt){ showErr('⚠ 请先粘贴家园 JSON。'); return; }
+  let j;
+  try { j = JSON.parse(txt); }
+  catch(e){ showErr('⚠ 不是合法 JSON：'+esc(e.message)); $('result').innerHTML=''; return; }
+  if(j && j.code && j.code!==0){ showErr('⚠ 这是接口错误响应（'+esc(j.message||'')+'），不是家园数据。'); $('result').innerHTML=''; return; }
+  try { render(j); }
+  catch(e){ showErr('⚠ 解析渲染失败：'+esc(e.message)); }
+});
+
+// ---------- Tab 切换 ----------
+$('tabNote').addEventListener('click', function(){ switchTab('note'); });
+$('tabImport').addEventListener('click', function(){ switchTab('import'); });
+function switchTab(which){
+  const isNote = which==='note';
+  $('tabNote').classList.toggle('active', isNote);
+  $('tabImport').classList.toggle('active', !isNote);
+  $('paneNote').style.display = isNote ? 'block' : 'none';
+  $('paneImport').style.display = isNote ? 'none' : 'block';
 }
 
-loadUids();
-$('searchBtn').addEventListener('click', doQuery);
+// ---------- 启动 ----------
+renderNotes();
 </script>
 </body>
 </html>
