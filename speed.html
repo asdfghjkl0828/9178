@@ -42,8 +42,13 @@
   .speed-row td:last-child { border-right:1px solid var(--border); border-top-right-radius:10px; border-bottom-right-radius:10px; }
   .rk { font-size:15px; font-weight:800; color:var(--text2); width:42px; text-align:center; }
   .rk.top { color:var(--accent); }
-  .tie-tag { display:block; font-size:9px; font-weight:600; color:var(--text2); margin-top:1px; letter-spacing:1px; }
-  .speed-row.is-tied td:first-child { border-left:3px solid var(--accent); }
+  .cnt-tag { display:block; font-size:9px; font-weight:600; color:var(--text2); margin-top:1px; letter-spacing:1px; }
+  .spirit-list { display:flex; flex-wrap:wrap; gap:7px 10px; align-items:center; }
+  .spirit-chip { display:inline-flex; align-items:center; gap:6px; color:var(--text); text-decoration:none; font-weight:600; font-size:13px; padding:3px 10px 3px 3px; border-radius:20px; background:var(--bg); border:1px solid var(--border); transition:.12s; }
+  .spirit-chip:hover { color:var(--accent); border-color:var(--accent); }
+  .spirit-chip .ava-wrap { width:26px; height:26px; }
+  .spirit-chip .ava-wrap .fallback { font-size:11px; }
+  .speed-row td { padding-top:8px; padding-bottom:8px; }
   .base-sp { font-size:14px; font-weight:700; color:var(--text); width:74px; }
   .abil { font-size:18px; font-weight:800; color:#4FBD72; width:60px; text-align:right; }
   .abil-bar-wrap { min-width:160px; }
@@ -165,37 +170,43 @@ function buildTable(){
     return;
   }
   const cfg = CONFIGS[state.cfg];
-  // 同速同排：能力值相同的精灵并列同一名次（标准竞赛排名 1,2,2,4…）
-  const ranks = [];
-  let curRank = 0, prevAbil = null;
-  rows.forEach(function(r, i){
-    if (r.abil !== prevAbil){ curRank = i + 1; prevAbil = r.abil; }
-    ranks.push(curRank);
+  // 同速同排：能力值相同的精灵合并进同一行（一个速度档次站一排），从上往下排
+  const groups = [];
+  rows.forEach(function(r){
+    const last = groups[groups.length - 1];
+    if (last && last.abil === r.abil) last.members.push(r);
+    else groups.push({ abil: r.abil, spMin: r.sp, spMax: r.sp, members: [r] });
   });
-  const tieCount = {};
-  ranks.forEach(function(rk){ tieCount[rk] = (tieCount[rk] || 0) + 1; });
-  const tiedRanks = Object.keys(tieCount).filter(function(k){ return tieCount[k] > 1; }).length;
+  groups.forEach(function(g){
+    g.members.forEach(function(m){
+      if (m.sp < g.spMin) g.spMin = m.sp;
+      if (m.sp > g.spMax) g.spMax = m.sp;
+    });
+  });
   document.getElementById('statLine').innerHTML =
     '当前配置：<b>' + cfg.label + '</b>（IV=' + cfg.iv + '，性格=' + cfg.nat + '） · 共 <b>' +
-    rows.length + '</b> 只 · 最快 <b>' + rows[0].abil + '</b> / 最慢 <b>' + rows[rows.length-1].abil + '</b>' +
-    (tiedRanks ? ' · 有 <b>' + tiedRanks + '</b> 组并列' : '');
+    rows.length + '</b> 只精灵 · 分 <b>' + groups.length + '</b> 个速度档次 · 最快 <b>' + rows[0].abil + '</b> / 最慢 <b>' + rows[rows.length-1].abil + '</b>';
 
-  body.innerHTML = rows.map(function(r, i){
-    const rank = ranks[i];
-    const pct = Math.max(4, Math.round(r.abil / maxAbil * 100));
-    const ch = r.s.n.charAt(0);
-    const img = r.s.img
-      ? '<span class="ava-wrap"><span class="fallback">' + ch + '</span><img src="' + r.s.img + '" alt="' + r.s.n + '" loading="lazy" onerror="this.style.display=\'none\'"></span>'
-      : '<span class="ava-wrap"><span class="fallback">' + ch + '</span></span>';
-    const rkCls = rank <= 3 ? 'rk top' : 'rk';
-    const tieTag = tieCount[rank] > 1 ? '<span class="tie-tag">并列</span>' : '';
-    return '<tr class="speed-row' + (tieCount[rank] > 1 ? ' is-tied' : '') + '">' +
-      '<td class="' + rkCls + '">' + rank + tieTag + '</td>' +
-      '<td class="base-sp">' + r.sp + '</td>' +
-      '<td class="abil">' + r.abil + '</td>' +
+  body.innerHTML = groups.map(function(g, gi){
+    const tier = gi + 1;
+    const pct = Math.max(4, Math.round(g.abil / maxAbil * 100));
+    const spTxt = g.spMin === g.spMax ? String(g.spMin) : (g.spMin + '–' + g.spMax);
+    const chips = g.members.map(function(m){
+      const ch = m.s.n.charAt(0);
+      const img = m.s.img
+        ? '<span class="ava-wrap"><span class="fallback">' + ch + '</span><img src="' + m.s.img + '" alt="' + m.s.n + '" loading="lazy" onerror="this.style.display=\'none\'"></span>'
+        : '<span class="ava-wrap"><span class="fallback">' + ch + '</span></span>';
+      return '<a class="spirit-chip" href="pokedex.html?spirit=' + encodeURIComponent(m.s.n) + '">' + img +
+        '<span>' + m.s.n + '</span></a>';
+    }).join('');
+    const rkCls = tier <= 3 ? 'rk top' : 'rk';
+    const cntTag = g.members.length > 1 ? '<span class="cnt-tag">' + g.members.length + '只</span>' : '';
+    return '<tr class="speed-row">' +
+      '<td class="' + rkCls + '">' + tier + cntTag + '</td>' +
+      '<td class="base-sp">' + spTxt + '</td>' +
+      '<td class="abil">' + g.abil + '</td>' +
       '<td class="abil-bar-wrap"><div class="abil-bar" style="width:' + pct + '%"></div></td>' +
-      '<td><div class="spirit-cell">' + img +
-        '<a href="pokedex.html?spirit=' + encodeURIComponent(r.s.n) + '">' + r.s.n + '</a></div></td>' +
+      '<td><div class="spirit-list">' + chips + '</div></td>' +
     '</tr>';
   }).join('');
 }
