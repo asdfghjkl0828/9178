@@ -84,13 +84,12 @@
   <div class="mch-intro">
     远行商人每天 <b>08:00 / 12:00 / 16:00 / 20:00</b> 四轮刷新，每轮货架保留 <b>4 小时</b>（08:00–24:00 营业）。本页通过代理拉取<b>当前轮次</b>的真实货架，并把你关注的商品高亮标出，方便蹲点抢购。
     <details class="guide">
-      <summary>还没配置代理？点开看部署指引（约 3 分钟）</summary>
+      <summary>数据怎么来的？（点击展开）</summary>
       <ol>
-        <li>申请 <b>WeGame API Key</b>：登录 <code>https://rocom.shallow.ink/</code> → 开发者平台 / API Key 页面申请（需 WeGame 作用域）。</li>
-        <li>部署免费代理（Cloudflare Worker）：登录 <code>dash.cloudflare.com</code> → Workers → 新建 Worker → 把本仓库 <code>worker.js</code> 内容粘贴进去并部署。</li>
-        <li>绑定 Key（<b>关键·安全</b>）：Worker <b>Settings → Variables</b> 添加环境变量 <code>API_KEY</code> = 你的 Key，并设为 <b>Secret</b>。<b>Key 只放这里——不要发到聊天、也不要写进任何前端代码或仓库。</b><code>worker.js</code> 读的是环境变量，本身不含 Key，可安全提交。</li>
-        <li>把部署得到的地址（如 <code>https://rocom-proxy.xxx.workers.dev</code>）发给我，我填进本页 <code>WORKER_URL</code> 常量并推送，真实货架即可显示。</li>
-        <li>为什么必须代理：后端 <code>wegame.shallow.ink</code> 无 CORS 头，且 Key 一旦进前端就会公开泄露并被限流，所以必须由服务端代理转发。</li>
+        <li>本页数据由 GitHub Actions 定时任务（每 15 分钟）从游戏接口自动抓取，存为 <code>data/merchant.json</code>，前端直接读取——<b>无需任何代理、无 CORS 问题</b>，大陆访问无障碍。</li>
+        <li>WeGame API Key 仅保存在 GitHub 仓库 <b>Secrets</b>（<code>ROCOM_API_KEY</code>），从不进前端代码或公开仓库。</li>
+        <li>远行商人每 4 小时刷新一次货架，本页 15 分钟同步一次，对蹲点完全够用。</li>
+        <li>想立即刷新？去仓库 <b>Actions</b> 页点 <b>Run workflow</b> 手动触发一次。</li>
       </ol>
     </details>
   </div>
@@ -129,9 +128,7 @@
 </div>
 
 <script>
-// ====== 配置：部署代理后把地址填到这里 ======
-const WORKER_URL = "https://raspy-hill-0440.3128926988.workers.dev"; // 例如 "https://rocom-proxy.xxx.workers.dev"
-
+// ====== 配置 ======
 const ROUNDS = [8, 12, 16, 20]; // 每日刷新整点（本地时区）
 const REFRESH_MS = 60000;       // 自动刷新间隔
 
@@ -290,24 +287,19 @@ function showErr(msg, raw){
 function clearErr(){ document.getElementById('mchErr').classList.remove('show'); }
 
 async function load(){
-  if (!WORKER_URL){
-    showErr('⚠ 尚未配置代理地址 <code>WORKER_URL</code>。请按页面顶部「部署指引」申请 Key、部署 Cloudflare Worker，并把地址填入脚本顶部常量后推送。倒计时仍可正常使用。', 'WORKER_URL 为空');
-    render();
-    return;
-  }
   clearErr();
   try {
-    const resp = await fetch(WORKER_URL.replace(/\/$/,'') + '/merchant', { cache:'no-store' });
+    const resp = await fetch('data/merchant.json', { cache:'no-store' });
     const text = await resp.text();
+    if (!resp.ok){ showErr('⚠ 数据文件加载失败（HTTP ' + resp.status + '）。请稍后刷新，或到仓库 Actions 页手动 Run workflow 触发一次抓取。', text); render(); return; }
     let json;
-    try { json = JSON.parse(text); } catch(e){ showErr('⚠ 代理返回的不是合法 JSON（HTTP ' + resp.status + '）。可能是 Worker 未部署、Key 未配置，或后端限流。', text); render(); return; }
-    if (!resp.ok){ showErr('⚠ 代理请求失败（HTTP ' + resp.status + '）。请检查 Worker 是否已部署、<code>API_KEY</code> 是否正确。', json); render(); return; }
+    try { json = JSON.parse(text); } catch(e){ showErr('⚠ 数据文件不是合法 JSON。可能抓取任务正在运行，请稍候刷新。', text); render(); return; }
     lastData = extract(json);
     document.getElementById('debugWrap').style.display = 'block';
     document.getElementById('rawJson').textContent = JSON.stringify(json, null, 2);
     render();
   } catch(e){
-    showErr('⚠ 无法连接代理 <code>' + WORKER_URL + '</code>：' + e.message + '。请确认 Worker 地址正确且已部署。', String(e));
+    showErr('⚠ 无法加载数据：' + e.message + '。请确认 GitHub Actions 定时任务已启用（见页面说明）。', String(e));
     render();
   }
 }
