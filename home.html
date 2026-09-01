@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>家园查询 - Roke 伤害计算工具箱</title>
+<link rel="stylesheet" href="css/head.css">
+<style>
+  .home-intro { font-size:13px; color:var(--text2); line-height:1.7; margin-bottom:14px; background:rgba(124,107,255,.07); border:1px solid rgba(124,107,255,.22); border-radius:10px; padding:10px 14px; }
+  .home-intro b { color:var(--accent); }
+  .panel { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px; margin-bottom:14px; }
+  .panel h2 { font-size:15px; font-weight:800; color:var(--text); margin:0 0 10px; }
+  .panel p, .panel li { font-size:13px; color:var(--text2); line-height:1.8; }
+  .panel ul { margin:8px 0 0; padding-left:20px; }
+  .tag-ok { color:#4FBD72; font-weight:700; }
+  .tag-no { color:#ff8080; font-weight:700; }
+  .go-btn { display:inline-block; margin-top:12px; font-size:14px; font-weight:700; color:#fff; background:var(--accent); border-radius:10px; padding:10px 18px; text-decoration:none; }
+  .go-btn:hover { opacity:.9; }
+  .arch { font-size:12.5px; color:var(--text2); line-height:1.8; background:rgba(255,255,255,.04); border:1px solid var(--border); border-radius:10px; padding:12px 14px; }
+  .arch code { background:var(--bg); padding:1px 6px; border-radius:4px; color:var(--text); }
+  .note { font-size:12px; color:var(--text2); margin-top:8px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>家园查询</h1>
+  <span>查看你的家园菜园、守卫精灵与室内精灵</span>
+  <nav class="dex-nav">
+    <a href="9178.html">伤害计算器</a>
+    <a href="pokedex.html">精灵图鉴</a>
+    <a href="skilldex.html">技能图鉴</a>
+    <a href="restraint.html">克制计算器</a>
+    <a href="speed.html">速度榜单</a>
+    <a href="eggs.html">孵蛋查询</a>
+    <a href="merchant.html">远行商人</a>
+    <a href="home.html" class="active">家园查询</a>
+  </nav>
+  <div class="header-actions">
+    <div class="theme-toggle" id="themeToggle"><span class="tt-icon">🌙</span><span class="tt-text">深色</span></div>
+  </div>
+</header>
+
+<div class="main">
+  <div class="home-intro">
+    家园查询用于查看你<b>个人账号</b>的家园数据（菜园、守卫精灵、室内摆放精灵等）。这类查询需要你的 <b>WeGame UID / 绑定凭证</b>，并由服务端代理游戏接口，<b>纯静态网页无法直接做真实查询</b>。下面说明功能与可行路径。
+  </div>
+
+  <div class="panel">
+    <h2>🏡 家园查询能看什么</h2>
+    <ul>
+      <li><b>家园概况</b>：家园等级、灵感进度等（接口 <code>home/info</code>）。</li>
+      <li><b>菜园</b>：种植的植物、成熟状态。</li>
+      <li><b>守卫精灵</b>：驻守在家园中的精灵。</li>
+      <li><b>室内精灵</b>：摆放的精灵完整面板（接口 <code>ingame/pet/data</code>）。</li>
+    </ul>
+    <p class="note">数据来自游戏官方接口，需绑定你本人的 WeGame 账号后按 UID 查询。</p>
+  </div>
+
+  <div class="panel">
+    <h2>为什么本工具箱暂时做不了真实查询</h2>
+    <ul>
+      <li><span class="tag-no">✗ 需个人凭证</span>：必须传入你的 UID 或绑定 token，静态页无法安全持有。</li>
+      <li><span class="tag-no">✗ 需后端代理</span>：游戏接口在 <code>wegame.shallow.ink</code> 后端，需服务端转发并鉴权，浏览器直连会被 CORS 拦截。</li>
+      <li><span class="tag-no">✗ 官方也未完全开放</span>：连数据源站 <code>rocom.shallow.ink</code> 首页都还把「家园信息」标为「即将开放」。</li>
+    </ul>
+  </div>
+
+  <div class="panel">
+    <h2>✅ 现在怎么查你的家园</h2>
+    <p>最稳妥的方式：去洛克魔法书绑定你的 WeGame 角色，直接在他们站查询（无需自己搭后端）。</p>
+    <a class="go-btn" href="https://rocom.shallow.ink/account/bindings" target="_blank" rel="noopener">前往 rocom.shallow.ink 绑定并查询 →</a>
+  </div>
+
+  <div class="panel">
+    <h2>🛠️ 想在自己站也做？需要这些</h2>
+    <div class="arch">
+      若以后要在本工具箱做真实家园查询，架构上需要：<br>
+      1. 一个<b>无服务代理</b>（Cloudflare Worker 等）持有 <code>API_KEY</code> 并转发 <code>wegame.shallow.ink</code> 的 <code>/home/info</code>；<br>
+      2. 用户<b>登录态</b>：要么让用户输入自己的 UID，要么接 WeGame OAuth（复杂，涉及凭证安全）；<br>
+      3. 前端按 UID 拉取并渲染菜园 / 守卫 / 室内精灵。<br>
+      工作量与合规风险都明显高于远行商人（远行商人货架是全服公开、无需个人凭证）。<b>建议先不做</b>，等官方稳定开放再评估。
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const t = document.getElementById('themeToggle');
+  const saved = localStorage.getItem('theme');
+  if (saved === 'light') document.documentElement.setAttribute('data-theme','light');
+  function sync(){
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    t.querySelector('.tt-icon').textContent = isLight ? '☀️' : '🌙';
+    t.querySelector('.tt-text').textContent = isLight ? '浅色' : '深色';
+  }
+  sync();
+  t.addEventListener('click', function(){
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    if (isLight){ document.documentElement.removeAttribute('data-theme'); localStorage.setItem('theme','dark'); }
+    else { document.documentElement.setAttribute('data-theme','light'); localStorage.setItem('theme','light'); }
+    sync();
+  });
+})();
+</script>
+</body>
+</html>
