@@ -84,7 +84,7 @@
   <div class="speed-intro">
     把每只精灵的<b>种族速度</b>按当前养成配置换算成实战<b>能力值</b>，从高到低排成「速度线」，用来判断<b>谁能先手</b>。
     公式：<code>能力值 = round( round(种族×1.1 + IV×0.55 + 10) × 性格 + 50 )</code>，
-    与伤害计算器同一套口径。默认显示<b>双加速</b>（满个体 IV=60 + 加速性格 1.2）并隐藏限定/异色皮肤，仅列主要形态。
+    与伤害计算器同一套口径。默认显示<b>双加速</b>（满个体 IV=60 + 加速性格 1.2）并<b>列出全部形态</b>（含限定/异色皮肤，如卡瓦重（雪山形态））；如需只看主要形态可勾选上方「仅主要形态」开关。
   </div>
 
   <div class="controls">
@@ -98,7 +98,7 @@
       </div>
     </div>
     <label class="switch">
-      <input type="checkbox" id="finalOnly" checked>
+      <input type="checkbox" id="finalOnly">
       <span class="track"></span>
       <span>仅主要形态（隐藏限定/异色皮肤）</span>
     </label>
@@ -145,7 +145,7 @@ function ability(sp, iv, nat){
   return Math.round( Math.round(sp * 1.1 + iv * 0.55 + 10) * nat + 50 );
 }
 
-const state = { cfg: 'double', finalOnly: true, q: '' };
+const state = { cfg: 'double', finalOnly: false, q: '' };
 
 function computeRows(){
   const cfg = CONFIGS[state.cfg];
