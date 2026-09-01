@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>技能图鉴 - 洛克王国 PVP 计算器</title>
+<link rel="stylesheet" href="css/head.css">
+<style>
+  .dex-nav { display:flex; gap:6px; margin-left:16px; align-items:center; flex-wrap:wrap; }
+  .dex-nav a { color:rgba(255,255,255,.82); text-decoration:none; font-size:13px; padding:5px 11px; border-radius:18px; border:1px solid rgba(255,255,255,.18); white-space:nowrap; }
+  .dex-nav a:hover { background:rgba(255,255,255,.15); }
+  .dex-nav a.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .toolbar { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:12px; }
+  .toolbar .search-wrap { margin-bottom:0; flex:1; min-width:200px; }
+  .toolbar .search-input { cursor:text; }
+  .filter-label { font-size:12px; color:var(--text2); }
+  .chip-row { display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
+  .fchip { cursor:pointer; font-size:12px; padding:3px 10px; border-radius:14px; border:1px solid var(--border); background:var(--card2); color:var(--text); user-select:none; }
+  .fchip:hover { border-color:var(--accent); }
+  .fchip.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .count { font-size:12px; color:var(--text2); margin-bottom:10px; }
+  .dex-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:14px; }
+  .dex-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px; display:flex; flex-direction:column; }
+  .dex-card .name { font-size:17px; font-weight:700; line-height:1.2; }
+  .dex-card .types { display:flex; gap:6px; margin-top:7px; flex-wrap:wrap; align-items:center; }
+  .cat-badge { font-size:11px; padding:2px 9px; border-radius:12px; font-weight:700; }
+  .cat-物攻 { background:rgba(255,112,67,.22); color:#ff7043; border:1px solid rgba(255,112,67,.4); }
+  .cat-魔攻 { background:rgba(124,107,255,.22); color:#a99bff; border:1px solid rgba(124,107,255,.4); }
+  .cat-状态 { background:rgba(102,187,106,.22); color:#66bb6a; border:1px solid rgba(102,187,106,.4); }
+  .cat-防御 { background:rgba(66,165,245,.22); color:#42a5f5; border:1px solid rgba(66,165,245,.4); }
+  .skill-meta { margin-top:11px; font-size:13px; color:var(--text2); }
+  .skill-meta b { color:var(--text); font-size:15px; }
+  .skill-desc { margin-top:8px; font-size:12.5px; color:var(--text2); line-height:1.5; }
+  .sub { color:var(--text2); font-size:13px; margin-bottom:14px; }
+</style>
+</head>
+<body>
+<header>
+  <div style="font-size:24px">📗</div>
+  <div style="display:flex;flex-direction:column;gap:2px">
+    <h1>技能图鉴</h1>
+  </div>
+  <nav class="dex-nav">
+    <a href="9178.html">伤害计算器</a>
+    <a href="pokedex.html">精灵图鉴</a>
+    <a href="skilldex.html" class="active">技能图鉴</a>
+  </nav>
+  <div class="header-actions">
+    <div class="theme-toggle" onclick="toggleTheme()">
+      <span class="tt-icon" id="theme-icon">🌙</span>
+      <span id="theme-label">夜间</span>
+    </div>
+  </div>
+</header>
+
+<div class="main">
+  <div class="toolbar">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="search-input" id="search" placeholder="搜索技能名称 / 拼音…">
+    </div>
+    <span class="filter-label">属性:</span>
+    <div class="chip-row" id="attrFilter"></div>
+    <span class="filter-label">分类:</span>
+    <div class="chip-row" id="catFilter"></div>
+  </div>
+  <div class="count" id="count"></div>
+  <div class="dex-grid" id="grid"></div>
+</div>
+
+<script src="data/skills.js"></script>
+<script src="data/type.js"></script>
+<script src="data/pinyin.js"></script>
+<script>
+  // ---------- theme ----------
+  function toggleTheme() {
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    if (isLight) {
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem('theme', 'dark');
+      document.getElementById('theme-icon').textContent = '🌙';
+      document.getElementById('theme-label').textContent = '夜间';
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+      localStorage.setItem('theme', 'light');
+      document.getElementById('theme-icon').textContent = '☀️';
+      document.getElementById('theme-label').textContent = '日间';
+    }
+  }
+  (function () {
+    const t = localStorage.getItem('theme');
+    if (t === 'light') {
+      document.documentElement.setAttribute('data-theme', 'light');
+      document.getElementById('theme-icon').textContent = '☀️';
+      document.getElementById('theme-label').textContent = '日间';
+    }
+  })();
+
+  // ---------- helpers ----------
+  function typeChip(t) {
+    const bg = (typeof TYPE_COLORS !== 'undefined' && TYPE_COLORS[t]) || '#888';
+    const tc = (typeof TYPE_TEXT_DARK !== 'undefined' && TYPE_TEXT_DARK.has(t)) ? '#333' : '#fff';
+    return '<span class="type-tag" style="background:' + bg + ';color:' + tc + '">' + t + '</span>';
+  }
+  function pinyinOf(n) {
+    if (typeof PINYIN_MAP === 'undefined') return n;
+    return n.split('').map(ch => PINYIN_MAP[ch] || ch).join('');
+  }
+
+  function cardHTML(s) {
+    const catCls = ['物攻', '魔攻', '状态', '防御'].includes(s.k) ? s.k : '状态';
+    const meta = '<span class="skill-meta">威力 <b>' + (s.p != null ? s.p : '—') + '</b> ｜ 耗能 <b>' + (s.c != null ? s.c : '—') + '</b></span>';
+    return '<div class="dex-card">' +
+             '<div class="name">' + s.n + '</div>' +
+             '<div class="types">' + typeChip(s.a) +
+               '<span class="cat-badge cat-' + catCls + '">' + s.k + '</span></div>' +
+             meta +
+             '<div class="skill-desc">' + (s.desc || '—') + '</div>' +
+           '</div>';
+  }
+
+  // ---------- state + render ----------
+  let activeAttr = '';
+  let activeCat = '';
+  let q = '';
+  const grid = document.getElementById('grid');
+  const attrs = [...new Set(SKILLS.map(s => s.a).filter(Boolean))].sort();
+  const cats = ['物攻', '魔攻', '状态', '防御'];
+
+  const af = document.getElementById('attrFilter');
+  const cf = document.getElementById('catFilter');
+  const chips = [];
+  function mkChip(parent, label, onClick) {
+    const el = document.createElement('span');
+    el.className = 'fchip';
+    el.textContent = label;
+    el.onclick = onClick;
+    parent.appendChild(el);
+    chips.push(el);
+    return el;
+  }
+  // attr chips
+  const attrChips = [];
+  mkChip(af, '全部', () => { activeAttr = ''; attrChips.forEach(c => c.classList.remove('active')); attrAll.classList.add('active'); render(); });
+  const attrAll = chips[chips.length - 1]; attrAll.classList.add('active'); attrChips.push(attrAll);
+  attrs.forEach(a => {
+    const el = mkChip(af, a, () => {
+      activeAttr = (activeAttr === a) ? '' : a;
+      attrChips.forEach(c => c.classList.remove('active'));
+      if (activeAttr) { attrChips[attrs.indexOf(a) + 1].classList.add('active'); }
+      else { attrAll.classList.add('active'); }
+      render();
+    });
+    attrChips.push(el);
+  });
+  // cat chips
+  const catChips = [];
+  mkChip(cf, '全部', () => { activeCat = ''; catChips.forEach(c => c.classList.remove('active')); catAll.classList.add('active'); render(); });
+  const catAll = chips[chips.length - 1]; catAll.classList.add('active'); catChips.push(catAll);
+  cats.forEach(cat => {
+    const el = mkChip(cf, cat, () => {
+      activeCat = (activeCat === cat) ? '' : cat;
+      catChips.forEach(c => c.classList.remove('active'));
+      if (activeCat) { catChips[cats.indexOf(cat) + 1].classList.add('active'); }
+      else { catAll.classList.add('active'); }
+      render();
+    });
+    catChips.push(el);
+  });
+
+  document.getElementById('search').addEventListener('input', e => { q = e.target.value; render(); });
+
+  function render() {
+    const ql = q.trim().toLowerCase();
+    const list = SKILLS.filter(s => {
+      if (activeAttr && s.a !== activeAttr) return false;
+      if (activeCat && s.k !== activeCat) return false;
+      if (ql) {
+        const hit = s.n.toLowerCase().includes(ql) || pinyinOf(s.n).toLowerCase().includes(ql);
+        if (!hit) return false;
+      }
+      return true;
+    });
+    document.getElementById('count').textContent = '共 ' + list.length + ' 个';
+    grid.innerHTML = list.map(cardHTML).join('');
+  }
+  render();
+</script>
+</body>
+</html>
