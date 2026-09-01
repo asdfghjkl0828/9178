@@ -84,12 +84,13 @@
   <div class="mch-intro">
     远行商人每天 <b>08:00 / 12:00 / 16:00 / 20:00</b> 四轮刷新，每轮货架保留 <b>4 小时</b>（08:00–24:00 营业）。本页通过代理拉取<b>当前轮次</b>的真实货架，并把你关注的商品高亮标出，方便蹲点抢购。
     <details class="guide">
-      <summary>还没配置代理？点开看部署指引</summary>
+      <summary>还没配置代理？点开看部署指引（约 3 分钟）</summary>
       <ol>
         <li>申请 <b>WeGame API Key</b>：登录 <code>https://rocom.shallow.ink/</code> → 开发者平台 / API Key 页面申请（需 WeGame 作用域）。</li>
-        <li>部署代理（Cloudflare Worker，免费）：把本仓库 <code>worker.js</code> 内容粘贴到 Worker 编辑器中，在 Worker <b>设置 → 变量</b> 里加环境变量 <code>API_KEY</code> = 你的 Key。</li>
-        <li>部署后得到地址如 <code>https://rocom-proxy.xxx.workers.dev</code>，把它填入本页脚本顶部的 <code>WORKER_URL</code> 常量（或发给助理代填），推送上线即可。</li>
-        <li>为什么必须代理：后端 <code>wegame.shallow.ink</code> 无 CORS 头、且 Key 不能暴露在前端，必须由服务端代理转发。</li>
+        <li>部署免费代理（Cloudflare Worker）：登录 <code>dash.cloudflare.com</code> → Workers → 新建 Worker → 把本仓库 <code>worker.js</code> 内容粘贴进去并部署。</li>
+        <li>绑定 Key（<b>关键·安全</b>）：Worker <b>Settings → Variables</b> 添加环境变量 <code>API_KEY</code> = 你的 Key，并设为 <b>Secret</b>。<b>Key 只放这里——不要发到聊天、也不要写进任何前端代码或仓库。</b><code>worker.js</code> 读的是环境变量，本身不含 Key，可安全提交。</li>
+        <li>把部署得到的地址（如 <code>https://rocom-proxy.xxx.workers.dev</code>）发给我，我填进本页 <code>WORKER_URL</code> 常量并推送，真实货架即可显示。</li>
+        <li>为什么必须代理：后端 <code>wegame.shallow.ink</code> 无 CORS 头，且 Key 一旦进前端就会公开泄露并被限流，所以必须由服务端代理转发。</li>
       </ol>
     </details>
   </div>
