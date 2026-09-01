@@ -293,3 +293,8 @@
     .formula-row { font-size: 10px; word-break: break-all; }
     .search-input, .niv-select, .field-input, .skill-lib-search, .mult-box-input, .reduce-input { font-size: 16px; }
   }
+
+  .dex-nav { display:flex; gap:6px; margin-left:16px; align-items:center; flex-wrap:wrap; }
+  .dex-nav a { color:rgba(255,255,255,.82); text-decoration:none; font-size:13px; padding:5px 11px; border-radius:18px; border:1px solid rgba(255,255,255,.18); white-space:nowrap; }
+  .dex-nav a:hover { background:rgba(255,255,255,.15); }
+  .dex-nav a.active { background:var(--accent); border-color:var(--accent); color:#fff; }
