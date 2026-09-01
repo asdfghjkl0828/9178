@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>速度榜单 - Roke 伤害计算工具箱</title>
+<link rel="stylesheet" href="css/head.css">
+<style>
+  .speed-intro { font-size:13px; color:var(--text2); line-height:1.7; margin-bottom:14px; background:rgba(124,107,255,.07); border:1px solid rgba(124,107,255,.22); border-radius:10px; padding:10px 14px; }
+  .speed-intro b { color:var(--accent); }
+  .speed-intro code { background:var(--bg); padding:1px 6px; border-radius:5px; color:var(--text); font-size:12px; }
+
+  .controls { display:flex; flex-wrap:wrap; gap:14px; align-items:flex-end; margin-bottom:12px; }
+  .control-group { display:flex; flex-direction:column; gap:6px; }
+  .control-group > label { font-size:12px; color:var(--text2); font-weight:600; }
+  .seg { display:inline-flex; background:var(--bg); border:1px solid var(--border); border-radius:9px; padding:3px; gap:3px; flex-wrap:wrap; }
+  .seg button { border:none; background:transparent; color:var(--text2); font-family:inherit; font-size:13px; font-weight:600; padding:7px 12px; border-radius:7px; cursor:pointer; transition:.15s; }
+  .seg button:hover { color:var(--text); }
+  .seg button.active { background:var(--accent); color:#fff; }
+  .switch { display:inline-flex; align-items:center; gap:8px; cursor:pointer; user-select:none; font-size:13px; color:var(--text); background:var(--card); border:1px solid var(--border); border-radius:9px; padding:9px 12px; }
+  .switch input { display:none; }
+  .switch .track { width:38px; height:21px; border-radius:11px; background:var(--border); position:relative; transition:.2s; flex-shrink:0; }
+  .switch .track::after { content:''; position:absolute; top:2px; left:2px; width:17px; height:17px; border-radius:50%; background:#fff; transition:.2s; }
+  .switch input:checked + .track { background:var(--accent); }
+  .switch input:checked + .track::after { transform:translateX(17px); }
+
+  .speed-search { flex:1; min-width:180px; position:relative; }
+  .speed-search input { width:100%; background:var(--bg); border:1px solid var(--border); border-radius:9px; padding:10px 12px 10px 34px; color:var(--text); font-size:14px; font-family:inherit; }
+  .speed-search input:focus { outline:none; border-color:var(--accent); }
+  .speed-search .si { position:absolute; left:11px; top:50%; transform:translateY(-50%); color:var(--text2); font-size:14px; pointer-events:none; }
+
+  .stat-line { font-size:12px; color:var(--text2); margin:6px 2px 12px; }
+  .stat-line b { color:var(--text); }
+
+  .speed-table { width:100%; border-collapse:separate; border-spacing:0 4px; }
+  .speed-table thead th { font-size:12px; color:var(--text2); text-align:left; padding:4px 10px; font-weight:700; }
+  .speed-table thead th.num { text-align:right; }
+  .speed-row { background:var(--card); transition:background .12s; }
+  .speed-row:hover { background:var(--card2); }
+  .speed-row td { padding:9px 10px; vertical-align:middle; border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
+  .speed-row td:first-child { border-left:1px solid var(--border); border-top-left-radius:10px; border-bottom-left-radius:10px; }
+  .speed-row td:last-child { border-right:1px solid var(--border); border-top-right-radius:10px; border-bottom-right-radius:10px; }
+  .rk { font-size:15px; font-weight:800; color:var(--text2); width:42px; text-align:center; }
+  .rk.top { color:var(--accent); }
+  .base-sp { font-size:14px; font-weight:700; color:var(--text); width:74px; }
+  .abil { font-size:18px; font-weight:800; color:#4FBD72; width:60px; text-align:right; }
+  .abil-bar-wrap { min-width:160px; }
+  .abil-bar { height:9px; border-radius:5px; background:linear-gradient(90deg,var(--accent),#4FBD72); }
+  .spirit-cell { display:flex; align-items:center; gap:9px; }
+  .ava-wrap { position:relative; width:40px; height:40px; border-radius:50%; overflow:hidden; flex-shrink:0; background:var(--bg); }
+  .ava-wrap img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  .ava-wrap .fallback { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--text2); font-size:15px; }
+  .spirit-cell a { color:var(--text); text-decoration:none; font-weight:600; font-size:14px; }
+  .spirit-cell a:hover { color:var(--accent); text-decoration:underline; }
+  .empty-row td { text-align:center; color:var(--text2); padding:24px; }
+  @media (max-width:640px){ .abil-bar-wrap { display:none; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>速度榜单</h1>
+  <span>洛克王国精灵速度线 · 谁先手一目了然</span>
+  <nav class="dex-nav">
+    <a href="9178.html">伤害计算器</a>
+    <a href="pokedex.html">精灵图鉴</a>
+    <a href="skilldex.html">技能图鉴</a>
+    <a href="restraint.html">克制计算器</a>
+    <a href="speed.html" class="active">速度榜单</a>
+  </nav>
+  <div class="header-actions">
+    <div class="theme-toggle" id="themeToggle"><span class="tt-icon">🌙</span><span class="tt-text">深色</span></div>
+  </div>
+</header>
+
+<div class="main">
+  <div class="speed-intro">
+    把每只精灵的<b>种族速度</b>按当前养成配置换算成实战<b>能力值</b>，从高到低排成「速度线」，用来判断<b>谁能先手</b>。
+    公式：<code>能力值 = round( round(种族×1.1 + IV×0.55 + 10) × 性格 + 50 )</code>，
+    与伤害计算器同一套口径。默认显示<b>双加速</b>（满个体 IV=60 + 加速性格 1.2）并隐藏限定/异色皮肤，仅列主要形态。
+  </div>
+
+  <div class="controls">
+    <div class="control-group">
+      <label>养成配置</label>
+      <div class="seg" id="cfgSeg">
+        <button data-iv="60" data-nat="1.2" class="active">双加速</button>
+        <button data-iv="60" data-nat="1.0">仅个体</button>
+        <button data-iv="0" data-nat="1.2">仅性格</button>
+        <button data-iv="0" data-nat="1.0">无加成</button>
+      </div>
+    </div>
+    <label class="switch">
+      <input type="checkbox" id="finalOnly" checked>
+      <span class="track"></span>
+      <span>仅主要形态（隐藏限定/异色皮肤）</span>
+    </label>
+    <div class="speed-search">
+      <span class="si">🔍</span>
+      <input type="text" id="search" placeholder="搜索精灵名…">
+    </div>
+  </div>
+
+  <div class="stat-line" id="statLine"></div>
+
+  <table class="speed-table">
+    <thead>
+      <tr>
+        <th class="num">#</th>
+        <th>种族速度</th>
+        <th class="num">能力值</th>
+        <th>速度线</th>
+        <th>精灵</th>
+      </tr>
+    </thead>
+    <tbody id="speedBody"></tbody>
+  </table>
+</div>
+
+<script src="data/spirits.js"></script>
+<script>
+const CONFIGS = {
+  double: { iv: 60, nat: 1.2, label: '双加速' },
+  ivOnly: { iv: 60, nat: 1.0, label: '仅个体加速' },
+  natOnly:{ iv: 0,  nat: 1.2, label: '仅性格加速' },
+  none:   { iv: 0,  nat: 1.0, label: '无加成' }
+};
+
+// 异色/限定皮肤：名称带括号且含形态标记，视为非主要形态
+const ALT_FORM_RE = /（[^）]*(?:的样子|形态|附近|季节|觉醒前|原本)/;
+
+function isMainForm(s){
+  if (s.n.indexOf('（') < 0) return true;
+  return !ALT_FORM_RE.test(s.n);
+}
+
+function ability(sp, iv, nat){
+  return Math.round( Math.round(sp * 1.1 + iv * 0.55 + 10) * nat + 50 );
+}
+
+const state = { cfg: 'double', finalOnly: true, q: '' };
+
+function computeRows(){
+  const cfg = CONFIGS[state.cfg];
+  let rows = SPIRITS
+    .filter(s => s.sp != null)
+    .map(s => ({ s, sp: s.sp, abil: ability(s.sp, cfg.iv, cfg.nat) }));
+  if (state.finalOnly) rows = rows.filter(r => isMainForm(r.s));
+  if (state.q){
+    const q = state.q.trim().toLowerCase();
+    rows = rows.filter(r => r.s.n.toLowerCase().indexOf(q) >= 0);
+  }
+  rows.sort((a,b) => b.abil - a.abil || b.sp - a.sp || a.s.n.localeCompare(b.s.n, 'zh'));
+  return rows;
+}
+
+function buildTable(){
+  const rows = computeRows();
+  const maxAbil = rows.length ? rows[0].abil : 1;
+  const body = document.getElementById('speedBody');
+  if (!rows.length){
+    body.innerHTML = '<tr class="empty-row"><td colspan="5">没有匹配的精灵</td></tr>';
+    document.getElementById('statLine').innerHTML = '';
+    return;
+  }
+  const cfg = CONFIGS[state.cfg];
+  document.getElementById('statLine').innerHTML =
+    '当前配置：<b>' + cfg.label + '</b>（IV=' + cfg.iv + '，性格=' + cfg.nat + '） · 共 <b>' +
+    rows.length + '</b> 只 · 最快 <b>' + rows[0].abil + '</b> / 最慢 <b>' + rows[rows.length-1].abil + '</b>';
+
+  body.innerHTML = rows.map(function(r, i){
+    const rank = i + 1;
+    const pct = Math.max(4, Math.round(r.abil / maxAbil * 100));
+    const ch = r.s.n.charAt(0);
+    const img = r.s.img
+      ? '<span class="ava-wrap"><span class="fallback">' + ch + '</span><img src="' + r.s.img + '" alt="' + r.s.n + '" loading="lazy" onerror="this.style.display=\'none\'"></span>'
+      : '<span class="ava-wrap"><span class="fallback">' + ch + '</span></span>';
+    const rkCls = rank <= 3 ? 'rk top' : 'rk';
+    return '<tr class="speed-row">' +
+      '<td class="' + rkCls + '">' + rank + '</td>' +
+      '<td class="base-sp">' + r.sp + '</td>' +
+      '<td class="abil">' + r.abil + '</td>' +
+      '<td class="abil-bar-wrap"><div class="abil-bar" style="width:' + pct + '%"></div></td>' +
+      '<td><div class="spirit-cell">' + img +
+        '<a href="pokedex.html?spirit=' + encodeURIComponent(r.s.n) + '">' + r.s.n + '</a></div></td>' +
+    '</tr>';
+  }).join('');
+}
+
+// 控件绑定
+document.getElementById('cfgSeg').addEventListener('click', function(e){
+  const btn = e.target.closest('button');
+  if (!btn) return;
+  const iv = btn.dataset.iv, nat = btn.dataset.nat;
+  for (const k in CONFIGS){
+    if (String(CONFIGS[k].iv) === iv && String(CONFIGS[k].nat) === nat){ state.cfg = k; break; }
+  }
+  Array.prototype.forEach.call(this.children, function(b){ b.classList.toggle('active', b === btn); });
+  buildTable();
+});
+document.getElementById('finalOnly').addEventListener('change', function(){
+  state.finalOnly = this.checked; buildTable();
+});
+document.getElementById('search').addEventListener('input', function(){
+  state.q = this.value; buildTable();
+});
+
+// 主题切换
+(function(){
+  const t = document.getElementById('themeToggle');
+  const saved = localStorage.getItem('theme');
+  if (saved === 'light') document.documentElement.setAttribute('data-theme','light');
+  function sync(){
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    t.querySelector('.tt-icon').textContent = isLight ? '☀️' : '🌙';
+    t.querySelector('.tt-text').textContent = isLight ? '浅色' : '深色';
+  }
+  sync();
+  t.addEventListener('click', function(){
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    if (isLight){ document.documentElement.removeAttribute('data-theme'); localStorage.setItem('theme','dark'); }
+    else { document.documentElement.setAttribute('data-theme','light'); localStorage.setItem('theme','light'); }
+    sync();
+  });
+})();
+
+buildTable();
+</script>
+</body>
+</html>
