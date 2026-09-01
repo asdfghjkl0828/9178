@@ -1,9 +1,12 @@
 name: Refresh Rocom Data
 
 on:
-  schedule:
-    - cron: '*/15 * * * *'   # 每 15 分钟（GitHub Actions 最低粒度，远行商人 4h 一变，足够）
-  workflow_dispatch:        # 手动立即触发
+  # 自动调度已禁用：不充钱时每 15 分钟空跑会持续消耗 rocom 平台积分
+  # （merchant 5 / home 20 每次）并写 402 错误页污染数据文件。
+  # 充钱且有积分后，取消下方注释即可恢复自动刷新：
+  #  schedule:
+  #    - cron: '*/15 * * * *'
+  workflow_dispatch:        # 手动立即触发（Run workflow）
   repository_dispatch:
     types: [refresh-rocom]
 
