@@ -72,22 +72,24 @@
 
 <div class="main">
   <div class="home-intro">
-    输入同学的<b>洛克 UID</b>（数字），即可查询 TA 的家园情况：菜园作物、守卫精灵、室内摆放精灵。数据经代理转发游戏接口，<b>无需同学本人登录</b>。
+    选择预设同学的<b>洛克 UID</b>，即可查看 TA 的家园情况：菜园作物、守卫精灵、室内摆放精灵。数据由定时任务自动抓取，<b>无需同学本人登录</b>。
     <details class="guide">
-      <summary>还没配置代理？点开看部署指引</summary>
+      <summary>数据怎么来的？（点击展开）</summary>
       <ol>
-        <li>申请 <b>WeGame API Key</b>：登录 <code>https://rocom.shallow.ink/</code> → 开发者平台 / API Key 页面申请（需 WeGame 作用域）。</li>
-        <li>部署免费代理（Cloudflare Worker）：登录 <code>dash.cloudflare.com</code> → Workers → 新建 Worker → 把本仓库 <code>worker.js</code> 内容粘贴进去并部署。</li>
-        <li>绑定 Key（<b>关键·安全</b>）：Worker <b>Settings → Variables</b> 添加环境变量 <code>API_KEY</code> = 你的 Key，并设为 <b>Secret</b>。<b>Key 只放这里，不要发到聊天、不要写进前端代码或仓库。</b></li>
-        <li>把部署得到的地址（如 <code>https://rocom-proxy.xxx.workers.dev</code>）发给我，我填进本页 <code>WORKER_URL</code> 常量并推送，查询即可使用。</li>
+        <li>本页由 GitHub Actions 定时任务（每 15 分钟）按预设 UID 列表自动抓取，存为 <code>data/home_&lt;uid&gt;.json</code>，前端直接读取——<b>无需代理、大陆可访问</b>。</li>
+        <li>想查某个同学？把 TA 的洛克 UID（和昵称）发给助理，助理加入 <code>data/uids.json</code> 并推送，约 15 分钟内自动出数据。</li>
+        <li>WeGame API Key 仅存于 GitHub 仓库 Secrets，不进前端。</li>
       </ol>
     </details>
   </div>
 
   <div class="search">
-    <input id="uidInput" placeholder="输入洛克 UID，如 12345678" inputmode="numeric" autocomplete="off">
+    <select id="uidSelect" style="flex:1; min-width:0; height:44px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text); padding:0 14px; font-size:15px; font-family:inherit;">
+      <option value="">— 选择预设同学 UID —</option>
+    </select>
     <button id="searchBtn">查询</button>
   </div>
+  <div style="font-size:11px;color:var(--text2);margin-top:8px;">没有同学？把 TA 的 UID 发给助理加入预设列表，约 15 分钟自动同步。</div>
 
   <div class="mch-err" id="homeErr"></div>
   <div id="result"></div>
@@ -104,8 +106,6 @@
 </div>
 
 <script>
-const WORKER_URL = "https://raspy-hill-0440.3128926988.workers.dev"; // 例如 "https://rocom-proxy.xxx.workers.dev"
-
 // ---------- 主题切换（与全站一致） ----------
 (function(){
   const t = document.getElementById('themeToggle');
@@ -257,40 +257,59 @@ function render(raw, uid){
   $('result').innerHTML = html;
 }
 
+// ---------- 加载预设 UID 列表 ----------
+async function loadUids(){
+  try {
+    const resp = await fetch('data/uids.json', { cache:'no-store' });
+    const list = await resp.json();
+    if(!Array.isArray(list)) return;
+    const sel = $('uidSelect');
+    list.forEach(function(item){
+      const uid = item.uid || item;
+      const name = item.name || uid;
+      const opt = document.createElement('option');
+      opt.value = String(uid);
+      opt.textContent = name + '（' + uid + '）';
+      sel.appendChild(opt);
+    });
+  } catch(e){ /* 忽略 */ }
+}
+
 // ---------- 查询 ----------
 async function doQuery(){
   hideErr();
-  const uid = ($('uidInput').value||'').trim();
-  if(!WORKER_URL){
-    showErr('⚠ 尚未配置代理地址 <code>WORKER_URL</code>。请按页面顶部「部署指引」申请 Key、部署 Cloudflare Worker，并把地址发给助理填进脚本顶部常量后推送。');
-    return;
-  }
+  const uid = ($('uidSelect').value||'').trim();
   if(!uid){
-    showErr('⚠ 请输入洛克 UID（数字）。');
+    showErr('⚠ 请先在下拉框选择一个预设同学的 UID。没有？把同学 UID 发给助理加入预设列表。');
     return;
   }
   const btn = $('searchBtn');
   btn.disabled = true;
-  $('result').innerHTML = '<div class="loading">查询中…（上游异步任务，请稍候数秒）</div>';
+  $('result').innerHTML = '<div class="loading">读取 '+esc(uid)+' 的家园数据…（每 15 分钟自动同步）</div>';
   try {
-    const resp = await fetch(WORKER_URL.replace(/\/$/,'') + '/home?uid=' + encodeURIComponent(uid), { cache:'no-store' });
+    const resp = await fetch('data/home_' + encodeURIComponent(uid) + '.json', { cache:'no-store' });
+    if(resp.status === 404){
+      showErr('⚠ 该 UID 的数据尚未抓取（可能刚加入预设列表，请等下次自动同步，或到仓库 Actions 页手动 Run workflow 立即触发）。');
+      $('result').innerHTML = '';
+      return;
+    }
     const j = await resp.json().catch(()=>({}));
     if(!resp.ok){
-      showErr('⚠ 代理返回错误：' + esc(j.error || ('HTTP '+resp.status)) + (j.raw? '<br><code>'+esc(j.raw)+'</code>':''));
+      showErr('⚠ 数据加载失败（HTTP '+resp.status+'）。');
       $('result').innerHTML = '';
       return;
     }
     render(j, uid);
   } catch(e){
-    showErr('⚠ 无法连接代理 <code>'+esc(WORKER_URL)+'</code>：'+esc(e.message)+'。请确认 Worker 地址正确且已部署。');
+    showErr('⚠ 无法加载数据：'+esc(e.message));
     $('result').innerHTML = '';
   } finally {
     btn.disabled = false;
   }
 }
 
+loadUids();
 $('searchBtn').addEventListener('click', doQuery);
-$('uidInput').addEventListener('keydown', function(e){ if(e.key==='Enter') doQuery(); });
 </script>
 </body>
 </html>
