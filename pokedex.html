@@ -19,8 +19,10 @@
   .fchip:hover { border-color:var(--accent); }
   .fchip.active { background:var(--accent); border-color:var(--accent); color:#fff; }
   .count { font-size:12px; color:var(--text2); margin-bottom:10px; }
+  .sub { color:var(--text2); font-size:13px; margin-bottom:12px; }
   .dex-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:14px; }
-  .dex-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px; display:flex; flex-direction:column; }
+  .dex-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px; display:flex; flex-direction:column; cursor:pointer; transition:transform .12s, box-shadow .12s, border-color .12s; }
+  .dex-card:hover { transform:translateY(-2px); border-color:var(--accent); box-shadow:0 6px 22px rgba(0,0,0,.22); }
   .dex-card .top { display:flex; gap:12px; align-items:center; }
   .dex-card .no { font-size:11px; color:var(--text2); }
   .dex-card .name { font-size:17px; font-weight:700; line-height:1.2; }
@@ -33,9 +35,36 @@
   .trait { margin-top:11px; font-size:12px; }
   .trait .tn { color:var(--accent2); font-weight:700; }
   .trait .td { color:var(--text2); margin-top:3px; line-height:1.45; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
-  .go-btn { margin-top:12px; align-self:flex-start; font-size:12px; color:#fff; background:linear-gradient(135deg,#7c5cbf,#5b3fa0); border:none; border-radius:8px; padding:6px 14px; cursor:pointer; text-decoration:none; }
+  .go-btn { margin-top:12px; align-self:flex-start; font-size:12px; color:#fff; background:linear-gradient(135deg,#7c5cbf,#5b3fa0); border:none; border-radius:8px; padding:6px 14px; cursor:pointer; text-decoration:none; position:relative; z-index:2; }
   .go-btn:hover { filter:brightness(1.1); }
-  .sub { color:var(--text2); font-size:13px; margin-bottom:14px; }
+  .card-hint { margin-top:11px; font-size:11px; color:var(--accent); }
+  .cat-badge { font-size:11px; padding:2px 9px; border-radius:12px; font-weight:700; }
+  .cat-物攻 { background:rgba(255,112,67,.22); color:#ff7043; border:1px solid rgba(255,112,67,.4); }
+  .cat-魔攻 { background:rgba(124,107,255,.22); color:#a99bff; border:1px solid rgba(124,107,255,.4); }
+  .cat-状态 { background:rgba(102,187,106,.22); color:#66bb6a; border:1px solid rgba(102,187,106,.4); }
+  .cat-防御 { background:rgba(66,165,245,.22); color:#42a5f5; border:1px solid rgba(66,165,245,.4); }
+  /* modal */
+  .modal-overlay { position:fixed; inset:0; background:rgba(8,8,16,.62); display:none; align-items:flex-start; justify-content:center; padding:48px 16px; z-index:1000; overflow:auto; }
+  .modal-overlay.open { display:flex; }
+  .modal-box { background:var(--card); border:1px solid var(--border); border-radius:16px; max-width:780px; width:100%; margin:auto; padding:22px 24px 26px; position:relative; box-shadow:0 24px 70px rgba(0,0,0,.45); }
+  .modal-close { position:absolute; top:14px; right:14px; width:30px; height:30px; border:none; border-radius:50%; background:var(--card2); color:var(--text); font-size:15px; cursor:pointer; line-height:1; }
+  .modal-close:hover { background:var(--accent); color:#fff; }
+  .detail-head { display:flex; gap:14px; align-items:center; }
+  .modal-avatar .spirit-avatar { width:84px; height:84px; font-size:34px; border-radius:12px; }
+  .detail-head .name { font-size:22px; font-weight:800; }
+  .detail-head .no { font-size:12px; color:var(--text2); }
+  .detail-head .types { display:flex; gap:6px; margin-top:7px; flex-wrap:wrap; }
+  .stat-grid { margin-top:16px; display:grid; grid-template-columns:1fr 1fr; gap:5px 18px; }
+  .detail-sec-title { margin-top:20px; font-size:15px; font-weight:700; color:var(--text); display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .detail-sec-title .hint { font-size:11px; color:var(--text2); font-weight:400; }
+  .badge-count { background:var(--accent); color:#fff; padding:1px 9px; border-radius:10px; font-size:12px; }
+  .skill-link-grid { margin-top:11px; display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:8px; }
+  .skill-link { cursor:pointer; background:var(--card2); border:1px solid var(--border); border-radius:9px; padding:8px 10px; display:flex; flex-direction:column; gap:6px; transition:border-color .12s; }
+  .skill-link:hover { border-color:var(--accent); }
+  .skill-link .sl-top { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+  .skill-link .sl-name { font-weight:700; font-size:14px; }
+  .skill-link .sl-meta { font-size:11.5px; color:var(--text2); }
+  .detail-empty { margin-top:12px; color:var(--text2); font-size:13px; }
 </style>
 </head>
 <body>
@@ -67,12 +96,22 @@
     <div class="chip-row" id="attrFilter"></div>
   </div>
   <div class="count" id="count"></div>
+  <div class="sub">点击任意精灵卡片 → 查看它可学习的全部技能 ✦</div>
   <div class="dex-grid" id="grid"></div>
+</div>
+
+<div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modal-body"></div>
+  </div>
 </div>
 
 <script src="data/spirits.js"></script>
 <script src="data/type.js"></script>
 <script src="data/pinyin.js"></script>
+<script src="data/spirit_skills.js"></script>
+<script src="data/skills.js"></script>
 <script>
   // ---------- theme ----------
   function toggleTheme() {
@@ -110,6 +149,10 @@
   }
   const STAT_MAX = 200;
   const STATS = [['hp', 'HP'], ['pa', '物攻'], ['ma', '魔攻'], ['pd', '物防'], ['md', '魔防'], ['sp', '速度']];
+  const CAT_ORDER = { '物攻': 0, '魔攻': 1, '防御': 2, '状态': 3 };
+
+  const SPIRIT_BY_NAME = Object.fromEntries(SPIRITS.map(s => [s.n, s]));
+  const SKILL_BY_NAME  = (typeof SKILLS !== 'undefined') ? Object.fromEntries(SKILLS.map(s => [s.n, s])) : {};
 
   function avatarHTML(s) {
     const ch = (s.n || '?').charAt(0);
@@ -121,30 +164,99 @@
            '</div>';
   }
 
-  function cardHTML(s) {
-    const types = (s.a1 ? typeChip(s.a1) : '') + (s.a2 ? typeChip(s.a2) : '');
-    const stats = STATS.map(([k, label]) => {
+  function statRowsHTML(s) {
+    return STATS.map(([k, label]) => {
       const v = s[k] || 0;
       const w = Math.max(4, Math.min(100, Math.round(v / STAT_MAX * 100)));
       return '<div class="stat-row"><span class="sl">' + label + '</span>' +
              '<span class="sv">' + v + '</span>' +
              '<span class="stat-bar"><i style="width:' + w + '%"></i></span></div>';
     }).join('');
+  }
+
+  function cardHTML(s) {
+    const types = (s.a1 ? typeChip(s.a1) : '') + (s.a2 ? typeChip(s.a2) : '');
+    const stats = statRowsHTML(s);
     const trait = s.tr
       ? '<div class="trait"><span class="tn">' + s.tr + '</span>' +
         (s.tr_desc ? '<div class="td" title="' + (s.tr_desc || '').replace(/"/g, '&quot;') + '">' + s.tr_desc + '</div>' : '') +
         '</div>'
       : '';
-    return '<div class="dex-card">' +
+    return '<div class="dex-card" data-name="' + s.n + '">' +
              '<div class="top">' + avatarHTML(s) +
                '<div><div class="no">NO.' + (s.no || '?') + '</div>' +
                '<div class="name">' + s.n + '</div>' +
                '<div class="types">' + types + '</div></div>' +
              '</div>' +
              stats + trait +
-             '<a class="go-btn" href="9178.html">去伤害计算 →</a>' +
+             '<a class="go-btn" href="9178.html?spirit=' + encodeURIComponent(s.n) + '">去伤害计算 →</a>' +
+             '<div class="card-hint">点击查看可学技能 →</div>' +
            '</div>';
   }
+
+  // ---------- modal ----------
+  function showModal(html) {
+    document.getElementById('modal-body').innerHTML = html;
+    document.getElementById('modal').classList.add('open');
+  }
+  function closeModal() {
+    document.getElementById('modal').classList.remove('open');
+    document.getElementById('modal-body').innerHTML = '';
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  function goSkill(name) {
+    location.href = 'skilldex.html?skill=' + encodeURIComponent(name);
+  }
+
+  function openSpiritDetail(name) {
+    const s = SPIRIT_BY_NAME[name];
+    if (!s) return;
+    const names = (typeof SPIRIT_SKILLS !== 'undefined' && SPIRIT_SKILLS[name]) || [];
+    const skills = names.map(n => SKILL_BY_NAME[n]).filter(Boolean);
+    skills.sort((a, b) => (CAT_ORDER[a.k] != null ? CAT_ORDER[a.k] : 9) - (CAT_ORDER[b.k] != null ? CAT_ORDER[b.k] : 9) || (b.p || 0) - (a.p || 0));
+
+    const types = (s.a1 ? typeChip(s.a1) : '') + (s.a2 ? typeChip(s.a2) : '');
+    let body = '<div class="detail-head"><div class="modal-avatar">' + avatarHTML(s) + '</div>' +
+               '<div><div class="no">NO.' + (s.no || '?') + '</div>' +
+               '<div class="name">' + s.n + '</div>' +
+               '<div class="types">' + types + '</div></div></div>';
+
+    body += '<div class="stat-grid">' + statRowsHTML(s) + '</div>';
+    if (s.tr) {
+      body += '<div class="trait" style="margin-top:14px"><span class="tn">' + s.tr + '</span>' +
+              (s.tr_desc ? '<div class="td" style="display:block;-webkit-line-clamp:initial">' + s.tr_desc + '</div>' : '') +
+              '</div>';
+    }
+
+    if (skills.length) {
+      body += '<div class="detail-sec-title">可学技能 <span class="badge-count">' + skills.length + '</span>' +
+              '<span class="hint">（点击技能查看哪些精灵能学 →）</span></div>';
+      body += '<div class="skill-link-grid">' + skills.map(sk => {
+        const catCls = ['物攻', '魔攻', '状态', '防御'].includes(sk.k) ? sk.k : '状态';
+        return '<div class="skill-link" data-skill="' + sk.n + '">' +
+                 '<div class="sl-top"><span class="sl-name">' + sk.n + '</span>' +
+                   typeChip(sk.a) +
+                   '<span class="cat-badge cat-' + catCls + '">' + sk.k + '</span></div>' +
+                 '<div class="sl-meta">威力 <b style="color:var(--text)">' + (sk.p != null ? sk.p : '—') + '</b> ｜ 耗能 <b style="color:var(--text)">' + (sk.c != null ? sk.c : '—') + '</b></div>' +
+               '</div>';
+      }).join('') + '</div>';
+    } else {
+      body += '<div class="detail-empty">暂无该精灵的技能数据。</div>';
+    }
+
+    showModal(body);
+    document.querySelectorAll('#modal-body .skill-link').forEach(el => {
+      el.addEventListener('click', () => goSkill(el.dataset.skill));
+    });
+  }
+
+  // card click → open detail (skip when clicking the "去伤害计算" button)
+  document.getElementById('grid').addEventListener('click', e => {
+    if (e.target.closest('.go-btn')) return;
+    const card = e.target.closest('.dex-card');
+    if (card) openSpiritDetail(card.dataset.name);
+  });
 
   // ---------- state + render ----------
   let activeAttr = '';
@@ -152,7 +264,6 @@
   const grid = document.getElementById('grid');
   const attrs = [...new Set(SPIRITS.flatMap(s => [s.a1, s.a2].filter(Boolean)))].sort();
 
-  // attribute filter chips
   const af = document.getElementById('attrFilter');
   const chips = [];
   function mkChip(label, onClick) {
@@ -193,6 +304,12 @@
     grid.innerHTML = list.map(cardHTML).join('');
   }
   render();
+
+  // ---------- deep link: ?spirit= ----------
+  (function () {
+    const sp = new URLSearchParams(location.search).get('spirit');
+    if (sp && SPIRIT_BY_NAME[sp]) openSpiritDetail(sp);
+  })();
 </script>
 </body>
 </html>
