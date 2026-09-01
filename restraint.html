@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>克制计算器 - Roke 伤害计算工具箱</title>
+<link rel="stylesheet" href="css/head.css">
+<style>
+  .restrain-intro { font-size:13px; color:var(--text2); line-height:1.7; margin-bottom:14px; background:rgba(124,107,255,.07); border:1px solid rgba(124,107,255,.22); border-radius:10px; padding:10px 14px; }
+  .restrain-intro b { color:var(--accent); }
+  .type-selectors { display:flex; gap:14px; flex-wrap:wrap; margin-bottom:12px; }
+  .type-select { flex:1; min-width:200px; }
+  .type-select .ts-label { font-size:12px; color:var(--text2); margin-bottom:6px; font-weight:600; }
+  .ts-btn { width:100%; display:flex; align-items:center; gap:10px; background:var(--card); border:1px solid var(--border); border-radius:10px; padding:10px 12px; cursor:pointer; color:var(--text); font-size:15px; font-weight:600; font-family:inherit; position:relative; }
+  .ts-btn:hover { border-color:var(--accent); }
+  .ts-btn .ts-icon { width:30px; height:30px; border-radius:8px; background:var(--bg); display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0; }
+  .ts-btn .ts-icon img { width:100%; height:100%; object-fit:contain; }
+  .ts-btn .ts-name { flex:1; text-align:left; }
+  .ts-btn .ts-arrow { font-size:11px; color:var(--text2); transition:transform .2s; }
+  .ts-btn.is-open .ts-arrow { transform:rotate(180deg); }
+  .ts-menu { display:none; position:absolute; z-index:200; width:100%; background:var(--dropdown-bg); border:1px solid var(--border); border-radius:10px; max-height:280px; overflow-y:auto; top:calc(100% + 4px); left:0; box-shadow:0 8px 24px rgba(0,0,0,.25); padding:4px; }
+  .ts-menu.open { display:block; }
+  .ts-option { display:flex; align-items:center; gap:10px; padding:7px 10px; border-radius:8px; cursor:pointer; font-size:14px; }
+  .ts-option:hover { background:var(--card2); }
+  .ts-option .ts-icon { width:26px; height:26px; border-radius:6px; background:var(--bg); display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0; }
+  .ts-option .ts-icon img { width:100%; height:100%; object-fit:contain; }
+
+  .res-title { font-size:13px; font-weight:700; margin:4px 0 10px; line-height:1.4; }
+  .res-title .arr { font-style:normal; margin-left:4px; }
+  .res-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .res-box { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px; }
+  .res-box.good .res-title { color:#4FBD72; }
+  .res-box.bad  .res-title { color:#C4945A; }
+  .res-list { display:flex; flex-wrap:wrap; gap:8px; min-height:34px; align-items:flex-start; }
+  .res-item { display:flex; align-items:center; gap:7px; background:var(--card2); border:1px solid var(--border); border-radius:10px; padding:5px 10px 5px 5px; }
+  .res-item .ri-icon { width:26px; height:26px; border-radius:7px; background:var(--bg); display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0; font-size:13px; font-weight:700; }
+  .res-item .ri-icon img { width:100%; height:100%; object-fit:contain; }
+  .res-item .ri-name { font-size:13px; font-weight:600; }
+  .res-item .ri-val { font-size:13px; font-weight:800; padding:1px 7px; border-radius:8px; }
+  .ri-val.up { color:#4FBD72; background:rgba(79,189,114,.16); }
+  .ri-val.down { color:#C4945A; background:rgba(196,148,90,.16); }
+  .res-empty { font-size:12px; color:var(--text2); padding:6px 2px; }
+  .special-note { font-size:13px; line-height:1.7; margin:14px 0 4px; padding:10px 14px; border-radius:10px; background:rgba(79,189,114,.08); border:1px solid rgba(79,189,114,.25); }
+  .special-note i { font-style:normal; font-weight:700; }
+  .special-note.muted { background:rgba(154,160,190,.07); border-color:rgba(154,160,190,.2); color:var(--text2); }
+  @media (max-width:700px){ .res-grid { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>克制计算器</h1>
+  <span>洛克王国属性克制关系查询</span>
+  <nav class="dex-nav">
+    <a href="9178.html">伤害计算器</a>
+    <a href="pokedex.html">精灵图鉴</a>
+    <a href="skilldex.html">技能图鉴</a>
+    <a href="restraint.html" class="active">克制计算器</a>
+  </nav>
+  <div class="header-actions">
+    <div class="theme-toggle" id="themeToggle"><span class="tt-icon">🌙</span><span class="tt-text">深色</span></div>
+  </div>
+</header>
+
+<div class="main">
+  <div class="restrain-intro">
+    选择 <b>主系</b> 查看它对各属性的克制关系；再选 <b>副系</b> 可计算双属性精灵的复合效果（同属性被双方克制叠加为 ×3 / 双方抵抗叠加为 ×0.25，互斥则相互抵消）。数据来源：BWiki 克制计算器。
+  </div>
+
+  <div class="type-selectors">
+    <div class="type-select">
+      <div class="ts-label">主系</div>
+      <button type="button" class="ts-btn" id="mainBtn" data-type="普通">
+        <span class="ts-icon" id="mainIcon"></span>
+        <span class="ts-name" id="mainName">普通</span>
+        <span class="ts-arrow">▼</span>
+      </button>
+      <div class="ts-menu" id="mainMenu"></div>
+    </div>
+    <div class="type-select">
+      <div class="ts-label">副系</div>
+      <button type="button" class="ts-btn" id="subBtn" data-type="无">
+        <span class="ts-icon" id="subIcon"></span>
+        <span class="ts-name" id="subName">无</span>
+        <span class="ts-arrow">▼</span>
+      </button>
+      <div class="ts-menu" id="subMenu"></div>
+    </div>
+  </div>
+
+  <div class="special-note muted" id="specialNote">双属性默认不展示克制和被抵抗效果</div>
+
+  <div class="res-grid">
+    <div class="res-box good">
+      <div class="res-title">造成伤害增加<span class="arr" style="color:#4FBD72">⬆</span></div>
+      <div class="res-list" id="resStrong"></div>
+    </div>
+    <div class="res-box bad">
+      <div class="res-title">造成伤害降低<span class="arr" style="color:#C4945A">⬇</span></div>
+      <div class="res-list" id="resResist"></div>
+    </div>
+    <div class="res-box bad">
+      <div class="res-title">受到伤害增加<span class="arr" style="color:#C4945A">⬆</span></div>
+      <div class="res-list" id="resWeak"></div>
+    </div>
+    <div class="res-box good">
+      <div class="res-title">受到伤害降低<span class="arr" style="color:#4FBD72">⬇</span></div>
+      <div class="res-list" id="resVuln"></div>
+    </div>
+  </div>
+</div>
+
+<script src="data/type.js"></script>
+<script>
+// 类型图标（BWiki CDN，与技能图鉴一致风格）
+const TYPE_ICONS = {
+  '普通':'https://patchwiki.biligame.com/images/rocom/6/69/nc77midbqeafn7i2snh5a5h16ctdi0o.png',
+  '草':'https://patchwiki.biligame.com/images/rocom/1/12/b8bsilucec9a98rsmqkmxt06c4mnnix.png',
+  '火':'https://patchwiki.biligame.com/images/rocom/a/ab/8wvxz3p479e2b702afdqyzhx9340qgx.png',
+  '水':'https://patchwiki.biligame.com/images/rocom/d/d1/csqsyhq1k488329455xdlzdcybv6zjh.png',
+  '光':'https://patchwiki.biligame.com/images/rocom/d/de/pxfi7cg0j94c45uxf4itigu90wis7jr.png',
+  '地':'https://patchwiki.biligame.com/images/rocom/3/32/0w5pybmkd8qm306doqx8kh5onl1o8cq.png',
+  '冰':'https://patchwiki.biligame.com/images/rocom/9/9b/oxnxxud1xhopw87c7mnawxijz8r1hns.png',
+  '龙':'https://patchwiki.biligame.com/images/rocom/6/65/kgcg0hvl19o7up0ug8f42bbvhi71dke.png',
+  '电':'https://patchwiki.biligame.com/images/rocom/0/02/iqzkamzcra945jsw5z6o8h9p30fv7db.png',
+  '毒':'https://patchwiki.biligame.com/images/rocom/5/53/jnd3vijasgthdz2ukggyfpisd464r2v.png',
+  '虫':'https://patchwiki.biligame.com/images/rocom/c/cb/q3mlwj270f67spwr934hpqx7hj62bm3.png',
+  '武':'https://patchwiki.biligame.com/images/rocom/5/52/q9hbq9nrnhjt7t86hy7sftv3e2e5fvx.png',
+  '翼':'https://patchwiki.biligame.com/images/rocom/2/2b/p7wdw88ziupp84s1mr8t9t602psswzz.png',
+  '萌':'https://patchwiki.biligame.com/images/rocom/5/5f/80jhk99eosjv1ld26wp7ljtmif27lfv.png',
+  '幽':'https://patchwiki.biligame.com/images/rocom/e/e7/ttqdi3zlz72g5dgmc8qg9ko4aorwllw.png',
+  '恶':'https://patchwiki.biligame.com/images/rocom/3/3b/hrdmz7n0qt3bnmir9fdn7977fvleec0.png',
+  '机械':'https://patchwiki.biligame.com/images/rocom/a/ad/fw81a2pvdickbcnq5rt17m6066cchcf.png',
+  '幻':'https://patchwiki.biligame.com/images/rocom/6/64/89miqle961qdw2tt56hb78bps6f34ci.png',
+  '无':'https://patchwiki.biligame.com/images/rocom/b/b2/nlbok7r3ok0qyeq73mlwh7hk84bmu2b.png'
+};
+
+const FULL_TYPE_LIST = ALL_TYPES.concat(['无']);
+const SPECIAL_TITLE = {
+  '草': { text:'寄生', color:'#4FBD72', template:'免疫{word}' },
+  '火': { text:'灼烧', color:'#E86A3A', template:'免疫{word}' },
+  '毒': { text:'中毒', color:'#8E62D9', template:'免疫{word}' },
+  '冰': { text:'冻结', color:'#49A6E9', template:'免疫{word}' }
+};
+
+function iconHtml(type, cls){
+  const url = TYPE_ICONS[type];
+  if (url) return '<img src="'+url+'" alt="'+type+'" onerror="this.style.display=\'none\'">';
+  const c = TYPE_COLORS[type] || '#888';
+  return '<span style="color:#fff;background:'+c+';width:100%;height:100%;display:flex;align-items:center;justify-content:center;border-radius:7px">'+type.charAt(0)+'</span>';
+}
+function setBtnVisual(btn, iconEl, nameEl, type){
+  btn.setAttribute('data-type', type);
+  iconEl.innerHTML = iconHtml(type, 'ts-icon');
+  nameEl.textContent = type;
+}
+
+function buildMenu(menu, current){
+  menu.innerHTML = '';
+  FULL_TYPE_LIST.forEach(function(type){
+    const opt = document.createElement('div');
+    opt.className = 'ts-option';
+    opt.setAttribute('data-type', type);
+    opt.innerHTML = '<span class="ts-icon">'+iconHtml(type,'ts-icon')+'</span><span>'+type+'</span>';
+    opt.addEventListener('click', function(e){
+      e.stopPropagation();
+      menu.dispatchEvent(new CustomEvent('pick', { detail: type }));
+    });
+    menu.appendChild(opt);
+  });
+}
+
+function syncSubOptions(){
+  const mainVal = mainBtn.getAttribute('data-type');
+  const avail = FULL_TYPE_LIST.filter(function(t){ return t === '无' || t !== mainVal; });
+  subMenu.innerHTML = '';
+  avail.forEach(function(type){
+    const opt = document.createElement('div');
+    opt.className = 'ts-option';
+    opt.setAttribute('data-type', type);
+    opt.innerHTML = '<span class="ts-icon">'+iconHtml(type,'ts-icon')+'</span><span>'+type+'</span>';
+    opt.addEventListener('click', function(e){
+      e.stopPropagation();
+      subMenu.dispatchEvent(new CustomEvent('pick', { detail: type }));
+    });
+    subMenu.appendChild(opt);
+  });
+  const cur = subBtn.getAttribute('data-type') || '无';
+  if (cur === mainVal) setBtnVisual(subBtn, subIcon, subName, '无');
+}
+
+function closeMenus(){
+  mainBtn.classList.remove('is-open'); mainMenu.classList.remove('open');
+  subBtn.classList.remove('is-open');  subMenu.classList.remove('open');
+}
+
+function updateSpecialNote(mainType, subType){
+  const note = document.getElementById('specialNote');
+  const selected = [mainType, subType];
+  const matched = ['草','火','毒','冰'].filter(function(t){ return selected.includes(t); });
+  if (matched.length === 0){
+    note.className = 'special-note muted';
+    note.innerHTML = '双属性默认不展示克制和被抵抗效果';
+    return;
+  }
+  const clauses = matched.map(function(t){
+    const cfg = SPECIAL_TITLE[t];
+    return cfg.template.replace('{word}', '<i style="color:'+cfg.color+'">'+cfg.text+'</i>');
+  });
+  note.className = 'special-note';
+  note.innerHTML = '这个系别搭配的精灵' + clauses.join('、');
+}
+
+function genItemsHtml(arr, value, cls){
+  if (!arr.length) return '<span class="res-empty">无</span>';
+  return arr.map(function(t){
+    return '<div class="res-item"><span class="ri-icon">'+iconHtml(t,'ri-icon')+'</span>'+
+           '<span class="ri-name">'+t+'系</span>'+
+           '<span class="ri-val '+cls+'">'+value+'</span></div>';
+  }).join('');
+}
+
+function genItemsHtmlByItems(items, cls){
+  if (!items.length) return '<span class="res-empty">无</span>';
+  return items.map(function(it){
+    return '<div class="res-item"><span class="ri-icon">'+iconHtml(it.type,'ri-icon')+'</span>'+
+           '<span class="ri-name">'+it.type+'系</span>'+
+           '<span class="ri-val '+cls+'">'+it.value+'</span></div>';
+  }).join('');
+}
+
+function updateResult(mainType){
+  const subType = subBtn.getAttribute('data-type') || '无';
+  updateSpecialNote(mainType, subType);
+
+  if (!TYPE_CHART[mainType] || subType === '无' || !TYPE_CHART[subType]){
+    const chart = TYPE_CHART[mainType] || { strong:[], resist:[], weak:[], vulnerable:[] };
+    const strongArr = (chart.strong||[]).filter(function(x){ return x; });
+    const resistArr = (chart.resist||[]).filter(function(x){ return x; });
+    const weakArr   = (chart.weak||[]).filter(function(x){ return x; });
+    const vulnArr   = (chart.vulnerable||[]).filter(function(x){ return x; });
+    document.getElementById('resStrong').innerHTML = genItemsHtml(strongArr, '2.0', 'up');
+    document.getElementById('resResist').innerHTML = genItemsHtml(resistArr, '0.5', 'down');
+    document.getElementById('resWeak').innerHTML   = genItemsHtml(weakArr, '2.0', 'down');
+    document.getElementById('resVuln').innerHTML   = genItemsHtml(vulnArr, '0.5', 'up');
+    return;
+  }
+
+  const mainChart = TYPE_CHART[mainType];
+  const subChart  = TYPE_CHART[subType];
+  const weakCombined = (mainChart.weak||[]).concat(subChart.weak||[]).filter(function(x){ return x; });
+  const vulnCombined = (mainChart.vulnerable||[]).concat(subChart.vulnerable||[]).filter(function(x){ return x; });
+
+  function buildItems(combined, single, overlap){
+    const count = {}; const order = [];
+    combined.forEach(function(t){
+      if (!count[t]) { order.push(t); count[t] = 0; }
+      count[t] += 1;
+    });
+    return order.map(function(t, i){ return { type:t, value: count[t] > 1 ? overlap : single, index:i }; });
+  }
+  let weakItems = buildItems(weakCombined, '2.0', '3.0');
+  let vulnItems = buildItems(vulnCombined, '0.5', '0.25');
+  const weakSet = new Set(weakItems.map(function(i){ return i.type; }));
+  const vulnSet = new Set(vulnItems.map(function(i){ return i.type; }));
+  const cancel = new Set([].concat([].filter.call(weakSet, function(t){ return vulnSet.has(t); })));
+  weakItems = weakItems.filter(function(i){ return !cancel.has(i.type); }).sort(function(a,b){ return (b.count-a.count)||(a.index-b.index); });
+  vulnItems = vulnItems.filter(function(i){ return !cancel.has(i.type); }).sort(function(a,b){ return (b.count-a.count)||(a.index-b.index); });
+
+  document.getElementById('resStrong').innerHTML = '<span class="res-empty">双属性不展示</span>';
+  document.getElementById('resResist').innerHTML = '<span class="res-empty">双属性不展示</span>';
+  document.getElementById('resWeak').innerHTML   = genItemsHtmlByItems(weakItems, 'down');
+  document.getElementById('resVuln').innerHTML   = genItemsHtmlByItems(vulnItems, 'up');
+}
+
+// ---- 初始化 ----
+const mainBtn = document.getElementById('mainBtn');
+const subBtn  = document.getElementById('subBtn');
+const mainIcon = document.getElementById('mainIcon');
+const subIcon  = document.getElementById('subIcon');
+const mainName = document.getElementById('mainName');
+const subName  = document.getElementById('subName');
+const mainMenu = document.getElementById('mainMenu');
+const subMenu  = document.getElementById('subMenu');
+
+setBtnVisual(mainBtn, mainIcon, mainName, '普通');
+setBtnVisual(subBtn, subIcon, subName, '无');
+buildMenu(mainMenu, '普通');
+syncSubOptions();
+updateResult('普通');
+
+function wireBtn(btn, menu){
+  btn.addEventListener('click', function(e){
+    if (e.target.closest('.ts-menu')) return;
+    const isOpen = btn.classList.contains('is-open');
+    closeMenus();
+    if (!isOpen){ btn.classList.add('is-open'); menu.classList.add('open'); }
+  });
+  menu.addEventListener('pick', function(e){
+    const type = e.detail;
+    setBtnVisual(btn, btn.querySelector('.ts-icon'), btn.querySelector('.ts-name'), type);
+    if (btn === mainBtn) syncSubOptions();
+    closeMenus();
+    updateResult(mainBtn.getAttribute('data-type'));
+  });
+}
+wireBtn(mainBtn, mainMenu);
+wireBtn(subBtn, subMenu);
+
+document.addEventListener('click', function(e){
+  if (!e.target.closest('.ts-btn')) closeMenus();
+});
+
+// 主题切换
+(function(){
+  const t = document.getElementById('themeToggle');
+  const saved = localStorage.getItem('theme');
+  if (saved === 'light') document.documentElement.setAttribute('data-theme','light');
+  function sync(){
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    t.querySelector('.tt-icon').textContent = isLight ? '☀️' : '🌙';
+    t.querySelector('.tt-text').textContent = isLight ? '浅色' : '深色';
+  }
+  sync();
+  t.addEventListener('click', function(){
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    if (isLight){ document.documentElement.removeAttribute('data-theme'); localStorage.setItem('theme','dark'); }
+    else { document.documentElement.setAttribute('data-theme','light'); localStorage.setItem('theme','light'); }
+    sync();
+  });
+})();
+</script>
+</body>
+</html>
