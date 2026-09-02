@@ -10,24 +10,31 @@
   .dex-nav a { color:rgba(255,255,255,.82); text-decoration:none; font-size:13px; padding:5px 11px; border-radius:18px; border:1px solid rgba(255,255,255,.18); white-space:nowrap; }
   .dex-nav a:hover { background:rgba(255,255,255,.15); }
   .dex-nav a.active { background:var(--accent); border-color:var(--accent); color:#fff; }
-  .sub { color:var(--text2); font-size:13px; margin-bottom:14px; line-height:1.6; }
-  .note { background:rgba(255,200,80,.08); border:1px solid rgba(255,200,80,.3); border-radius:10px; padding:10px 14px; font-size:12px; color:rgba(255,220,150,.9); margin:10px 0; }
+  .sub { color:var(--text2); font-size:13px; margin-bottom:14px; line-height:1.7; }
+  .sub b { color:var(--text); }
+  .note { background:rgba(255,170,80,.1); border:1px solid rgba(255,170,80,.35); border-radius:10px; padding:11px 14px; font-size:12.5px; color:rgba(255,210,150,.95); margin:10px 0; line-height:1.7; }
   .rt-box { display:flex; flex-wrap:wrap; gap:8px; align-items:center; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; margin:14px 0; }
   .rt-box input { flex:1; min-width:120px; background:var(--card2); border:1px solid var(--border); color:var(--text); border-radius:8px; padding:7px 11px; font-size:14px; }
   .rt-box button { background:var(--accent); color:#fff; border:none; border-radius:8px; padding:7px 14px; font-size:14px; cursor:pointer; }
   .rt-box button:hover { filter:brightness(1.1); }
+  .rt-box button.ghost { background:transparent; border:1px solid var(--border); color:var(--text2); }
   .rt-box .hint { font-size:12px; color:var(--text2); }
   .count { font-size:13px; color:var(--text2); margin:8px 0 14px; }
-  .xgrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:14px; }
-  .xcard { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px; text-align:center; }
-  .xcard .imgwrap { width:120px; height:120px; margin:0 auto 10px; background:#f5f6fa; border-radius:50%; overflow:hidden; display:flex; align-items:center; justify-content:center; }
-  .xcard img { max-width:100%; max-height:100%; object-fit:contain; }
-  .xcard .imgtag { font-size:11px; color:#ff8fd0; margin-top:5px; font-weight:700; }
+  .xgrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:14px; }
+  .xcard { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px; text-align:center; display:flex; flex-direction:column; align-items:center; }
+  .xcard .imgwrap { width:120px; height:120px; margin:0 auto 8px; background:#f5f6fa; border-radius:50%; overflow:hidden; display:flex; align-items:center; justify-content:center; }
+  .xcard img.origin { max-width:100%; max-height:100%; object-fit:contain; }
   .xcard .name { font-size:16px; font-weight:700; color:var(--text); margin-top:2px; }
   .xcard .default { font-size:12px; color:var(--text2); margin-top:2px; }
   .xcard .xc-badge { display:inline-block; margin-top:8px; background:linear-gradient(135deg,#ff6ec4,#7873f5); color:#fff; font-size:12px; font-weight:700; padding:3px 10px; border-radius:10px; }
   .xcard .meta { font-size:12px; color:var(--text2); margin-top:8px; line-height:1.6; }
   .xcard .gid { font-family:monospace; font-size:11px; color:var(--text2); margin-top:6px; opacity:.7; }
+  .shot-area { margin-top:10px; width:100%; }
+  .shot-area img.shot { width:100%; border-radius:8px; border:1px solid var(--border); display:block; }
+  .shot-area .shot-tag { font-size:11px; color:#7fe0a0; margin-top:4px; }
+  .upload-btn { margin-top:8px; font-size:11px; background:var(--card2); border:1px dashed var(--border); color:var(--text2); border-radius:8px; padding:6px 10px; cursor:pointer; width:100%; }
+  .upload-btn:hover { border-color:var(--accent); color:var(--text); }
+  .del-shot { font-size:10px; color:#ff8a8a; background:none; border:none; cursor:pointer; margin-top:5px; text-decoration:underline; }
   .empty { padding:40px; text-align:center; color:var(--text2); font-size:14px; grid-column:1/-1; }
 </style>
 </head>
@@ -55,12 +62,16 @@
 </header>
 
 <div class="main">
-  <h2>🌈 炫彩精灵</h2>
-  <p class="sub">输入游戏 UID，列出该账号下所有"异色炫彩"精灵（mutationName 含「炫彩」）。<b>有异色图的精灵显示 BWiki 异色形态真实配色</b>（固定配色，可直接看颜色）；炫彩的随机粒子特效为游戏客户端渲染，服务器不提供独立"色卡"图资源，故<b>无法显示该个体真实的炫彩配色</b>。</p>
+  <h2>🌈 炫彩 / 异色精灵</h2>
+  <p class="sub">
+    输入游戏 UID，列出该账号下所有带<b>特殊配色</b>的精灵（异色 / 异色炫彩）。<br>
+    <b>重要限制：</b>炫彩的随机配色是游戏客户端实时渲染的，<b>服务器不存、公开图库（BWiki / rocodex）也无独立资源</b>，所以网页无法自动显示某只精灵真实的炫彩颜色。本页给出两条路：① 下方「原型立绘」是该精灵的普通形态（仅作对照，<b>不是</b>炫彩色）；② 你可以<b>上传游戏内的炫彩实机截图</b>，本页会把它存在本机浏览器并展示——这才是看到真实炫彩颜色的唯一办法。
+  </p>
 
   <div class="rt-box">
     <input id="uid" type="text" inputmode="numeric" placeholder="UID" value="5678116">
     <button id="queryBtn">查询最新</button>
+    <button id="clearBtn" class="ghost" title="清除本机保存的所有截图">清空本机截图</button>
     <span class="hint" id="hint"></span>
   </div>
 
@@ -69,31 +80,29 @@
   <div class="xgrid" id="xgrid"></div>
 </div>
 
-<script src="data/shiny_icons.js"></script>
 <script>
 const RT_PROXY_DEFAULT = 'https://db643367.roco-proxy.pages.dev';
 const ICON_BASE = 'https://rocodex.org';
 const FALLBACK_INDEX = 'data/home_index.json';
 
-function proxyBase(){
-  return localStorage.getItem('rt_proxy') || RT_PROXY_DEFAULT;
-}
+function proxyBase(){ return localStorage.getItem('rt_proxy') || RT_PROXY_DEFAULT; }
 function setHint(t){ document.getElementById('hint').textContent = t || ''; }
 function setNote(t){ const n=document.getElementById('note'); n.textContent=t; n.style.display = t ? 'block' : 'none'; }
 
+function shotKey(uid, gid){ return 'xcshot_' + uid + '_' + gid; }
+function loadShot(uid, gid){ try { return localStorage.getItem(shotKey(uid, gid)); } catch(e){ return null; } }
+function saveShot(uid, gid, data){ try { localStorage.setItem(shotKey(uid, gid), data); } catch(e){ alert('保存失败：本机存储可能已满（截图太大）'); } }
+function delShot(uid, gid){ try { localStorage.removeItem(shotKey(uid, gid)); } catch(e){} }
+
 async function fetchRealtime(uid){
-  const url = proxyBase() + '/home?uid=' + uid;
-  const res = await fetch(url);
+  const res = await fetch(proxyBase() + '/home?uid=' + uid);
   if (!res.ok) throw new Error('代理返回 HTTP ' + res.status);
   const j = await res.json();
   if (j.error || !j.data) throw new Error('数据异常: ' + (j.message || 'no data'));
   return j.data;
 }
-
 async function fetchSnapshot(uid){
-  const ir = await fetch(FALLBACK_INDEX + '?t=' + Date.now());
-  if (!ir.ok) throw new Error('快照索引失败 HTTP ' + ir.status);
-  const idx = await ir.json();
+  const idx = await (await fetch(FALLBACK_INDEX + '?t=' + Date.now())).json();
   const hit = (idx.uids || []).find(u => String(u.uid) === String(uid) && u.ok);
   if (!hit) throw new Error('该 UID 无每小时快照数据');
   const fr = await fetch('data/home_' + uid + '.json?t=' + Date.now());
@@ -101,42 +110,62 @@ async function fetchSnapshot(uid){
   return (await fr.json()).data;
 }
 
-function isXuancai(p){
+function isColorful(p){
   const m = String(p.mutationName || '');
-  return m.includes('炫彩');
+  return m.includes('异色') || m.includes('炫彩');
 }
 
+const CUR_UID = { v: '' };
+
 function renderPets(pets, source){
-  const xc = pets.filter(isXuancai);
+  const list = pets.filter(isColorful);
+  const uid = CUR_UID.v;
   const grid = document.getElementById('xgrid');
-  document.getElementById('count').textContent = '共 ' + pets.length + ' 只精灵，其中炫彩 ' + xc.length + ' 只（数据源：' + source + '）';
-  if (xc.length === 0){
-    grid.innerHTML = '<div class="empty">该账号下暂无炫彩精灵。</div>';
+  document.getElementById('count').textContent = '共 ' + pets.length + ' 只精灵，其中异色/炫彩 ' + list.length + ' 只（数据源：' + source + '）';
+  if (list.length === 0){
+    grid.innerHTML = '<div class="empty">该账号下暂无异色 / 炫彩精灵。</div>';
     return;
   }
-  grid.innerHTML = xc.map(function(p){
+  grid.innerHTML = list.map(function(p){
+    const gid = p.gid || p.petId || '';
     const spName = p.defaultName || p.name || '';
-    const shinyUrl = (typeof SHINY_ICONS !== 'undefined' && SHINY_ICONS[spName]) ? SHINY_ICONS[spName] : '';
-    const icon = shinyUrl || (p.icon ? ICON_BASE + p.icon : '');
-    const isShinyImg = !!shinyUrl;
-    const img = icon ? '<img src="' + icon + '" alt="' + (p.name||'') + '" loading="lazy" onerror="this.style.display=\'none\'">' : '';
-    const imgTag = isShinyImg ? '<div class="imgtag">异色配色参考 · BWiki</div>' : '';
+    const icon = p.icon ? ICON_BASE + p.icon : '';
+    const originImg = icon ? '<img class="origin" src="' + icon + '" alt="' + spName + '" loading="lazy" onerror="this.style.display=\'none\'">' : '<span style="color:#999;font-size:12px">无立绘</span>';
     const def = (p.defaultName && p.defaultName !== p.name) ? '<div class="default">原型：' + p.defaultName + '</div>' : '';
+    const shot = loadShot(uid, gid);
+    const shotHtml = shot
+      ? '<img class="shot" src="' + shot + '" alt="炫彩截图"><div class="shot-tag">✓ 已存本机截图</div><button class="del-shot" onclick="delOne(\'' + uid + '\',\'' + gid + '\')">删除这张</button>'
+      : '<button class="upload-btn" onclick="document.getElementById(\'file_' + gid + '\').click()">📷 上传炫彩实机截图</button>';
     return '<div class="xcard">'
-      + '<div class="imgwrap">' + img + '</div>'
-      + imgTag
+      + '<div class="imgwrap">' + originImg + '</div>'
       + '<div class="name">' + (p.name || '?') + '</div>'
       + def
-      + '<div class="xc-badge">' + (p.mutationName || '炫彩') + '</div>'
-      + '<div class="meta">Lv.' + (p.level || '?') + ' · ' + (p.genderText || '?') + '</div>'
-      + '<div class="gid">gid: ' + (p.gid || '?') + '</div>'
+      + '<div class="xc-badge">' + (p.mutationName || '异色') + '</div>'
+      + '<div class="meta">Lv.' + (p.lv || '?') + (p.sex != null ? ' · ' + (p.sex === 1 ? '雄' : (p.sex === 2 ? '雌' : '无')) : '') + '</div>'
+      + '<div class="gid">gid: ' + gid + '</div>'
+      + '<div class="shot-area">' + shotHtml
+      + '<input id="file_' + gid + '" type="file" accept="image/*" style="display:none" onchange="onShot(this,\'' + uid + '\',\'' + gid + '\')">'
+      + '</div>'
       + '</div>';
   }).join('');
 }
 
+function onShot(input, uid, gid){
+  const f = input.files && input.files[0];
+  if (!f) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    saveShot(uid, gid, e.target.result);
+    query();
+  };
+  reader.readAsDataURL(f);
+}
+function delOne(uid, gid){ delShot(uid, gid); query(); }
+
 async function query(){
   const uid = (document.getElementById('uid').value || '').trim();
   if (!uid){ setHint('请输入 UID'); return; }
+  CUR_UID.v = uid;
   setHint('查询中…'); setNote('');
   document.getElementById('xgrid').innerHTML = '';
   document.getElementById('count').textContent = '';
@@ -160,27 +189,24 @@ async function query(){
 
 document.getElementById('queryBtn').addEventListener('click', query);
 document.getElementById('uid').addEventListener('keydown', function(e){ if (e.key === 'Enter') query(); });
+document.getElementById('clearBtn').addEventListener('click', function(){
+  const uid = CUR_UID.v || (document.getElementById('uid').value || '').trim();
+  if (!uid){ alert('请先输入 UID'); return; }
+  if (!confirm('确认清除本机保存的「' + uid + '」全部炫彩截图？')) return;
+  const keys = [];
+  for (let i = 0; i < localStorage.length; i++){ const k = localStorage.key(i); if (k && k.indexOf('xcshot_' + uid + '_') === 0) keys.push(k); }
+  keys.forEach(k => localStorage.removeItem(k));
+  alert('已清除 ' + keys.length + ' 张截图（仅本机）');
+  query();
+});
 
 function toggleTheme(){
   const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-  if (isLight){
-    document.documentElement.removeAttribute('data-theme');
-    localStorage.setItem('theme','dark');
-    document.getElementById('themeToggle').innerHTML = '<span class="tt-icon">🌙</span><span class="tt-text">深色</span>';
-  } else {
-    document.documentElement.setAttribute('data-theme','light');
-    localStorage.setItem('theme','light');
-    document.getElementById('themeToggle').innerHTML = '<span class="tt-icon">☀️</span><span class="tt-text">日间</span>';
-  }
+  if (isLight){ document.documentElement.removeAttribute('data-theme'); localStorage.setItem('theme','dark'); document.getElementById('themeToggle').innerHTML = '<span class="tt-icon">🌙</span><span class="tt-text">深色</span>'; }
+  else { document.documentElement.setAttribute('data-theme','light'); localStorage.setItem('theme','light'); document.getElementById('themeToggle').innerHTML = '<span class="tt-icon">☀️</span><span class="tt-text">日间</span>'; }
 }
 document.getElementById('themeToggle').addEventListener('click', toggleTheme);
-(function(){
-  const t = localStorage.getItem('theme');
-  if (t === 'light'){
-    document.documentElement.setAttribute('data-theme','light');
-    document.getElementById('themeToggle').innerHTML = '<span class="tt-icon">☀️</span><span class="tt-text">日间</span>';
-  }
-})();
+(function(){ if (localStorage.getItem('theme') === 'light'){ document.documentElement.setAttribute('data-theme','light'); document.getElementById('themeToggle').innerHTML = '<span class="tt-icon">☀️</span><span class="tt-text">日间</span>'; } })();
 
 query();
 </script>
