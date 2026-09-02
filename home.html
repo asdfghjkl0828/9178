@@ -248,7 +248,17 @@ function renderHomeData(raw){
       const icon = fixIcon(p.icon);
       const ch = String(p.name||p.defaultName||'?').charAt(0);
       const mut = p.mutationName ? '<span class="mut">'+esc(p.mutationName)+'</span>' : '';
-      const star = (p.statusText || (p.haveEgg?'有蛋':'')) ? '<span class="star">'+esc(p.haveEgg?'🥚有蛋':p.statusText)+'</span>' : '';
+            const haveEgg = p.haveEgg || /蛋|生蛋|孵化/i.test(p.statusText||'');
+      const star = (haveEgg || p.statusText) ? '<span class="star">'+esc(haveEgg?'🥚有蛋':p.statusText)+'</span>' : '';
+      const eggTs = p.eggTime ?? p.eggAt ?? p.nextEggTime ?? p.layEggAt ?? p.layEggTime ?? p.hatchTime ?? p.hatchAt ?? p.breedEndTime ?? p.eggEndTime;
+      let eggLine = '';
+      if (eggTs != null) {
+        let ms = Number(eggTs);
+        if (isFinite(ms)) { if (ms < 1e12) ms *= 1000; const diff = ms - Date.now();
+          if (diff > 0) { const h = Math.floor(diff/3600000), m = Math.floor((diff%3600000)/60000); eggLine = '生蛋中 · 约 '+(h>0?h+'h ':'')+m+'m 后下蛋'; }
+          else eggLine = '蛋已产出 ✅';
+        }
+      }
       const meta = 'Lv.'+esc(p.level??'—')+' · '+genderText(p.gender)+' · 精力 '+esc(p.energy??'—')+(p.feedRound?(' · 喂养'+p.feedRound+'轮'):'');
       html += '<div class="good">'
         + '<div class="ico-box">'+(icon?'<img src="'+esc(icon)+'" alt="" onerror="this.style.display=\'none\'">':'')+'<div class="ico-fb">'+esc(ch)+'</div></div>'
@@ -256,6 +266,7 @@ function renderHomeData(raw){
           + '<div class="nm">'+esc(p.name||p.defaultName||'未知精灵')+mut+star+'</div>'
           + '<div class="meta">'+meta+'</div>'
           + (p.statusText? '<div class="meta">状态：'+esc(p.statusText)+'</div>':'')
+          + (eggLine? '<div class="meta" style="color:#ff9f43;font-weight:700">'+esc(eggLine)+'</div>':'')
         + '</div></div>';
     }
     html += '</div>';
