@@ -1,0 +1,33 @@
+name: 家园数据每日自动抓取
+
+on:
+  schedule:
+    # 北京时间每天 07:07（UTC 前一天 23:07）抓取一次，覆盖 data/uids.json 里的 UID
+    - cron: "7 23 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: 抓取家园数据
+        run: python scrape_home.py
+      - name: 提交结果
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/home_*.json data/home_index.json
+          if git diff --cached --quiet; then
+            echo "无变化，跳过提交"
+          else
+            git commit -m "chore: 自动更新家园数据 $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            git push
+          fi
