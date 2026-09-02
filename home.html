@@ -104,8 +104,8 @@
 
 <div class="main">
   <div class="home-intro">
-    已接入<b>免费自动数据源</b> <code>rocodex.org</code>（无需 Key / 不耗积分）：默认<b>每小时</b>由 GitHub Actions 自动抓取 <code>data/uids.json</code> 里登记的 UID，推静态 JSON 作快照；想查<b>当前最新</b>，用上方<b>⚡ 实时查询</b>——运行本地代理 <code>run_proxy.bat</code> 后打开 <code>http://127.0.0.1:8787/home.html</code> 即可点一下即查（每次新额度≈无限次免费）。
-    自动追踪免费额度每天 3 次 / IP，故 <code>uids.json</code> 最多放 3 个 UID。也可用下方<b>粘贴导入 / 本地备忘录</b>作离线兜底。
+    已接入<b>免费数据源</b> <code>rocodex.org</code>（无需 Key / 不耗积分）。在「⚡ 实时查询」输入任意 UID 点一下即看<b>当前最新</b>——页面通过部署在 Cloudflare Pages 的<b>免费云端代理</b>（<code>*.pages.dev</code>，中国可达、带 CORS）实时拉取，<b>你不用开任何程序、不用去别的网站</b>。
+    代理不可达时自动回退到<b>每小时</b> GitHub Actions 推送的静态快照（默认追踪 <code>data/uids.json</code> 里的 UID）。也可用下方<b>粘贴导入 / 本地备忘录</b>作离线兜底。
   </div>
 
   <div class="tabs">
@@ -154,7 +154,19 @@
       <li>想加同学：把 UID 加进这个数组（如 <code>[5678116, 1234567]</code>），提交后下次自动抓取就会包含他。</li>
       <li>注意免费额度每天 3 次 / IP，所以 <code>uids.json</code> 里最多放 3 个 UID 才能每天都被抓到。</li>
       <li>数据每小时（北京时间整点后 7 分）更新一次；植物成熟 / 生蛋倒计时是当天快照，精确到分钟以游戏内为准。</li>
-      <li>要查<b>当前最新</b>：双击 <code>run_proxy.bat</code> 启动本地代理，用 <code>http://127.0.0.1:8787/home.html</code> 打开本页，在上方「⚡ 实时查询」输入 UID 点查询即可（绕开 CORS，每次新额度≈无限免费）。</li>
+      <li>想让「⚡ 实时查询」在纯 GitHub Pages 下也能用：需一次性部署云端代理（详见本页底部「怎么部署实时代理」说明）。部署后页面自动走代理，无需开任何程序。</li>
+    </ol>
+  </details>
+
+  <details class="guide">
+    <summary>怎么部署⚡实时查询的云端代理（一次性，免费用）</summary>
+    <ol>
+      <li>实时查询需要一个<b>中国可达、带 CORS 的免费代理</b>转发 rocodex（纯 GitHub Pages 无后端，且 rocodex 不发跨域头，浏览器直连会被拦）。</li>
+      <li>推荐 <b>Cloudflare Pages</b>（你已有 CF 账号）：本仓库已含 <code>proxy/</code> 文件夹（<code>functions/home.js</code> 即代理）。本地装好 <code>wrangler</code> 后执行两行命令：<br><code>npx wrangler login</code><br><code>npx wrangler pages deploy proxy --project-name roco-proxy</code></li>
+      <li>部署完会得到形如 <code>https://roco-proxy.pages.dev</code> 的地址（项目名可自定义）。把地址告诉页面：在网址后加 <code>?proxy=https://你的地址.pages.dev</code> 打开一次即记住（或改 <code>home.html</code> 顶部的 <code>RT_PROXY_DEFAULT</code>）。</li>
+      <li>之后在 GitHub Pages 打开本页，输 UID 点「查询最新」就是当前实时数据，零成本、免积分，纯网页操作。</li>
+      <li>若 <code>*.pages.dev</code> 在你的网络被拦，可改用 <b>Vercel</b>（<code>vercel.app</code>，同样免费、中国可达）：把 <code>proxy/functions/home.js</code> 复制到 <code>api/home.js</code> 部署即可（逻辑一致）。</li>
+      <li>代理每次请求都用新访客身份，≈无限次免费实时；若多人共用触发 IP 级限流，稍降频率即可。</li>
     </ol>
   </details>
 </div>
@@ -415,15 +427,22 @@ function switchTab(which){
 // ---------- 启动 ----------
 renderNotes();
 
-// ---------- 实时查询（本地代理 /home?uid=） ----------
+// ---------- 实时查询（云端代理 /home?uid=，本地代理作离线兜底） ----------
 function isLocal(){ return ['127.0.0.1','localhost','[::1]'].includes(location.hostname); }
+const RT_PROXY_DEFAULT = 'https://roco-proxy.pages.dev';
+(function(){ const p = new URLSearchParams(location.search).get('proxy'); if(p) localStorage.setItem('rt_proxy', p); })();
+function rtProxy(){ return localStorage.getItem('rt_proxy') || RT_PROXY_DEFAULT; }
+
 $('rtBtn').addEventListener('click', function(){ realtimeQuery(($('rtUid').value.trim()) || '5678116'); });
 $('rtUid').addEventListener('keydown', function(e){ if(e.key==='Enter') realtimeQuery((this.value.trim()) || '5678116'); });
 async function realtimeQuery(uid){
   const box = $('rtResult'), hint = $('rtHint');
   box.innerHTML = '<div class="loading">实时查询 '+esc(uid)+' …</div>';
+  const endpoint = isLocal()
+    ? 'home?uid='+encodeURIComponent(uid)
+    : rtProxy()+'/home?uid='+encodeURIComponent(uid);
   try {
-    const r = await fetch('home?uid='+encodeURIComponent(uid), {cache:'no-store'});
+    const r = await fetch(endpoint, {cache:'no-store'});
     if(!r.ok) throw new Error('HTTP '+r.status);
     const j = await r.json();
     if(j.error) throw new Error(j.error);
@@ -431,17 +450,23 @@ async function realtimeQuery(uid){
     const when = (j.cacheExpiresAt||'').replace('T',' ').replace('Z','') || '当前';
     hint.innerHTML = isLocal()
       ? '<span class="local-ok">✅ 本地代理已连接 · 实时数据</span> 抓取于 '+esc(when)
-      : '实时数据（若长时间未更新，请确认本地代理在运行）。';
+      : '<span class="local-ok">✅ 已通过云端代理实时查询</span> · 抓取于 '+esc(when);
   } catch(e){
     if(isLocal()){
       hint.textContent = '代理似乎没运行？请确认 run_proxy.bat 窗口还开着，端口 8787 未被占用。';
+      box.innerHTML = '<div class="empty-row">实时查询失败：'+esc(e.message)+'</div>';
     } else {
-      hint.innerHTML = '实时查询需在<b>本机</b>运行本地代理：双击 <code>run_proxy.bat</code>，再用 <code>http://127.0.0.1:8787/home.html</code> 打开本页即可实时查（纯 GitHub Pages 域名无后端，无法跨域直连 rocodex）。';
+      hint.innerHTML = '⚠ 实时代理暂不可达（可能尚未部署或被网络拦截），已回退到每小时自动快照。代理地址：<code>'+esc(rtProxy())+'</code>；部署方法见页面底部「怎么部署实时代理」。';
+      try {
+        const j = await fetch('data/home_'+uid+'.json?t='+Date.now()).then(r=>r.json());
+        box.innerHTML = renderHomeData(j);
+        return;
+      } catch(_){}
+      box.innerHTML = '<div class="empty-row">实时查询失败：'+esc(e.message)+'</div>';
     }
-    box.innerHTML = '<div class="empty-row">实时查询失败：'+esc(e.message)+'</div>';
   }
 }
-// 本地代理托管环境：自动查一次，打开即见实时
+// 本地代理托管环境：打开即自动查一次
 if(isLocal()){ realtimeQuery('5678116'); }
 
 loadAuto();
