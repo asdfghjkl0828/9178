@@ -162,9 +162,10 @@
     <summary>怎么部署⚡实时查询的云端代理（一次性，免费用）</summary>
     <ol>
       <li>实时查询需要一个<b>中国可达、带 CORS 的免费代理</b>转发 rocodex（纯 GitHub Pages 无后端，且 rocodex 不发跨域头，浏览器直连会被拦）。</li>
-      <li><b>Cloudflare Pages（推荐，中国可达）</b>：本仓库根已含 <code>functions/home.js</code>（即代理）。去 CF 后台 <b>Workers & Pages → 创建 → Pages → 连接 Git</b>，选仓库 <code>asdfghjkl0828/9178</code>，<b>构建命令与输出目录都留空</b>，部署后 CF 自动识别 <code>functions/</code>。得到 <code>https://xxx.pages.dev</code> 地址（若复用现有 <code>roco-proxy</code> 项目则仍是 <code>d0b2dc1e.roco-proxy.pages.dev</code>）。</li>
-      <li><b>不要用</b> <code>wrangler pages deploy</code> 直传——直传模式 Functions 不生效（实测 /home 返回 404）。必须用 <b>Git 集成</b> 才能跑函数。<code>vercel.app</code> 在中国被墙（连接超时），也不要用。</li>
-      <li>部署完在 GitHub Pages 打开本页，输 UID 点「查询最新」即当前实时数据，零成本、免积分、纯网页。若地址变了，在网址后加 <code>?proxy=https://你的地址.pages.dev</code> 打开一次即记住（或改本页顶部 <code>RT_PROXY_DEFAULT</code>）。</li>
+      <li>推荐 <b>Cloudflare Pages</b>（你已有 CF 账号）：本仓库已含 <code>proxy/</code> 文件夹（<code>functions/home.js</code> 即代理）。本地装好 <code>wrangler</code> 后执行两行命令：<br><code>npx wrangler login</code><br><code>npx wrangler pages deploy proxy --project-name roco-proxy</code></li>
+      <li>部署完会得到形如 <code>https://roco-proxy.pages.dev</code> 的地址（项目名可自定义）。把地址告诉页面：在网址后加 <code>?proxy=https://你的地址.pages.dev</code> 打开一次即记住（或改 <code>home.html</code> 顶部的 <code>RT_PROXY_DEFAULT</code>）。</li>
+      <li>之后在 GitHub Pages 打开本页，输 UID 点「查询最新」就是当前实时数据，零成本、免积分，纯网页操作。</li>
+      <li>若 <code>*.pages.dev</code> 在你的网络被拦，可改用 <b>Vercel</b>（<code>vercel.app</code>，同样免费、中国可达）：把 <code>proxy/functions/home.js</code> 复制到 <code>api/home.js</code> 部署即可（逻辑一致）。</li>
       <li>代理每次请求都用新访客身份，≈无限次免费实时；若多人共用触发 IP 级限流，稍降频率即可。</li>
     </ol>
   </details>
@@ -439,7 +440,7 @@ renderNotes();
 
 // ---------- 实时查询（云端代理 /home?uid=，本地代理作离线兜底） ----------
 function isLocal(){ return ['127.0.0.1','localhost','[::1]'].includes(location.hostname); }
-const RT_PROXY_DEFAULT = 'https://d0b2dc1e.roco-proxy.pages.dev';
+const RT_PROXY_DEFAULT = 'https://roco-proxy.pages.dev';
 (function(){ const p = new URLSearchParams(location.search).get('proxy'); if(p) localStorage.setItem('rt_proxy', p); })();
 function rtProxy(){ return localStorage.getItem('rt_proxy') || RT_PROXY_DEFAULT; }
 
