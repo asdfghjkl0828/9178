@@ -22,6 +22,7 @@
   .xcard { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px; text-align:center; }
   .xcard .imgwrap { width:120px; height:120px; margin:0 auto 10px; background:#f5f6fa; border-radius:50%; overflow:hidden; display:flex; align-items:center; justify-content:center; }
   .xcard img { max-width:100%; max-height:100%; object-fit:contain; }
+  .xcard .imgtag { font-size:11px; color:#ff8fd0; margin-top:5px; font-weight:700; }
   .xcard .name { font-size:16px; font-weight:700; color:var(--text); margin-top:2px; }
   .xcard .default { font-size:12px; color:var(--text2); margin-top:2px; }
   .xcard .xc-badge { display:inline-block; margin-top:8px; background:linear-gradient(135deg,#ff6ec4,#7873f5); color:#fff; font-size:12px; font-weight:700; padding:3px 10px; border-radius:10px; }
@@ -55,7 +56,7 @@
 
 <div class="main">
   <h2>🌈 炫彩精灵</h2>
-  <p class="sub">输入游戏 UID，列出该账号下所有"异色炫彩"精灵（mutationName 含「炫彩」）。图仅为种类立绘参考——实际炫彩配色（随机+粒子特效）为游戏客户端渲染，游戏不提供独立"色卡"图资源。</p>
+  <p class="sub">输入游戏 UID，列出该账号下所有"异色炫彩"精灵（mutationName 含「炫彩」）。<b>有异色图的精灵显示 BWiki 异色形态真实配色</b>（固定配色，可直接看颜色）；炫彩的随机粒子特效为游戏客户端渲染，服务器不提供独立"色卡"图资源，故<b>无法显示该个体真实的炫彩配色</b>。</p>
 
   <div class="rt-box">
     <input id="uid" type="text" inputmode="numeric" placeholder="UID" value="5678116">
@@ -68,6 +69,7 @@
   <div class="xgrid" id="xgrid"></div>
 </div>
 
+<script src="data/shiny_icons.js"></script>
 <script>
 const RT_PROXY_DEFAULT = 'https://db643367.roco-proxy.pages.dev';
 const ICON_BASE = 'https://rocodex.org';
@@ -113,11 +115,16 @@ function renderPets(pets, source){
     return;
   }
   grid.innerHTML = xc.map(function(p){
-    const icon = p.icon ? ICON_BASE + p.icon : '';
+    const spName = p.defaultName || p.name || '';
+    const shinyUrl = (typeof SHINY_ICONS !== 'undefined' && SHINY_ICONS[spName]) ? SHINY_ICONS[spName] : '';
+    const icon = shinyUrl || (p.icon ? ICON_BASE + p.icon : '');
+    const isShinyImg = !!shinyUrl;
     const img = icon ? '<img src="' + icon + '" alt="' + (p.name||'') + '" loading="lazy" onerror="this.style.display=\'none\'">' : '';
+    const imgTag = isShinyImg ? '<div class="imgtag">异色配色参考 · BWiki</div>' : '';
     const def = (p.defaultName && p.defaultName !== p.name) ? '<div class="default">原型：' + p.defaultName + '</div>' : '';
     return '<div class="xcard">'
       + '<div class="imgwrap">' + img + '</div>'
+      + imgTag
       + '<div class="name">' + (p.name || '?') + '</div>'
       + def
       + '<div class="xc-badge">' + (p.mutationName || '炫彩') + '</div>'
