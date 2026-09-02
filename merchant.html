@@ -9,6 +9,8 @@
   .mch-intro { font-size:13px; color:var(--text2); line-height:1.7; margin-bottom:14px; background:rgba(124,107,255,.07); border:1px solid rgba(124,107,255,.22); border-radius:10px; padding:10px 14px; }
   .mch-intro b { color:var(--accent); }
   .mch-intro code { background:var(--bg); padding:1px 6px; border-radius:5px; color:var(--text); font-size:12px; }
+  .mch-banner { font-size:12.5px; color:#7CFFB2; background:rgba(60,200,120,.1); border:1px solid rgba(60,200,120,.3); border-radius:10px; padding:9px 13px; margin-bottom:14px; line-height:1.6; }
+  .mch-banner b { color:#7CFFB2; }
   .mch-src { font-size:11px; color:var(--text2); margin-top:8px; }
 
   .mch-status { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px; margin-bottom:14px; display:flex; flex-wrap:wrap; gap:18px; align-items:center; }
@@ -32,21 +34,28 @@
   .watch-hint { font-size:11px; color:var(--text2); margin-top:8px; }
 
   .sec-ttl { font-size:15px; font-weight:800; color:var(--text); margin:18px 2px 10px; display:flex; align-items:center; gap:8px; }
+  .sec-ttl .upd { font-size:11px; font-weight:500; color:var(--text2); margin-left:auto; }
 
   .round-tabs { display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
   .round-tab { font-size:13px; font-weight:700; padding:7px 14px; border-radius:10px; background:var(--bg); border:1px solid var(--border); color:var(--text2); cursor:pointer; user-select:none; }
   .round-tab.active { background:var(--accent); color:#fff; border-color:var(--accent); }
   .round-tab .now { font-size:10px; margin-left:4px; opacity:.85; }
+  .round-tab .miss { font-size:10px; margin-left:4px; color:#ffae5e; }
 
-  .pool-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:12px; }
+  .pool-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:12px; }
   .item-card { background:var(--card); border:1px solid var(--border); border-radius:13px; padding:12px 14px; }
   .item-card.hit { border-color:var(--accent); background:rgba(124,107,255,.1); }
   .item-card .in { font-size:14px; font-weight:800; color:var(--text); display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
   .item-card .ip { font-size:12px; color:var(--text2); margin-top:5px; }
   .item-card .iu { font-size:12px; color:var(--text2); margin-top:4px; line-height:1.55; }
   .item-card .il { font-size:11px; color:var(--accent); margin-top:6px; }
-  .item-card .iw { font-size:11px; color:#ffae5e; margin-top:4px; }
+  .item-card .ir { font-size:11px; color:#7CFFB2; margin-top:4px; }
+  .item-card .im { width:48px; height:48px; border-radius:8px; object-fit:contain; background:var(--bg); flex:0 0 auto; }
+  .item-card .row { display:flex; gap:10px; align-items:flex-start; }
   .item-tag { font-size:10px; padding:2px 7px; border-radius:6px; background:rgba(124,107,255,.16); color:var(--accent); font-weight:700; }
+  .badge-hv { font-size:10px; padding:2px 7px; border-radius:6px; background:rgba(255,174,94,.18); color:#ffae5e; font-weight:700; }
+  .badge-rc { font-size:10px; padding:2px 7px; border-radius:6px; background:rgba(255,120,120,.18); color:#ff8080; font-weight:700; }
+  .empty-note { font-size:13px; color:var(--text2); padding:14px; background:var(--card); border:1px dashed var(--border); border-radius:12px; line-height:1.7; }
 
   details.guide { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 14px; margin-top:14px; }
   details.guide summary { cursor:pointer; font-size:13px; font-weight:700; color:var(--accent); }
@@ -58,7 +67,7 @@
 <body>
 <header>
   <h1>远行商人</h1>
-  <span>蹲点助手 · 倒计时 + 轮次物品池</span>
+  <span>蹲点助手 · 自动抓取真实货架</span>
   <nav class="dex-nav">
     <a href="9178.html">伤害计算器</a>
     <a href="pokedex.html">精灵图鉴</a>
@@ -75,11 +84,9 @@
 </header>
 
 <div class="main">
-  <div class="mch-intro">
-    远行商人每天 <b>08:00 / 12:00 / 16:00 / 20:00</b> 四轮刷新，每轮货架保留 <b>4 小时</b>（08:00–24:00 营业）。
-    由于 rocom.shallow.ink 的实时接口<b>按积分计费</b>（每次 5 积分）、不充钱无法调用，本页改为 <b>零成本版</b>：
-    下方为各轮次<b>可能上架的物品池</b>，自动按当前时间高亮本轮，无需你手动输入。
-    <div class="mch-src">数据来源：百度百科「远行商人」词条 + 玩家攻略站（ali213 / 九游 / DVG 等）公开整理；非 rocom 实时精确货架，具体以游戏内为准。</div>
+  <div class="mch-banner">
+    ✅ <b>已接入免费自动数据源</b>：onebiji.com「洛克王国远行商人查询器」。每日 <b>08:07 / 12:07 / 16:07 / 20:07</b> 由 GitHub Actions 自动抓取真实货架并推送，<b>零成本 · 免 Key · 免积分</b>，你无需手动输入。
+    <div class="mch-src">数据来源：onebiji.com 公开查询页（非 rocom 收费接口）；如某轮尚未抓取则显示参考物品池。</div>
   </div>
 
   <div class="mch-status">
@@ -101,23 +108,26 @@
     <div class="watch-hint">示例：国王球 / 炫彩精灵蛋 / 首领血脉秘药 / 祝福项坠</div>
   </div>
 
-  <div class="sec-ttl">本轮可能上架（物品池 · 公开攻略整理）</div>
-  <div class="round-tabs" id="roundTabs"></div>
-  <div class="pool-grid" id="poolGrid"></div>
+  <div class="sec-ttl">今日真实货架（自动抓取）<span class="upd" id="updAt"></span></div>
+  <div class="round-tabs" id="realTabs"></div>
+  <div class="pool-grid" id="realGrid"></div>
 
   <details class="guide">
-    <summary>为什么看不到「当天真实精确货架」？（点击展开）</summary>
+    <summary>参考物品池 & 原理说明（点击展开）</summary>
     <ol>
-      <li>真实货架来自 <code>wegame.shallow.ink</code>，需经 rocom.shallow.ink 代理，<b>按积分计费</b>（merchant 5 / home 20 每次），不充钱无法调用，纯静态站也无法免费取数。</li>
-      <li>因此本页提供「轮次物品池 + 倒计时」自动帮你蹲点，<b>完全免费、零依赖、无需手动输入</b>；但显示的是各轮「可能上架」的参考清单，非当天精确轮换。</li>
-      <li>若日后充了积分：把 Key 存进仓库 Secrets 的 <code>ROCOM_API_KEY</code>，到 Actions 页 <b>Run workflow</b>（或开定时）即可每日自动抓真实货架推静态 JSON，页面自动读取——代码与流程已现成，只差积分。</li>
+      <li>真实货架来自 <code>onebiji.com</code> 公开的「远行商人查询器」页面，由 GitHub Actions 在每天四轮刷新后自动抓取并写入 <code>data/merchant_daily.json</code>，本页直接读取展示——<b>全程免费、不消耗 rocom 积分</b>。</li>
+      <li>页面只渲染「当前轮」真实货物，因此 Actions 在每轮刷新后（08:07 等）各抓一次，到当天结束即可凑齐四轮真实货架；未抓取到的轮次下方显示参考物品池。</li>
+      <li>若 GitHub Actions 因网络/调度延迟未跑，页面会回退到下方「参考物品池」（公开攻略整理的各轮可能上架清单），不影响蹲点。</li>
     </ol>
+    <div class="round-tabs" id="refTabs" style="margin-top:12px;"></div>
+    <div class="pool-grid" id="refGrid"></div>
   </details>
 </div>
 
 <script>
 // ====== 配置 ======
 const ROUNDS = [8, 12, 16, 20]; // 每日刷新整点（本地时区）
+const ROUND_HOUR = { "1":8, "2":12, "3":16, "4":20 };
 
 // ---------- 倒计时 ----------
 function currentRound(){
@@ -164,18 +174,69 @@ function renderWatch(){
 function hitWatch(name){ return watch.some(function(w){ return name && name.indexOf(w) >= 0; }); }
 document.getElementById('watchChips').addEventListener('click', function(e){
   const x = e.target.getAttribute('data-x');
-  if (x !== null){ watch.splice(+x, 1); saveWatch(); renderWatch(); renderPool(); }
+  if (x !== null){ watch.splice(+x, 1); saveWatch(); renderWatch(); renderReal(); renderRef(); }
 });
 document.getElementById('watchInput').addEventListener('keydown', function(e){
   if (e.key === 'Enter'){
     const v = this.value.trim();
-    if (v && watch.indexOf(v) < 0){ watch.push(v); saveWatch(); renderWatch(); renderPool(); }
+    if (v && watch.indexOf(v) < 0){ watch.push(v); saveWatch(); renderWatch(); renderReal(); renderRef(); }
     this.value = '';
   }
 });
 
-// ---------- 轮次物品池（公开攻略整理，非 rocom 实时精确货架） ----------
-// 字段：n 名称 / p 价格 / u 用途 / l 限购 / w 提醒 / tag 分类
+// ---------- 真实货架（自动抓取） ----------
+let REAL = null;        // { date, updated_at, server_now, active_round, rounds:{ "1":{label,items:[]}, ... } }
+let selReal = (function(){ const r = currentRound().idx; return r < 8 ? 8 : r; })();
+
+function realRoundKey(hour){ for (const k in ROUND_HOUR){ if (ROUND_HOUR[k] === hour) return k; } return null; }
+
+function renderRealTabs(){
+  const cur = currentRound().idx;
+  const el = document.getElementById('realTabs');
+  el.innerHTML = ROUNDS.map(function(h){
+    const key = realRoundKey(h);
+    const have = REAL && REAL.rounds && REAL.rounds[key] && REAL.rounds[key].items.length;
+    const active = (h === selReal) ? ' active' : '';
+    const now = (h === cur) ? '<span class="now">·当前</span>' : '';
+    const miss = (!have) ? '<span class="miss">·未抓取</span>' : '';
+    return '<div class="round-tab'+active+'" data-h="'+h+'">'+h+':00'+now+miss+'</div>';
+  }).join('');
+}
+function renderReal(){
+  const el = document.getElementById('realGrid');
+  const key = realRoundKey(selReal);
+  const rd = REAL && REAL.rounds && REAL.rounds[key];
+  if (!rd || !rd.items || !rd.items.length){
+    el.innerHTML = '<div class="empty-note">本轮尚未自动抓取（Actions 在 '+selReal+':07 后运行）。可先参考下方「参考物品池」；或直接打开 '
+      + '<a href="https://www.onebiji.com/hykb_tools/comm/lkwgmerchant/preview.php?id=1&immgj=0" target="_blank" rel="noopener">onebiji 实时页</a> 查看。</div>';
+    return;
+  }
+  el.innerHTML = rd.items.map(function(it){
+    const hit = hitWatch(it.name) ? ' hit' : '';
+    const star = hitWatch(it.name) ? ' ⭐' : '';
+    const hv = it.high_value ? '<span class="badge-hv">💎超高价值</span>' : '';
+    const rc = it.recommend ? '<span class="badge-rc">🔥强烈推荐</span>' : '';
+    const img = (it.image && /^https?:\/\//.test(it.image))
+      ? '<img class="im" src="'+escapeHtml(it.image)+'" alt="" onerror="this.style.display=\'none\'">'
+      : '';
+    return '<div class="item-card'+hit+'">'
+      + '<div class="row">'+img
+      + '<div style="flex:1">'
+      + '<div class="in">'+ (it.type ? '<span class="item-tag">'+escapeHtml(it.type)+'</span>' : '') + escapeHtml(it.name) + star + hv + rc + '</div>'
+      + '<div class="ip">价格：'+(it.price||'—')+' 洛克贝</div>'
+      + (it.limit ? '<div class="il">限购：'+escapeHtml(it.limit)+'</div>' : '')
+      + (it.remain && it.remain !== '未知' ? '<div class="ir">剩余：'+escapeHtml(it.remain)+'</div>' : '')
+      + (it.desc ? '<div class="iu">'+escapeHtml(it.desc)+'</div>' : '')
+      + '</div></div>'
+      + '</div>';
+  }).join('');
+}
+document.getElementById('realTabs').addEventListener('click', function(e){
+  const h = e.target.getAttribute('data-h');
+  if (h !== null){ selReal = +h; renderRealTabs(); renderReal(); }
+});
+
+// ---------- 参考物品池（公开攻略整理，兜底用） ----------
 const ITEM_POOL = {
   8: [
     { n:'国王球',            p:'约 16 万洛克贝', u:'捕捉赛季稀有/异色精灵，唯一稳定锁定「了不起天分」', l:'每轮限量 3', tag:'捕捉球' },
@@ -200,20 +261,19 @@ const ITEM_POOL = {
     { n:'限时道具',          p:'—',              u:'本轮结束后下架，最后购买窗口', l:'—', w:'抓紧最后机会', tag:'特殊' }
   ]
 };
-
-let selRound = (function(){ const r = currentRound().idx; return r < 8 ? 8 : r; })();
-function renderTabs(){
+let selRef = (function(){ const r = currentRound().idx; return r < 8 ? 8 : r; })();
+function renderRefTabs(){
   const cur = currentRound().idx;
-  const el = document.getElementById('roundTabs');
+  const el = document.getElementById('refTabs');
   el.innerHTML = ROUNDS.map(function(h){
-    const active = (h === selRound) ? ' active' : '';
+    const active = (h === selRef) ? ' active' : '';
     const now = (h === cur) ? '<span class="now">·当前</span>' : '';
     return '<div class="round-tab'+active+'" data-h="'+h+'">'+h+':00'+now+'</div>';
   }).join('');
 }
-function renderPool(){
-  const el = document.getElementById('poolGrid');
-  const items = ITEM_POOL[selRound] || [];
+function renderRef(){
+  const el = document.getElementById('refGrid');
+  const items = ITEM_POOL[selRef] || [];
   el.innerHTML = items.map(function(it){
     const hit = hitWatch(it.n) ? ' hit' : '';
     const star = hitWatch(it.n) ? ' ⭐' : '';
@@ -226,10 +286,29 @@ function renderPool(){
       + '</div>';
   }).join('');
 }
-document.getElementById('roundTabs').addEventListener('click', function(e){
+document.getElementById('refTabs').addEventListener('click', function(e){
   const h = e.target.getAttribute('data-h');
-  if (h !== null){ selRound = +h; renderTabs(); renderPool(); }
+  if (h !== null){ selRef = +h; renderRefTabs(); renderRef(); }
 });
+
+// ---------- 加载自动数据 ----------
+function loadReal(){
+  fetch('data/merchant_daily.json', { cache:'no-store' })
+    .then(function(r){ if (!r.ok) throw new Error('http '+r.status); return r.json(); })
+    .then(function(d){
+      REAL = d;
+      if (d && d.updated_at){
+        const t = new Date(d.updated_at);
+        const txt = '更新于 ' + (t.getMonth()+1) + '/' + t.getDate() + ' ' + String(t.getHours()).padStart(2,'0') + ':' + String(t.getMinutes()).padStart(2,'0');
+        document.getElementById('updAt').textContent = (d.date||'') + ' · ' + txt;
+      }
+      renderRealTabs(); renderReal();
+    })
+    .catch(function(){
+      document.getElementById('updAt').textContent = '自动数据暂未获取，显示参考池';
+      renderRealTabs(); renderReal();
+    });
+}
 
 function escapeHtml(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
 
@@ -254,11 +333,12 @@ function escapeHtml(s){ return String(s).replace(/[&<>"']/g, function(c){ return
 
 // ---------- 启动 ----------
 renderWatch();
-renderTabs();
-renderPool();
+loadReal();
+renderRefTabs();
+renderRef();
 tick();
 setInterval(tick, 1000);
-setInterval(renderTabs, 60000); // 跨轮次后「当前」标记自动更新
+setInterval(function(){ renderRealTabs(); renderRefTabs(); }, 60000); // 跨轮次后「当前」标记自动更新
 </script>
 </body>
 </html>
