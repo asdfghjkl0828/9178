@@ -10,9 +10,14 @@
   .home-intro b { color:var(--accent); }
   .home-intro code { background:var(--bg); padding:1px 6px; border-radius:5px; color:var(--text); }
 
-  .tabs { display:flex; gap:8px; margin-bottom:14px; }
+  .tabs { display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap; }
   .tab { padding:7px 16px; border-radius:9px; border:1px solid var(--border); background:var(--bg); color:var(--text2); cursor:pointer; font-size:13px; font-weight:700; font-family:inherit; }
   .tab.active { color:var(--accent); border-color:var(--accent); background:rgba(124,107,255,.12); }
+
+  .src-bar { font-size:12px; color:var(--text2); margin-bottom:12px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .src-bar .badge { background:rgba(79,189,114,.16); color:#4FBD72; border-radius:7px; padding:2px 9px; font-weight:700; }
+  .src-bar .uid-tab { padding:5px 12px; border-radius:8px; border:1px solid var(--border); background:var(--bg); color:var(--text2); cursor:pointer; font-weight:700; font-size:12px; font-family:inherit; }
+  .src-bar .uid-tab.active { color:var(--accent); border-color:var(--accent); background:rgba(124,107,255,.12); }
 
   .note-form { background:var(--card); border:1px solid var(--border); border-radius:13px; padding:14px; margin-bottom:14px; }
   .note-form input, .note-form textarea { width:100%; box-sizing:border-box; background:var(--bg); border:1px solid var(--border); border-radius:9px; color:var(--text); padding:9px 12px; font-family:inherit; font-size:13px; margin-bottom:8px; }
@@ -36,28 +41,29 @@
   .mch-err code { background:rgba(0,0,0,.25); padding:1px 6px; border-radius:4px; }
   .loading { text-align:center; color:var(--text2); padding:30px; font-size:14px; }
 
-  .ov { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px; display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:10px; margin-bottom:14px; }
+  .ov { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px; display:grid; grid-template-columns:repeat(auto-fill,minmax(115px,1fr)); gap:10px; margin-bottom:14px; }
   .ov .cell { background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:10px 12px; }
   .ov .cell .k { font-size:11px; color:var(--text2); }
-  .ov .cell .v { font-size:18px; font-weight:800; color:var(--accent); margin-top:3px; word-break:break-all; }
+  .ov .cell .v { font-size:17px; font-weight:800; color:var(--accent); margin-top:3px; word-break:break-all; }
 
   .sec-ttl { font-size:15px; font-weight:800; color:var(--text); margin:18px 2px 10px; }
   .goods-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; }
   .good { display:flex; align-items:center; gap:12px; background:var(--card); border:1px solid var(--border); border-radius:13px; padding:11px 13px; }
-  .good .ico-box { position:relative; width:44px; height:44px; flex-shrink:0; }
-  .good .ico-fb { position:absolute; inset:0; width:44px; height:44px; border-radius:10px; background:var(--bg); display:flex; align-items:center; justify-content:center; font-weight:800; color:var(--text2); }
+  .good .ico-box { position:relative; width:46px; height:46px; flex-shrink:0; }
+  .good .ico-box img { position:absolute; inset:0; width:46px; height:46px; border-radius:10px; object-fit:cover; background:var(--bg); }
+  .good .ico-fb { position:absolute; inset:0; width:46px; height:46px; border-radius:10px; background:var(--bg); display:flex; align-items:center; justify-content:center; font-weight:800; color:var(--text2); }
   .good .info { flex:1; min-width:0; }
   .good .nm { font-size:14px; font-weight:700; color:var(--text); display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
   .good .meta { font-size:11px; color:var(--text2); margin-top:3px; line-height:1.6; }
-  .good .pet { font-size:10px; font-weight:700; color:#4FBD72; background:rgba(79,189,114,.18); border-radius:6px; padding:1px 7px; }
   .good .star { font-size:10px; font-weight:700; color:#E8B84B; background:rgba(232,184,75,.18); border-radius:6px; padding:1px 7px; }
+  .good .mut { font-size:10px; font-weight:700; color:#C77DFF; background:rgba(199,125,255,.18); border-radius:6px; padding:1px 7px; }
 
   .plant-land { background:var(--card); border:1px solid var(--border); border-radius:13px; padding:12px 14px; margin-bottom:12px; }
-  .plant-land .land-ttl { font-size:13px; font-weight:700; color:var(--text); margin-bottom:8px; }
   .plant-list { display:flex; flex-wrap:wrap; gap:8px; }
   .plant { background:var(--bg); border:1px solid var(--border); border-radius:9px; padding:7px 11px; font-size:12px; color:var(--text); }
   .plant .rip { color:var(--text2); margin-left:6px; }
   .plant .ripe { color:#4FBD72; font-weight:700; }
+  .plant .steal { color:#E8B84B; margin-left:6px; }
 
   .empty-row { text-align:center; color:var(--text2); padding:24px; background:var(--bg); border:1px dashed var(--border); border-radius:13px; font-size:13px; }
   details.guide { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 14px; margin-top:14px; }
@@ -69,7 +75,7 @@
 <body>
 <header>
   <h1>家园查询</h1>
-  <span>本地备忘录 + 粘贴导入（免费替代方案）</span>
+  <span>免费自动抓取（rocodex.org）</span>
   <nav class="dex-nav">
     <a href="9178.html">伤害计算器</a>
     <a href="pokedex.html">精灵图鉴</a>
@@ -87,17 +93,32 @@
 
 <div class="main">
   <div class="home-intro">
-    由于 rocom.shallow.ink 的家园接口<b>按积分计费</b>（每次查询 20 积分）且需 API Key，纯静态站<b>不充钱无法实时查他人家园</b>。本页改用两种<b>零成本</b>方式：
-    <b>① 本地备忘录</b>——你自己记录同学 / 朋友的精灵与菜园，存浏览器本地（仅你本机可见）；
-    <b>② 粘贴导入</b>——把同学从 rocom 家园页<b>复制的文字</b>（或导出的 JSON）粘进来，自动卡片化 / 结构化展示，<b>不消耗你的积分</b>。
+    已接入<b>免费自动数据源</b> <code>rocodex.org</code>（无需 Key / 不耗积分）：每天北京时间 <b>07:07</b> 由 GitHub Actions 自动抓取 <code>data/uids.json</code> 里登记的 UID，推静态 JSON，页面自动渲染。
+    每个 IP 每天免费额度 <b>3 次</b>，所以最多自动追踪 3 个 UID。也可用下方<b>粘贴导入 / 本地备忘录</b>作为离线兜底。
   </div>
 
   <div class="tabs">
-    <button class="tab active" id="tabNote">📝 本地备忘录</button>
+    <button class="tab active" id="tabAuto">🔄 自动抓取</button>
     <button class="tab" id="tabImport">📥 粘贴导入</button>
+    <button class="tab" id="tabNote">📝 本地备忘录</button>
   </div>
 
-  <div id="paneNote">
+  <div id="paneAuto">
+    <div class="src-bar" id="srcBar"><span class="loading">正在加载自动抓取数据…</span></div>
+    <div id="autoResult"></div>
+  </div>
+
+  <div id="paneImport" style="display:none">
+    <div class="home-intro" style="margin-bottom:12px">
+      把同学从任意家园页<b>复制的文字</b>（或导出的 JSON）粘到下方，点解析即可查看。支持两种结构：<code>rocodex</code> 返回的 <code>{data:{pets,plants}}</code>，或 <code>rocom</code> 的 <code>home/info</code> 结构。<b>不消耗积分</b>。
+    </div>
+    <textarea class="import-box" id="importBox" placeholder="粘贴家园内容，例如：{&quot;data&quot;:{&quot;homeName&quot;:&quot;小明の家&quot;,...}} 或同学复制的网页文字（每行一项即可卡片化）"></textarea>
+    <div style="margin-top:10px"><button class="btn" id="importBtn">解析查看</button></div>
+    <div class="mch-err" id="importErr"></div>
+    <div id="result"></div>
+  </div>
+
+  <div id="paneNote" style="display:none">
     <div class="note-form">
       <input id="noteName" placeholder="朋友昵称 / UID，如 5678116 小明">
       <textarea id="notePets" placeholder="守卫 / 室内精灵（一行一个，如：迪莫 Lv.45 / 火神 / 格兰球球）"></textarea>
@@ -107,28 +128,19 @@
     <div class="note-list" id="noteList"></div>
   </div>
 
-  <div id="paneImport" style="display:none">
-    <div class="home-intro" style="margin-bottom:12px">
-      把同学从 <code>rocom.shallow.ink</code> 家园页<b>选中的文字</b>（或导出的 JSON）粘到下方，点解析即可查看：能识别 JSON 就结构化展示，否则按行卡片化呈现。<b>不消耗你的积分</b>。
-    </div>
-    <textarea class="import-box" id="importBox" placeholder="粘贴同学发来的家园内容，例如：家名：小明の家 / 防守精灵：迪莫 Lv.45 / 菜园：星光花、魔力蘑菇（每行一项即可卡片化；也可直接粘 home/info 返回的 JSON）"></textarea>
-    <div style="margin-top:10px"><button class="btn" id="importBtn">解析查看</button></div>
-    <div class="mch-err" id="importErr"></div>
-    <div id="result"></div>
-  </div>
-
   <details class="guide">
-    <summary>同学怎么把家园数据发给你？（点击展开，两种办法）</summary>
+    <summary>怎么增加自动追踪的 UID？（点击展开）</summary>
     <ol>
-      <li><b>复制文字（最省事，推荐）</b>：同学登录 <code>rocom.shallow.ink</code> → 家园查询 → 用鼠标选中页面上的精灵 / 菜园文字 → <code>Ctrl+C</code> 复制 → 发给你（微信 / QQ 都行）。你粘进「粘贴导入」点解析即可卡片化查看。</li>
-      <li><b>导 JSON（进阶）</b>：会玩开发者工具的同学，F12 → Network → 刷新家园页 → 找 <code>home/info</code> 那条请求 → 复制 Response 里的 JSON 发你，粘进来会结构化展示（精灵 / 菜园分块）。</li>
-      <li>两种方式都<b>不消耗你的积分</b>。若日后你充了积分：把 Key 存进仓库 Secrets 的 <code>ROCOM_API_KEY</code>，到 Actions 页 <b>Run workflow</b> 即可自动抓真实数据（自动调度已默认关闭以免浪费）。</li>
+      <li>自动追踪的 UID 写在仓库的 <code>data/uids.json</code>（目前默认 <code>[5678116]</code>）。</li>
+      <li>想加同学：把 UID 加进这个数组（如 <code>[5678116, 1234567]</code>），提交后下次自动抓取就会包含他。</li>
+      <li>注意免费额度每天 3 次 / IP，所以 <code>uids.json</code> 里最多放 3 个 UID 才能每天都被抓到。</li>
+      <li>数据每天 07:07（北京时间）更新一次；植物成熟 / 生蛋倒计时是当天快照，精确到分钟以游戏内为准。</li>
     </ol>
   </details>
 </div>
 
 <script>
-// ---------- 主题切换（与全站一致） ----------
+// ---------- 主题切换 ----------
 (function(){
   const t = document.getElementById('themeToggle');
   const saved = localStorage.getItem('theme');
@@ -152,6 +164,7 @@ function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g, c=>({'&':'&amp;'
 function $(id){ return document.getElementById(id); }
 function showErr(html){ const e=$('importErr'); e.innerHTML=html; e.classList.add('show'); }
 function hideErr(){ $('importErr').classList.remove('show'); }
+function fixIcon(icon){ if(!icon) return ''; return icon.startsWith('/') ? 'https://rocodex.org'+icon : icon; }
 
 function genderText(g){
   if(g===1||g==='1'||g==='male') return '♂';
@@ -163,7 +176,7 @@ function fmtTime(ts){
   if(ts==null) return '—';
   let ms = Number(ts);
   if(!isFinite(ms)) return esc(ts);
-  if(ms < 1e12) ms = ms*1000; // 秒→毫秒
+  if(ms < 1e12) ms = ms*1000;
   const d = new Date(ms);
   if(isNaN(d.getTime())) return esc(ts);
   const now = Date.now();
@@ -172,47 +185,22 @@ function fmtTime(ts){
   const h = Math.floor(diff/3600000), m = Math.floor((diff%3600000)/60000);
   return '<span class="rip">约 '+ (h>0? h+'h ':'') + m + 'm 后成熟</span>';
 }
-function skillNames(skill){
-  if(!skill) return [];
-  if(typeof skill === 'string') return [skill];
-  if(Array.isArray(skill)) return skill.map(skillNames).flat().filter(Boolean);
-  if(skill.skill_data) return skillNames(skill.skill_data);
-  if(skill.name) return [skill.name];
-  if(skill.skill_name) return [skill.skill_name];
-  return [];
-}
-function attrText(attr){
-  if(!attr || typeof attr!=='object') return '';
-  const parts = [];
-  for(const k of ['hp','pa','ma','pd','md','sp','speed']) {
-    if(attr[k]!=null) parts.push(k.toUpperCase()+':'+attr[k]);
-  }
-  if(!parts.length){
-    for(const k in attr){ if(attr[k]!=null && typeof attr[k]!=='object') parts.push(k+':'+attr[k]); if(parts.length>=6) break; }
-  }
-  return parts.join(' · ');
-}
 
-// ---------- 解析 + 渲染（兼容 home/info 返回结构） ----------
-function parseHome(raw){
+// ---------- 渲染 rocodex 结构（data.pets / data.plants） ----------
+function renderHomeData(raw){
   let data = raw;
   if(raw && raw.data) data = raw.data;
-  const info = (data && data.home_info) ? data.home_info : data;
-  const brief = info.friend_home_brief_info || info.home_brief_info || {};
-  const cell = info.friend_cell_home_brief_info || info.cell_home_brief_info || {};
-  const pets = cell.home_pets || (info.home_pets) || [];
-  const lands = (cell.home_plant_info && cell.home_plant_info.home_plant_land_list) || [];
-  return { brief, pets, lands };
-}
-function render(raw){
-  const { brief, pets, lands } = parseHome(raw);
+  if(!data) throw new Error('无 data 字段');
   let html = '';
   const ovItems = [
-    ['家名', brief.home_name || brief.name || '—'],
-    ['家园等级', brief.home_level ?? '—'],
-    ['房间等级', brief.room_level ?? '—'],
-    ['舒适度', brief.home_comfort_level ?? '—'],
-    ['灵感经验', brief.home_experience ?? '—']
+    ['家名', data.homeName || '—'],
+    ['家园等级', data.homeLevel ?? '—'],
+    ['房间等级', data.roomLevel ?? '—'],
+    ['舒适度', data.comfortLevel ?? '—'],
+    ['灵感经验', data.homeExperience ?? '—'],
+    ['居住精灵', data.residentPetCount ?? (data.pets?data.pets.length:'—')],
+    ['植物数', data.plantCount ?? (data.plants?data.plants.length:'—')],
+    ['守卫', data.guardianPetName || '—']
   ];
   html += '<div class="ov">';
   for(const [k,v] of ovItems){
@@ -220,54 +208,123 @@ function render(raw){
   }
   html += '</div>';
 
-  html += '<div class="sec-ttl">守卫 / 室内精灵（'+pets.length+'）</div>';
+  const pets = data.pets || [];
+  html += '<div class="sec-ttl">居住 / 守卫精灵（'+pets.length+'）</div>';
   if(pets.length){
     html += '<div class="goods-grid">';
     for(const p of pets){
-      const hi = p.home_pet_info || {};
-      const di = p.display_info || {};
-      const name = di.name || di.base_conf_id || hi.pet_cfg_id || '未知精灵';
-      const ch = String(name).charAt(0);
-      const lv = di.level ?? hi.level ?? '—';
-      const meta1 = 'Lv.'+esc(lv)+' · '+genderText(di.gender)+' · 性格 '+esc(di.nature||'—')+' · 变异 '+esc(di.mutation_type||'—')+' · 血脉 '+esc(di.blood_id||'—')+' · 精力 '+esc(di.energy??'—');
-      const skills = skillNames(di.skill).map(esc);
-      const attr = attrText(di.attribute_info || (di.attribute_new_info && di.attribute_new_info.addi_attr_data));
-      const egg = p.have_egg ? '🥚有蛋' + (p.predicted_egg_time? ' · '+fmtTime(p.predicted_egg_time):'') : '';
-      const star = hi.status ? '<span class="star">'+esc(hi.status)+'</span>' : '';
+      const icon = fixIcon(p.icon);
+      const ch = String(p.name||p.defaultName||'?').charAt(0);
+      const mut = p.mutationName ? '<span class="mut">'+esc(p.mutationName)+'</span>' : '';
+      const star = (p.statusText || (p.haveEgg?'有蛋':'')) ? '<span class="star">'+esc(p.haveEgg?'🥚有蛋':p.statusText)+'</span>' : '';
+      const meta = 'Lv.'+esc(p.level??'—')+' · '+genderText(p.gender)+' · 精力 '+esc(p.energy??'—')+(p.feedRound?(' · 喂养'+p.feedRound+'轮'):'');
       html += '<div class="good">'
-        + '<div class="ico-box"><div class="ico-fb">'+esc(ch)+'</div></div>'
+        + '<div class="ico-box">'+(icon?'<img src="'+esc(icon)+'" alt="" onerror="this.style.display=\'none\'">':'')+'<div class="ico-fb">'+esc(ch)+'</div></div>'
         + '<div class="info">'
-          + '<div class="nm">'+esc(name)+' <span class="pet">精灵</span>'+star+'</div>'
-          + '<div class="meta">'+meta1+'</div>'
-          + (skills.length? '<div class="meta">技能：'+skills.map(s=>esc(s)).join(' / ')+'</div>' : '')
-          + (attr? '<div class="meta">'+esc(attr)+'</div>' : '')
-          + (egg? '<div class="meta">'+esc(egg)+'</div>' : '')
+          + '<div class="nm">'+esc(p.name||p.defaultName||'未知精灵')+mut+star+'</div>'
+          + '<div class="meta">'+meta+'</div>'
+          + (p.statusText? '<div class="meta">状态：'+esc(p.statusText)+'</div>':'')
         + '</div></div>';
     }
     html += '</div>';
   } else {
-    html += '<div class="empty-row">未查询到精灵数据（粘贴的 JSON 可能不含 home_pets 字段）</div>';
+    html += '<div class="empty-row">未查询到精灵数据</div>';
   }
 
-  html += '<div class="sec-ttl">菜园（'+lands.length+' 块地）</div>';
-  if(lands.length){
-    lands.forEach((land, i)=>{
-      const list = (land.home_plant_list) || [];
-      html += '<div class="plant-land"><div class="land-ttl">地块 '+(i+1)+'</div><div class="plant-list">';
-      if(list.length){
-        for(const pl of list){
-          const seed = pl.plant_seed_id || pl.plant_tab_id || '作物';
-          html += '<div class="plant">'+esc(seed)+fmtTime(pl.plant_rip_time)+'</div>';
-        }
-      } else {
-        html += '<span class="rip">（空）</span>';
-      }
-      html += '</div></div>';
-    });
+  const plants = data.plants || [];
+  html += '<div class="sec-ttl">菜园（'+plants.length+' 株）</div>';
+  if(plants.length){
+    html += '<div class="plant-list">';
+    for(const pl of plants){
+      const steal = (pl.canStealAccount!=null && pl.canStealAccount>0) ? '<span class="steal">可偷'+esc(pl.canStealAccount)+'</span>' : '';
+      html += '<div class="plant">'+esc(pl.seedName||('种子'+pl.seedId))+' · 产量'+esc(pl.harvestNum??'?')+fmtTime(pl.ripeAt)+steal+'</div>';
+    }
+    html += '</div>';
   } else {
     html += '<div class="empty-row">未查询到菜园数据</div>';
   }
-  $('result').innerHTML = html;
+  return html;
+}
+
+// ---------- 渲染 rocom 结构（home_info，粘贴导入兜底） ----------
+function parseHome(raw){
+  let data = raw;
+  if(raw && raw.data) data = raw.data;
+  const info = (data && data.home_info) ? data.home_info : data;
+  const cell = info.friend_cell_home_brief_info || info.cell_home_brief_info || {};
+  const pets = cell.home_pets || (info.home_pets) || [];
+  const lands = (cell.home_plant_info && cell.home_plant_info.home_plant_land_list) || [];
+  return { info, pets, lands };
+}
+function renderRocom(raw){
+  const { info, pets, lands } = parseHome(raw);
+  const brief = info.friend_home_brief_info || info.home_brief_info || {};
+  let html = '<div class="ov">';
+  for(const [k,v] of [['家名',brief.home_name||brief.name||'—'],['家园等级',brief.home_level??'—'],['房间等级',brief.room_level??'—'],['舒适度',brief.home_comfort_level??'—'],['灵感经验',brief.home_experience??'—']]){
+    html += '<div class="cell"><div class="k">'+esc(k)+'</div><div class="v">'+esc(v)+'</div></div>';
+  }
+  html += '</div>';
+  html += '<div class="sec-ttl">精灵（'+pets.length+'）</div>';
+  if(pets.length){
+    html += '<div class="goods-grid">';
+    for(const p of pets){
+      const hi=p.home_pet_info||{}, di=p.display_info||{};
+      const name=di.name||hi.pet_cfg_id||'未知';
+      html += '<div class="good"><div class="ico-box"><div class="ico-fb">'+esc(String(name).charAt(0))+'</div></div><div class="info"><div class="nm">'+esc(name)+'</div><div class="meta">Lv.'+esc(di.level??hi.level??'—')+' · '+genderText(di.gender)+'</div></div></div>';
+    }
+    html += '</div>';
+  } else html += '<div class="empty-row">未查询到精灵数据</div>';
+  html += '<div class="sec-ttl">菜园（'+lands.length+' 块地）</div>';
+  if(lands.length){
+    lands.forEach((land,i)=>{
+      const list=land.home_plant_list||[];
+      html += '<div class="plant-land"><div class="land-ttl">地块 '+(i+1)+'</div><div class="plant-list">';
+      html += list.length ? list.map(pl=>'<div class="plant">'+esc(pl.plant_seed_id||pl.plant_tab_id||'作物')+fmtTime(pl.plant_rip_time)+'</div>').join('') : '<span class="rip">（空）</span>';
+      html += '</div></div>';
+    });
+  } else html += '<div class="empty-row">未查询到菜园数据</div>';
+  return html;
+}
+
+// ---------- 自动抓取面板 ----------
+let INDEX = null, currentUid = null;
+async function loadAuto(){
+  const bar = $('srcBar'), res = $('autoResult');
+  try {
+    const idx = await fetch('data/home_index.json?t='+Date.now()).then(r=>r.json());
+    INDEX = idx;
+    if(!idx.uids || !idx.uids.length){
+      bar.innerHTML = '<span class="loading">暂无自动数据。每天 07:07（北京时间）更新；可切到「粘贴导入」手动查看。</span>';
+      res.innerHTML = '';
+      return;
+    }
+    currentUid = idx.uids[0].uid;
+    renderBar();
+    await showUid(currentUid);
+  } catch(e){
+    bar.innerHTML = '<span class="loading">加载失败：'+esc(e.message)+'。可切到「粘贴导入」手动查看。</span>';
+  }
+}
+function renderBar(){
+  const idx = INDEX;
+  let html = '<span class="badge">免费自动</span> <span>更新于 '+esc((idx.updated_at||'').replace('T',' ').replace('Z',' UTC'))+'</span> <span>源：'+esc(idx.source||'')+'</span>';
+  for(const u of idx.uids){
+    html += '<button class="uid-tab'+(u.uid===currentUid?' active':'')+'" data-uid="'+esc(u.uid)+'">'+esc(u.homeName||u.uid)+'</button>';
+  }
+  $('srcBar').innerHTML = html;
+  $('srcBar').querySelectorAll('.uid-tab').forEach(b=>{
+    b.addEventListener('click', ()=>{ currentUid=b.getAttribute('data-uid'); renderBar(); showUid(currentUid); });
+  });
+}
+async function showUid(uid){
+  const res = $('autoResult');
+  res.innerHTML = '<div class="loading">加载 '+esc(uid)+' 的家园…</div>';
+  try {
+    const j = await fetch('data/home_'+uid+'.json?t='+Date.now()).then(r=>r.json());
+    res.innerHTML = renderHomeData(j);
+  } catch(e){
+    res.innerHTML = '<div class="empty-row">读取 '+esc(uid)+' 失败：'+esc(e.message)+'</div>';
+  }
 }
 
 // ---------- 本地备忘录 ----------
@@ -300,16 +357,19 @@ $('noteList').addEventListener('click', function(e){ const x=e.target.getAttribu
 $('importBtn').addEventListener('click', function(){
   hideErr();
   const txt = $('importBox').value.trim();
-  if(!txt){ showErr('⚠ 请先粘贴同学发来的家园内容（文字或 JSON）。'); return; }
+  if(!txt){ showErr('⚠ 请先粘贴家园内容（文字或 JSON）。'); return; }
   let j=null;
   try { j = JSON.parse(txt); } catch(e){ j = null; }
   if(j && j.code && j.code!==0){ showErr('⚠ 这是接口错误响应（'+esc(j.message||'')+'），不是家园数据。'); $('result').innerHTML=''; return; }
   if(j && typeof j==='object'){
-    try { render(j); }
-    catch(e){ showErr('⚠ 解析渲染失败：'+esc(e.message)); }
+    try {
+      const data = j.data || j;
+      if(data.pets || data.plants || data.homeName) { $('result').innerHTML = renderHomeData(j); return; }
+      if(data.home_info) { $('result').innerHTML = renderRocom(j); return; }
+      throw new Error('未识别的结构');
+    } catch(e){ showErr('⚠ 解析渲染失败：'+esc(e.message)); }
     return;
   }
-  // 纯文本：按行卡片化展示（兼容同学复制的网页文字）
   const lines = txt.split(/\n+/).map(s=>s.trim()).filter(Boolean);
   if(!lines.length){ showErr('⚠ 内容为空。'); return; }
   let html = '<div class="sec-ttl">粘贴内容（原文）</div><div class="goods-grid">';
@@ -321,18 +381,20 @@ $('importBtn').addEventListener('click', function(){
 });
 
 // ---------- Tab 切换 ----------
-$('tabNote').addEventListener('click', function(){ switchTab('note'); });
-$('tabImport').addEventListener('click', function(){ switchTab('import'); });
+$('tabAuto').addEventListener('click', ()=>switchTab('auto'));
+$('tabImport').addEventListener('click', ()=>switchTab('import'));
+$('tabNote').addEventListener('click', ()=>switchTab('note'));
 function switchTab(which){
-  const isNote = which==='note';
-  $('tabNote').classList.toggle('active', isNote);
-  $('tabImport').classList.toggle('active', !isNote);
-  $('paneNote').style.display = isNote ? 'block' : 'none';
-  $('paneImport').style.display = isNote ? 'none' : 'block';
+  const map = {auto:['tabAuto','paneAuto'], import:['tabImport','paneImport'], note:['tabNote','paneNote']};
+  for(const k in map){
+    $(map[k][0]).classList.toggle('active', k===which);
+    $(map[k][1]).style.display = k===which ? 'block' : 'none';
+  }
 }
 
 // ---------- 启动 ----------
 renderNotes();
+loadAuto();
 </script>
 </body>
 </html>
