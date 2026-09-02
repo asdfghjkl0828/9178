@@ -298,3 +298,6 @@
   .dex-nav a { color:rgba(255,255,255,.82); text-decoration:none; font-size:13px; padding:5px 11px; border-radius:18px; border:1px solid rgba(255,255,255,.18); white-space:nowrap; }
   .dex-nav a:hover { background:rgba(255,255,255,.15); }
   .dex-nav a.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+
+  .dex-nav a.home-link { background:linear-gradient(135deg,var(--accent),var(--accent2)); border-color:transparent; color:#fff; font-weight:700; box-shadow:0 2px 8px rgba(124,107,255,.4); }
+  .dex-nav a.home-link:hover { filter:brightness(1.12); }
