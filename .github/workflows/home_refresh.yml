@@ -1,9 +1,9 @@
-name: 家园数据每日自动抓取
+name: 家园数据每小时自动抓取
 
 on:
   schedule:
-    # 北京时间每天 07:07（UTC 前一天 23:07）抓取一次，覆盖 data/uids.json 里的 UID
-    - cron: "7 23 * * *"
+    # 北京时间每小时 :07 抓取一次（UTC 每小时 :07），做成准实时快照，覆盖 data/uids.json 里的 UID
+    - cron: "7 * * * *"
   workflow_dispatch:
 
 permissions:
