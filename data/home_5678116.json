@@ -1,6 +1,6 @@
 {
  "uid": "5678116",
- "fetched_at": "2026-09-02T13:21:28Z",
+ "fetched_at": "2026-09-02T14:20:52Z",
  "source": "rocodex.org (免费)",
  "quota_remaining": 2,
  "from_cache": false,
@@ -62,7 +62,7 @@
     "genderText": "雌性",
     "energy": 10,
     "mutationName": "异色炫彩",
-    "haveEgg": true,
+    "haveEgg": false,
     "feedRound": 1,
     "status": 1702,
     "statusText": "已驻守",
@@ -78,7 +78,7 @@
     "genderText": "雌性",
     "energy": 10,
     "mutationName": "异色炫彩",
-    "haveEgg": true,
+    "haveEgg": false,
     "feedRound": 1,
     "status": 1702,
     "statusText": "已驻守",
@@ -174,7 +174,7 @@
     "genderText": "雌性",
     "energy": 10,
     "mutationName": "异色炫彩",
-    "haveEgg": true,
+    "haveEgg": false,
     "feedRound": 1,
     "status": 1702,
     "statusText": "已驻守",
@@ -334,9 +334,9 @@
    }
   ],
   "meta": {
-   "taskId": "tsk_dl4v1h71o8en_5516",
-   "createdAt": "2026-09-02T13:21:27.220Z",
-   "finishedAt": "2026-09-02T13:21:28.314Z"
+   "taskId": "tsk_dl4waykx6dq1_560a",
+   "createdAt": "2026-09-02T14:20:51.451Z",
+   "finishedAt": "2026-09-02T14:20:52.544Z"
   }
  }
 }
