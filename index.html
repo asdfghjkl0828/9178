@@ -6,8 +6,8 @@
 <title>洛克王国 PVP 工具箱</title>
 <link rel="stylesheet" href="css/head.css">
 <style>
-  .hub-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px; margin-top:6px; }
-  .hub-card { display:block; text-decoration:none; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:20px; transition:transform .15s,border-color .15s; }
+  .hub-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-top:6px; }
+  .hub-card { display:block; text-decoration:none; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:20px; min-height:130px; transition:transform .15s,border-color .15s; }
   .hub-card:hover { transform:translateY(-3px); border-color:var(--accent); }
   .hub-ico { font-size:34px; }
   .hub-title { font-size:18px; font-weight:700; color:var(--text); margin-top:10px; }
@@ -32,7 +32,7 @@
 <div class="main">
   <p class="sub">选择一个工具开始：</p>
   <div class="hub-grid">
-    <a class="hub-card" href="9178.html">
+    <a class="hub-card" href="calc.html">
       <div class="hub-ico">⚔️</div>
       <div class="hub-title">伤害计算器</div>
       <div class="hub-desc">攻防双面板，支持快捷 / 参数 / 配招三种模式，模拟实战伤害。</div>
@@ -62,7 +62,6 @@
       <div class="hub-title">孵蛋查询</div>
       <div class="hub-desc">输入蛋的尺寸与重量，按区间契合度反查最可能孵出的精灵。</div>
     </a>
-  </div>
     <a class="hub-card" href="merchant.html">
       <div class="hub-ico">🚚</div>
       <div class="hub-title">远行商人</div>
@@ -73,7 +72,7 @@
       <div class="hub-title">家园查询</div>
       <div class="hub-desc">查看个人家园菜园与守卫精灵（需绑定 WeGame，引导至官方查询）。</div>
     </a>
-</div>
+  </div>
 
 <script src="data/spirits.js"></script>
 <script src="data/skills.js"></script>
