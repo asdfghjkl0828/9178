@@ -70,6 +70,17 @@
   details.guide summary { cursor:pointer; font-size:13px; font-weight:700; color:var(--accent); }
   details.guide ol { margin:10px 0 2px; padding-left:20px; color:var(--text2); font-size:12.5px; line-height:1.8; }
   details.guide code { background:var(--bg); padding:1px 6px; border-radius:4px; color:var(--text); }
+
+  .rt-box { background:rgba(79,189,114,.08); border:1px solid rgba(79,189,114,.3); border-radius:13px; padding:12px 14px; margin-bottom:14px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .rt-box .rt-ttl { font-size:13px; font-weight:800; color:#4FBD72; }
+  .rt-box input { flex:1; min-width:160px; background:var(--bg); border:1px solid var(--border); border-radius:9px; color:var(--text); padding:9px 12px; font-family:inherit; font-size:13px; }
+  .rt-box input:focus { outline:none; border-color:var(--accent); }
+  .rt-box .btn { height:36px; }
+  .rt-hint { font-size:12px; color:var(--text2); width:100%; line-height:1.6; }
+  .rt-hint a { color:var(--accent); }
+  .local-ok { background:rgba(79,189,114,.16); color:#4FBD72; border-radius:7px; padding:2px 9px; font-weight:700; font-size:12px; }
+  .rt-divider { display:flex; align-items:center; gap:10px; color:var(--text2); font-size:12px; margin:6px 2px 12px; }
+  .rt-divider::before, .rt-divider::after { content:""; flex:1; height:1px; background:var(--border); }
 </style>
 </head>
 <body>
@@ -93,8 +104,8 @@
 
 <div class="main">
   <div class="home-intro">
-    已接入<b>免费自动数据源</b> <code>rocodex.org</code>（无需 Key / 不耗积分）：每天北京时间 <b>07:07</b> 由 GitHub Actions 自动抓取 <code>data/uids.json</code> 里登记的 UID，推静态 JSON，页面自动渲染。
-    每个 IP 每天免费额度 <b>3 次</b>，所以最多自动追踪 3 个 UID。也可用下方<b>粘贴导入 / 本地备忘录</b>作为离线兜底。
+    已接入<b>免费自动数据源</b> <code>rocodex.org</code>（无需 Key / 不耗积分）：默认<b>每小时</b>由 GitHub Actions 自动抓取 <code>data/uids.json</code> 里登记的 UID，推静态 JSON 作快照；想查<b>当前最新</b>，用上方<b>⚡ 实时查询</b>——运行本地代理 <code>run_proxy.bat</code> 后打开 <code>http://127.0.0.1:8787/home.html</code> 即可点一下即查（每次新额度≈无限次免费）。
+    自动追踪免费额度每天 3 次 / IP，故 <code>uids.json</code> 最多放 3 个 UID。也可用下方<b>粘贴导入 / 本地备忘录</b>作离线兜底。
   </div>
 
   <div class="tabs">
@@ -104,6 +115,14 @@
   </div>
 
   <div id="paneAuto">
+    <div class="rt-box">
+      <span class="rt-ttl">⚡ 实时查询</span>
+      <input id="rtUid" placeholder="输入 UID，如 5678116" value="5678116">
+      <button class="btn" id="rtBtn">查询最新</button>
+      <span class="rt-hint" id="rtHint"></span>
+    </div>
+    <div id="rtResult"></div>
+    <div class="rt-divider">每小时自动快照（GitHub Actions 推送）</div>
     <div class="src-bar" id="srcBar"><span class="loading">正在加载自动抓取数据…</span></div>
     <div id="autoResult"></div>
   </div>
@@ -134,7 +153,8 @@
       <li>自动追踪的 UID 写在仓库的 <code>data/uids.json</code>（目前默认 <code>[5678116]</code>）。</li>
       <li>想加同学：把 UID 加进这个数组（如 <code>[5678116, 1234567]</code>），提交后下次自动抓取就会包含他。</li>
       <li>注意免费额度每天 3 次 / IP，所以 <code>uids.json</code> 里最多放 3 个 UID 才能每天都被抓到。</li>
-      <li>数据每天 07:07（北京时间）更新一次；植物成熟 / 生蛋倒计时是当天快照，精确到分钟以游戏内为准。</li>
+      <li>数据每小时（北京时间整点后 7 分）更新一次；植物成熟 / 生蛋倒计时是当天快照，精确到分钟以游戏内为准。</li>
+      <li>要查<b>当前最新</b>：双击 <code>run_proxy.bat</code> 启动本地代理，用 <code>http://127.0.0.1:8787/home.html</code> 打开本页，在上方「⚡ 实时查询」输入 UID 点查询即可（绕开 CORS，每次新额度≈无限免费）。</li>
     </ol>
   </details>
 </div>
@@ -394,6 +414,36 @@ function switchTab(which){
 
 // ---------- 启动 ----------
 renderNotes();
+
+// ---------- 实时查询（本地代理 /home?uid=） ----------
+function isLocal(){ return ['127.0.0.1','localhost','[::1]'].includes(location.hostname); }
+$('rtBtn').addEventListener('click', function(){ realtimeQuery(($('rtUid').value.trim()) || '5678116'); });
+$('rtUid').addEventListener('keydown', function(e){ if(e.key==='Enter') realtimeQuery((this.value.trim()) || '5678116'); });
+async function realtimeQuery(uid){
+  const box = $('rtResult'), hint = $('rtHint');
+  box.innerHTML = '<div class="loading">实时查询 '+esc(uid)+' …</div>';
+  try {
+    const r = await fetch('home?uid='+encodeURIComponent(uid), {cache:'no-store'});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const j = await r.json();
+    if(j.error) throw new Error(j.error);
+    box.innerHTML = renderHomeData(j);
+    const when = (j.cacheExpiresAt||'').replace('T',' ').replace('Z','') || '当前';
+    hint.innerHTML = isLocal()
+      ? '<span class="local-ok">✅ 本地代理已连接 · 实时数据</span> 抓取于 '+esc(when)
+      : '实时数据（若长时间未更新，请确认本地代理在运行）。';
+  } catch(e){
+    if(isLocal()){
+      hint.textContent = '代理似乎没运行？请确认 run_proxy.bat 窗口还开着，端口 8787 未被占用。';
+    } else {
+      hint.innerHTML = '实时查询需在<b>本机</b>运行本地代理：双击 <code>run_proxy.bat</code>，再用 <code>http://127.0.0.1:8787/home.html</code> 打开本页即可实时查（纯 GitHub Pages 域名无后端，无法跨域直连 rocodex）。';
+    }
+    box.innerHTML = '<div class="empty-row">实时查询失败：'+esc(e.message)+'</div>';
+  }
+}
+// 本地代理托管环境：自动查一次，打开即见实时
+if(isLocal()){ realtimeQuery('5678116'); }
+
 loadAuto();
 </script>
 </body>
