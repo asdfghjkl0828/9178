@@ -9,6 +9,7 @@
   .mch-intro { font-size:13px; color:var(--text2); line-height:1.7; margin-bottom:14px; background:rgba(124,107,255,.07); border:1px solid rgba(124,107,255,.22); border-radius:10px; padding:10px 14px; }
   .mch-intro b { color:var(--accent); }
   .mch-intro code { background:var(--bg); padding:1px 6px; border-radius:5px; color:var(--text); font-size:12px; }
+  .mch-src { font-size:11px; color:var(--text2); margin-top:8px; }
 
   .mch-status { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px; margin-bottom:14px; display:flex; flex-wrap:wrap; gap:18px; align-items:center; }
   .mch-round { font-size:14px; }
@@ -32,11 +33,20 @@
 
   .sec-ttl { font-size:15px; font-weight:800; color:var(--text); margin:18px 2px 10px; display:flex; align-items:center; gap:8px; }
 
-  .tip-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; }
-  .tip { background:var(--card); border:1px solid var(--border); border-radius:13px; padding:12px 14px; }
-  .tip.now { border-color:var(--accent); background:linear-gradient(180deg, rgba(124,107,255,.12), var(--card)); }
-  .tip .th { font-size:14px; font-weight:800; color:var(--accent); margin-bottom:6px; }
-  .tip .td { font-size:12.5px; color:var(--text2); line-height:1.6; }
+  .round-tabs { display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
+  .round-tab { font-size:13px; font-weight:700; padding:7px 14px; border-radius:10px; background:var(--bg); border:1px solid var(--border); color:var(--text2); cursor:pointer; user-select:none; }
+  .round-tab.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .round-tab .now { font-size:10px; margin-left:4px; opacity:.85; }
+
+  .pool-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:12px; }
+  .item-card { background:var(--card); border:1px solid var(--border); border-radius:13px; padding:12px 14px; }
+  .item-card.hit { border-color:var(--accent); background:rgba(124,107,255,.1); }
+  .item-card .in { font-size:14px; font-weight:800; color:var(--text); display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .item-card .ip { font-size:12px; color:var(--text2); margin-top:5px; }
+  .item-card .iu { font-size:12px; color:var(--text2); margin-top:4px; line-height:1.55; }
+  .item-card .il { font-size:11px; color:var(--accent); margin-top:6px; }
+  .item-card .iw { font-size:11px; color:#ffae5e; margin-top:4px; }
+  .item-tag { font-size:10px; padding:2px 7px; border-radius:6px; background:rgba(124,107,255,.16); color:var(--accent); font-weight:700; }
 
   .manual-box { background:var(--card); border:1px solid var(--border); border-radius:13px; padding:14px; }
   .manual-box .mb-ttl { font-size:13px; font-weight:700; color:var(--text); margin-bottom:8px; }
@@ -65,7 +75,7 @@
 <body>
 <header>
   <h1>远行商人</h1>
-  <span>蹲点助手 · 倒计时 + 轮次规律 + 手动记货架</span>
+  <span>蹲点助手 · 倒计时 + 轮次物品池 + 手动记货架</span>
   <nav class="dex-nav">
     <a href="9178.html">伤害计算器</a>
     <a href="pokedex.html">精灵图鉴</a>
@@ -85,7 +95,8 @@
   <div class="mch-intro">
     远行商人每天 <b>08:00 / 12:00 / 16:00 / 20:00</b> 四轮刷新，每轮货架保留 <b>4 小时</b>（08:00–24:00 营业）。
     由于 rocom.shallow.ink 的实时接口<b>按积分计费</b>（每次 5 积分）、不充钱无法调用，本页改为 <b>零成本版</b>：
-    用「倒计时 + 每轮品类规律」帮你判断<b>这轮大概卖什么类型</b>，并支持你进游戏看一眼后<b>手动记录今日货架</b>随时回看。
+    下方为各轮次<b>可能上架的物品池参考</b>（依据公开攻略整理，可真实浏览物品名/价格/用途），并支持你进游戏看一眼后<b>手动记录今日实际货架</b>随时回看。
+    <div class="mch-src">数据来源：百度百科「远行商人」词条 + 玩家攻略站（ali213 / 九游 / DVG 等）公开整理；非 rocom 实时精确货架，具体以游戏内为准。</div>
   </div>
 
   <div class="mch-status">
@@ -104,13 +115,14 @@
     <div class="ttl">⭐ 关注清单（命中即高亮提示，自动保存）</div>
     <div class="chips" id="watchChips"></div>
     <input class="chip-add" id="watchInput" placeholder="+ 添加关注商品（如 国王球）" style="margin-top:8px">
-    <div class="watch-hint">示例：国王球 / 棱镜球 / 炫彩精灵蛋 / 首领血脉秘药 / 经验果</div>
+    <div class="watch-hint">示例：国王球 / 炫彩精灵蛋 / 首领血脉秘药 / 祝福项坠</div>
   </div>
 
-  <div class="sec-ttl">本轮大概卖什么（按刷新规律）</div>
-  <div class="tip-grid" id="tips"></div>
+  <div class="sec-ttl">本轮可能上架（物品池参考 · 公开攻略整理）</div>
+  <div class="round-tabs" id="roundTabs"></div>
+  <div class="pool-grid" id="poolGrid"></div>
 
-  <div class="sec-ttl">📝 手动记录今日货架（进游戏看一眼记下来）</div>
+  <div class="sec-ttl">📝 手动记录今日实际货架（进游戏看一眼记下来）</div>
   <div class="manual-box">
     <div class="mb-ttl">每行一个商品，可附价格 / 备注（用空格隔开）</div>
     <textarea id="manualInput" placeholder="国王球 1200洛克贝&#10;炫彩精灵蛋 限量&#10;首领血脉秘药"></textarea>
@@ -126,7 +138,7 @@
     <summary>为什么看不到实时精确货架？（点击展开）</summary>
     <ol>
       <li>实时货架来自 <code>wegame.shallow.ink</code>，需经 rocom.shallow.ink 代理，<b>按积分计费</b>（merchant 5 / home 20 每次），不充钱无法调用，纯静态站也无法免费取数。</li>
-      <li>因此本页提供「轮次规律 + 倒计时」帮你蹲点，配合「手动记录」自己记货架，<b>完全免费、零依赖</b>。</li>
+      <li>因此本页提供「轮次物品池参考 + 倒计时」帮你蹲点，配合「手动记录」自己记货架，<b>完全免费、零依赖</b>。</li>
       <li>若日后充了积分：把 Key 存进仓库 Secrets 的 <code>ROCOM_API_KEY</code>，到 Actions 页 <b>Run workflow</b> 即可抓真实货架（自动调度已默认关闭以免浪费）。</li>
     </ol>
   </details>
@@ -169,7 +181,7 @@ function tick(){
 
 // ---------- 关注清单 ----------
 let watch = [];
-try { watch = JSON.parse(localStorage.getItem('mch_watch') || '["国王球","棱镜球","炫彩精灵蛋"]'); } catch(e){ watch = ['国王球','棱镜球','炫彩精灵蛋']; }
+try { watch = JSON.parse(localStorage.getItem('mch_watch') || '["国王球","炫彩精灵蛋","首领血脉秘药","祝福项坠"]'); } catch(e){ watch = ['国王球','炫彩精灵蛋','首领血脉秘药','祝福项坠']; }
 if (!Array.isArray(watch)) watch = [];
 function saveWatch(){ localStorage.setItem('mch_watch', JSON.stringify(watch)); }
 function renderWatch(){
@@ -181,33 +193,74 @@ function renderWatch(){
 function hitWatch(name){ return watch.some(function(w){ return name && name.indexOf(w) >= 0; }); }
 document.getElementById('watchChips').addEventListener('click', function(e){
   const x = e.target.getAttribute('data-x');
-  if (x !== null){ watch.splice(+x, 1); saveWatch(); renderWatch(); }
+  if (x !== null){ watch.splice(+x, 1); saveWatch(); renderWatch(); renderPool(); }
 });
 document.getElementById('watchInput').addEventListener('keydown', function(e){
   if (e.key === 'Enter'){
     const v = this.value.trim();
-    if (v && watch.indexOf(v) < 0){ watch.push(v); saveWatch(); renderWatch(); }
+    if (v && watch.indexOf(v) < 0){ watch.push(v); saveWatch(); renderWatch(); renderPool(); }
     this.value = '';
   }
 });
 
-// ---------- 轮次规律卡（基于玩家攻略站总结的刷新规律） ----------
-const ROUND_TIPS = [
-  { h:8,  t:'08:00 首轮', d:'高价值概率最高：国王球、炫彩精灵蛋、首领血脉秘药大概率上架。每日最值得蹲守的一轮。' },
-  { h:12, t:'12:00 次轮', d:'基础养成材料、体力恢复药剂、矿石为主，适合中午上线补给储备。' },
-  { h:16, t:'16:00 三轮', d:'精灵捕捉类道具概率提升：棱镜球、调温球、美妙球等，适配赛季捕捉节奏。' },
-  { h:20, t:'20:00 末轮', d:'综合物资轮次；部分限时道具在此轮结束后下架，抓紧最后购买窗口。' }
-];
-function renderTips(){
+// ---------- 轮次物品池（公开攻略整理，非 rocom 实时精确货架） ----------
+// 字段：n 名称 / p 价格 / u 用途 / l 限购 / w 提醒 / tag 分类
+const ITEM_POOL = {
+  8: [
+    { n:'国王球',            p:'约 16 万洛克贝', u:'捕捉赛季稀有/异色精灵，唯一稳定锁定「了不起天分」', l:'每轮限量 3', tag:'捕捉球' },
+    { n:'炫彩精灵蛋',        p:'160 万洛克贝',   u:'必出黑金炫彩外观 + 了不起天分', l:'每轮限量 1', tag:'精灵蛋' },
+    { n:'首领血脉秘药',      p:'约 16 万 / 3 个', u:'精灵突破升星、提升资质（地系等）', l:'每周限量', tag:'血脉' },
+    { n:'祝福项坠',          p:'80 万洛克贝',    u:'对家园繁育蛋赐福，复制性格/特长（数值随机）', l:'随机刷新·超稀有', w:'建议刷新时段内尽快入手', tag:'特殊' }
+  ],
+  12: [
+    { n:'各类矿石',          p:'1000 洛克贝 / 个', u:'合成咕噜球、装备升级（黑金/琉璃/紫莲刚玉/星辉矿/晶核矿）', l:'限购 50', tag:'材料' },
+    { n:'体力药剂',          p:'—',              u:'恢复体力，错过刷新窗口后快速补货', l:'—', tag:'补给' },
+    { n:'基础材料',          p:'—',              u:'天使草/石耳/喷气菇/星霜花/蓝晶碧玺等野外采集', l:'限购 50', tag:'材料' }
+  ],
+  16: [
+    { n:'调温球',            p:'7500 洛克贝',    u:'周末限时·捕捉当期赛季精灵（背袭/牵手等效高级球）', l:'周五–周日限购 100', w:'仅周末上架', tag:'捕捉球' },
+    { n:'美妙球',            p:'7500 洛克贝',    u:'周末限时·捕捉当期赛季精灵', l:'周五–周日限购 100', w:'仅周末上架', tag:'捕捉球' },
+    { n:'高级咕噜球',        p:'—',              u:'目标精灵虚弱时显著提升收服成功率', l:'每轮 5', tag:'捕捉球' },
+    { n:'普通精灵蛋',        p:'—',              u:'随机精灵蛋', l:'每轮 5', tag:'精灵蛋' }
+  ],
+  20: [
+    { n:'经验果（普通/超级/极品）', p:'—',        u:'快速升级精灵，商人售价稳定、效率高', l:'—', tag:'养成' },
+    { n:'属性粉尘',          p:'500 洛克贝 / 100 个', u:'魔力/进化/龙系/萌系/机械系培养', l:'—', tag:'粉尘' },
+    { n:'限时道具',          p:'—',              u:'本轮结束后下架，最后购买窗口', l:'—', w:'抓紧最后机会', tag:'特殊' }
+  ]
+};
+
+let selRound = (function(){ const r = currentRound().idx; return r < 8 ? 8 : r; })();
+function renderTabs(){
   const cur = currentRound().idx;
-  const el = document.getElementById('tips');
-  el.innerHTML = ROUND_TIPS.map(function(r){
-    const now = (r.h === cur) ? ' now' : '';
-    return '<div class="tip'+now+'"><div class="th">'+r.t+(r.h===cur?' · 当前':'')+'</div><div class="td">'+r.d+'</div></div>';
+  const el = document.getElementById('roundTabs');
+  el.innerHTML = ROUNDS.map(function(h){
+    const active = (h === selRound) ? ' active' : '';
+    const now = (h === cur) ? '<span class="now">·当前</span>' : '';
+    return '<div class="round-tab'+active+'" data-h="'+h+'">'+h+':00'+now+'</div>';
   }).join('');
 }
+function renderPool(){
+  const el = document.getElementById('poolGrid');
+  const items = ITEM_POOL[selRound] || [];
+  el.innerHTML = items.map(function(it){
+    const hit = hitWatch(it.n) ? ' hit' : '';
+    const star = hitWatch(it.n) ? ' ⭐' : '';
+    return '<div class="item-card'+hit+'">'
+      + '<div class="in"><span class="item-tag">'+it.tag+'</span>'+escapeHtml(it.n)+star+'</div>'
+      + '<div class="ip">价格：'+(it.p||'—')+'</div>'
+      + (it.u ? '<div class="iu">用途：'+escapeHtml(it.u)+'</div>' : '')
+      + (it.l ? '<div class="il">限购：'+escapeHtml(it.l)+'</div>' : '')
+      + (it.w ? '<div class="iw">⚠ '+escapeHtml(it.w)+'</div>' : '')
+      + '</div>';
+  }).join('');
+}
+document.getElementById('roundTabs').addEventListener('click', function(e){
+  const h = e.target.getAttribute('data-h');
+  if (h !== null){ selRound = +h; renderTabs(); renderPool(); }
+});
 
-// ---------- 手动记录今日货架 ----------
+// ---------- 手动记录今日实际货架 ----------
 let manual = [];
 try { manual = JSON.parse(localStorage.getItem('mch_manual') || '[]'); } catch(e){ manual = []; }
 if (!Array.isArray(manual)) manual = [];
@@ -269,11 +322,12 @@ function escapeHtml(s){ return String(s).replace(/[&<>"']/g, function(c){ return
 
 // ---------- 启动 ----------
 renderWatch();
-renderTips();
+renderTabs();
+renderPool();
 renderManual();
 tick();
 setInterval(tick, 1000);
-setInterval(renderTips, 60000); // 跨轮次后规律卡高亮自动更新
+setInterval(renderTabs, 60000); // 跨轮次后「当前」标记自动更新
 </script>
 </body>
 </html>
