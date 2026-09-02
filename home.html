@@ -440,7 +440,7 @@ renderNotes();
 
 // ---------- 实时查询（云端代理 /home?uid=，本地代理作离线兜底） ----------
 function isLocal(){ return ['127.0.0.1','localhost','[::1]'].includes(location.hostname); }
-const RT_PROXY_DEFAULT = 'https://roco-proxy.pages.dev';
+const RT_PROXY_DEFAULT = 'https://db643367.roco-proxy.pages.dev';
 (function(){ const p = new URLSearchParams(location.search).get('proxy'); if(p) localStorage.setItem('rt_proxy', p); })();
 function rtProxy(){ return localStorage.getItem('rt_proxy') || RT_PROXY_DEFAULT; }
 
