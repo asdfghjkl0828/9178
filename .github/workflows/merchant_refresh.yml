@@ -1,0 +1,43 @@
+name: 远行商人每日货架自动抓取
+
+on:
+  # 北京时间 08:07 / 12:07 / 16:07 / 20:07（对应 UTC 00:07 / 04:07 / 08:07 / 12:07）
+  schedule:
+    - cron: '7 0,4,8,12 * * *'
+  # 手动触发（Actions 页面 → Run workflow）
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: merchant-refresh
+  cancel-in-progress: false
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 抓取远行商人货架并写入 JSON
+        run: python scrape_merchant.py --out data/merchant_daily.json
+
+      - name: 提交更新
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/merchant_daily.json
+          if git diff --cached --quiet; then
+            echo "无变化，跳过提交"
+          else
+            git commit -m "chore: 自动更新远行商人货架 $(TZ=Asia/Shanghai date +%F_%H:%M)"
+            git push
+          fi
