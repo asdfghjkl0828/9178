@@ -48,23 +48,6 @@
   .item-card .iw { font-size:11px; color:#ffae5e; margin-top:4px; }
   .item-tag { font-size:10px; padding:2px 7px; border-radius:6px; background:rgba(124,107,255,.16); color:var(--accent); font-weight:700; }
 
-  .manual-box { background:var(--card); border:1px solid var(--border); border-radius:13px; padding:14px; }
-  .manual-box .mb-ttl { font-size:13px; font-weight:700; color:var(--text); margin-bottom:8px; }
-  .manual-box textarea { width:100%; min-height:96px; box-sizing:border-box; background:var(--bg); border:1px solid var(--border); border-radius:10px; color:var(--text); padding:10px 12px; font-family:inherit; font-size:13px; resize:vertical; }
-  .manual-box textarea:focus { outline:none; border-color:var(--accent); }
-  .manual-actions { display:flex; gap:10px; margin-top:10px; align-items:center; flex-wrap:wrap; }
-  .btn { height:38px; padding:0 18px; border:none; border-radius:9px; background:var(--accent); color:#fff; font-weight:700; cursor:pointer; font-family:inherit; }
-  .btn.ghost { background:var(--bg); color:var(--text); border:1px solid var(--border); }
-  .manual-hint { font-size:11px; color:var(--text2); margin-left:auto; }
-  .manual-list { margin-top:12px; display:flex; flex-direction:column; gap:8px; }
-  .manual-item { display:flex; align-items:flex-start; gap:10px; background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:9px 12px; font-size:13px; }
-  .manual-item .mi-name { font-weight:700; color:var(--text); }
-  .manual-item .mi-note { color:var(--text2); margin-left:8px; }
-  .manual-item .mi-x { margin-left:auto; cursor:pointer; color:var(--text2); font-weight:700; flex-shrink:0; }
-  .manual-item .mi-x:hover { color:#ff8080; }
-
-  .empty-row { text-align:center; color:var(--text2); padding:24px; background:var(--bg); border:1px dashed var(--border); border-radius:13px; font-size:13px; line-height:1.6; }
-
   details.guide { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 14px; margin-top:14px; }
   details.guide summary { cursor:pointer; font-size:13px; font-weight:700; color:var(--accent); }
   details.guide ol { margin:10px 0 2px; padding-left:20px; color:var(--text2); font-size:12.5px; line-height:1.8; }
@@ -75,7 +58,7 @@
 <body>
 <header>
   <h1>远行商人</h1>
-  <span>蹲点助手 · 倒计时 + 轮次物品池 + 手动记货架</span>
+  <span>蹲点助手 · 倒计时 + 轮次物品池</span>
   <nav class="dex-nav">
     <a href="9178.html">伤害计算器</a>
     <a href="pokedex.html">精灵图鉴</a>
@@ -95,7 +78,7 @@
   <div class="mch-intro">
     远行商人每天 <b>08:00 / 12:00 / 16:00 / 20:00</b> 四轮刷新，每轮货架保留 <b>4 小时</b>（08:00–24:00 营业）。
     由于 rocom.shallow.ink 的实时接口<b>按积分计费</b>（每次 5 积分）、不充钱无法调用，本页改为 <b>零成本版</b>：
-    下方为各轮次<b>可能上架的物品池参考</b>（依据公开攻略整理，可真实浏览物品名/价格/用途），并支持你进游戏看一眼后<b>手动记录今日实际货架</b>随时回看。
+    下方为各轮次<b>可能上架的物品池</b>，自动按当前时间高亮本轮，无需你手动输入。
     <div class="mch-src">数据来源：百度百科「远行商人」词条 + 玩家攻略站（ali213 / 九游 / DVG 等）公开整理；非 rocom 实时精确货架，具体以游戏内为准。</div>
   </div>
 
@@ -118,28 +101,16 @@
     <div class="watch-hint">示例：国王球 / 炫彩精灵蛋 / 首领血脉秘药 / 祝福项坠</div>
   </div>
 
-  <div class="sec-ttl">本轮可能上架（物品池参考 · 公开攻略整理）</div>
+  <div class="sec-ttl">本轮可能上架（物品池 · 公开攻略整理）</div>
   <div class="round-tabs" id="roundTabs"></div>
   <div class="pool-grid" id="poolGrid"></div>
 
-  <div class="sec-ttl">📝 手动记录今日实际货架（进游戏看一眼记下来）</div>
-  <div class="manual-box">
-    <div class="mb-ttl">每行一个商品，可附价格 / 备注（用空格隔开）</div>
-    <textarea id="manualInput" placeholder="国王球 1200洛克贝&#10;炫彩精灵蛋 限量&#10;首领血脉秘药"></textarea>
-    <div class="manual-actions">
-      <button class="btn" id="manualAdd">保存记录</button>
-      <button class="btn ghost" id="manualClear">清空</button>
-      <span class="manual-hint">仅存你本机浏览器，不上传</span>
-    </div>
-    <div class="manual-list" id="manualList"></div>
-  </div>
-
   <details class="guide">
-    <summary>为什么看不到实时精确货架？（点击展开）</summary>
+    <summary>为什么看不到「当天真实精确货架」？（点击展开）</summary>
     <ol>
-      <li>实时货架来自 <code>wegame.shallow.ink</code>，需经 rocom.shallow.ink 代理，<b>按积分计费</b>（merchant 5 / home 20 每次），不充钱无法调用，纯静态站也无法免费取数。</li>
-      <li>因此本页提供「轮次物品池参考 + 倒计时」帮你蹲点，配合「手动记录」自己记货架，<b>完全免费、零依赖</b>。</li>
-      <li>若日后充了积分：把 Key 存进仓库 Secrets 的 <code>ROCOM_API_KEY</code>，到 Actions 页 <b>Run workflow</b> 即可抓真实货架（自动调度已默认关闭以免浪费）。</li>
+      <li>真实货架来自 <code>wegame.shallow.ink</code>，需经 rocom.shallow.ink 代理，<b>按积分计费</b>（merchant 5 / home 20 每次），不充钱无法调用，纯静态站也无法免费取数。</li>
+      <li>因此本页提供「轮次物品池 + 倒计时」自动帮你蹲点，<b>完全免费、零依赖、无需手动输入</b>；但显示的是各轮「可能上架」的参考清单，非当天精确轮换。</li>
+      <li>若日后充了积分：把 Key 存进仓库 Secrets 的 <code>ROCOM_API_KEY</code>，到 Actions 页 <b>Run workflow</b>（或开定时）即可每日自动抓真实货架推静态 JSON，页面自动读取——代码与流程已现成，只差积分。</li>
     </ol>
   </details>
 </div>
@@ -260,45 +231,6 @@ document.getElementById('roundTabs').addEventListener('click', function(e){
   if (h !== null){ selRound = +h; renderTabs(); renderPool(); }
 });
 
-// ---------- 手动记录今日实际货架 ----------
-let manual = [];
-try { manual = JSON.parse(localStorage.getItem('mch_manual') || '[]'); } catch(e){ manual = []; }
-if (!Array.isArray(manual)) manual = [];
-function saveManual(){ localStorage.setItem('mch_manual', JSON.stringify(manual)); }
-function renderManual(){
-  const el = document.getElementById('manualList');
-  if (!manual.length){
-    el.innerHTML = '<div class="empty-row">还没有记录。进游戏看一眼远行商人，把本轮商品名（可附价格）一行一个填到上方，保存后即可随时回看。</div>';
-    return;
-  }
-  el.innerHTML = manual.map(function(m,i){
-    return '<div class="manual-item"><span class="mi-name">'+escapeHtml(m.name)+'</span>'+(m.note?'<span class="mi-note">'+escapeHtml(m.note)+'</span>':'')+'<span class="mi-x" data-i="'+i+'">×</span></div>';
-  }).join('');
-}
-function addManual(){
-  const ta = document.getElementById('manualInput');
-  const lines = ta.value.split('\n').map(function(s){ return s.trim(); }).filter(Boolean);
-  let added = 0;
-  lines.forEach(function(line){
-    let cut = Infinity;
-    const sp = line.indexOf(' '), tab = line.indexOf('\t');
-    if (sp >= 0) cut = Math.min(cut, sp);
-    if (tab >= 0) cut = Math.min(cut, tab);
-    if (cut === Infinity){ manual.push({ name:line }); }
-    else { manual.push({ name:line.slice(0,cut), note:line.slice(cut+1).trim() }); }
-    added++;
-  });
-  if (added){ saveManual(); renderManual(); }
-  ta.value = '';
-}
-function delManual(i){ manual.splice(i,1); saveManual(); renderManual(); }
-document.getElementById('manualAdd').addEventListener('click', addManual);
-document.getElementById('manualClear').addEventListener('click', function(){ if(manual.length && confirm('确定清空所有手动记录？')){ manual=[]; saveManual(); renderManual(); } });
-document.getElementById('manualList').addEventListener('click', function(e){
-  const x = e.target.getAttribute('data-i');
-  if (x !== null) delManual(+x);
-});
-
 function escapeHtml(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
 
 // ---------- 主题 ----------
@@ -324,7 +256,6 @@ function escapeHtml(s){ return String(s).replace(/[&<>"']/g, function(c){ return
 renderWatch();
 renderTabs();
 renderPool();
-renderManual();
 tick();
 setInterval(tick, 1000);
 setInterval(renderTabs, 60000); // 跨轮次后「当前」标记自动更新
