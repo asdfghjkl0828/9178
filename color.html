@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>炫彩精灵 - 洛克王国 PVP 计算器</title>
+<link rel="stylesheet" href="css/head.css">
+<style>
+  .dex-nav { display:flex; gap:6px; margin-left:16px; align-items:center; flex-wrap:wrap; }
+  .dex-nav a { color:rgba(255,255,255,.82); text-decoration:none; font-size:13px; padding:5px 11px; border-radius:18px; border:1px solid rgba(255,255,255,.18); white-space:nowrap; }
+  .dex-nav a:hover { background:rgba(255,255,255,.15); }
+  .dex-nav a.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .sub { color:var(--text2); font-size:13px; margin-bottom:14px; line-height:1.6; }
+  .note { background:rgba(255,200,80,.08); border:1px solid rgba(255,200,80,.3); border-radius:10px; padding:10px 14px; font-size:12px; color:rgba(255,220,150,.9); margin:10px 0; }
+  .rt-box { display:flex; flex-wrap:wrap; gap:8px; align-items:center; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; margin:14px 0; }
+  .rt-box input { flex:1; min-width:120px; background:var(--card2); border:1px solid var(--border); color:var(--text); border-radius:8px; padding:7px 11px; font-size:14px; }
+  .rt-box button { background:var(--accent); color:#fff; border:none; border-radius:8px; padding:7px 14px; font-size:14px; cursor:pointer; }
+  .rt-box button:hover { filter:brightness(1.1); }
+  .rt-box .hint { font-size:12px; color:var(--text2); }
+  .count { font-size:13px; color:var(--text2); margin:8px 0 14px; }
+  .xgrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:14px; }
+  .xcard { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px; text-align:center; }
+  .xcard .imgwrap { width:120px; height:120px; margin:0 auto 10px; background:#f5f6fa; border-radius:50%; overflow:hidden; display:flex; align-items:center; justify-content:center; }
+  .xcard img { max-width:100%; max-height:100%; object-fit:contain; }
+  .xcard .name { font-size:16px; font-weight:700; color:var(--text); margin-top:2px; }
+  .xcard .default { font-size:12px; color:var(--text2); margin-top:2px; }
+  .xcard .xc-badge { display:inline-block; margin-top:8px; background:linear-gradient(135deg,#ff6ec4,#7873f5); color:#fff; font-size:12px; font-weight:700; padding:3px 10px; border-radius:10px; }
+  .xcard .meta { font-size:12px; color:var(--text2); margin-top:8px; line-height:1.6; }
+  .xcard .gid { font-family:monospace; font-size:11px; color:var(--text2); margin-top:6px; opacity:.7; }
+  .empty { padding:40px; text-align:center; color:var(--text2); font-size:14px; grid-column:1/-1; }
+</style>
+</head>
+<body>
+<header>
+  <div style="font-size:24px">🛠️</div>
+  <div style="display:flex;flex-direction:column;gap:2px">
+    <h1>洛克王国 PVP 工具箱</h1>
+  </div>
+  <nav class="dex-nav">
+    <a href="index.html" class="home-link">工具箱</a>
+    <a href="calc.html">伤害计算器</a>
+    <a href="pokedex.html">精灵图鉴</a>
+    <a href="skilldex.html">技能图鉴</a>
+    <a href="restraint.html">克制计算器</a>
+    <a href="speed.html">速度榜单</a>
+    <a href="eggs.html">孵蛋查询</a>
+    <a href="merchant.html">远行商人</a>
+    <a href="color.html" class="active">炫彩精灵</a>
+    <a href="home.html">家园查询</a>
+  </nav>
+  <div class="header-actions">
+    <div class="theme-toggle" id="themeToggle"><span class="tt-icon">🌙</span><span class="tt-text">深色</span></div>
+  </div>
+</header>
+
+<div class="main">
+  <h2>🌈 炫彩精灵</h2>
+  <p class="sub">输入游戏 UID，列出该账号下所有"异色炫彩"精灵（mutationName 含「炫彩」）。图仅为种类立绘参考——实际炫彩配色（随机+粒子特效）为游戏客户端渲染，游戏不提供独立"色卡"图资源。</p>
+
+  <div class="rt-box">
+    <input id="uid" type="text" inputmode="numeric" placeholder="UID" value="5678116">
+    <button id="queryBtn">查询最新</button>
+    <span class="hint" id="hint"></span>
+  </div>
+
+  <div class="note" id="note" style="display:none"></div>
+  <div class="count" id="count"></div>
+  <div class="xgrid" id="xgrid"></div>
+</div>
+
+<script>
+const RT_PROXY_DEFAULT = 'https://db643367.roco-proxy.pages.dev';
+const ICON_BASE = 'https://rocodex.org';
+const FALLBACK_INDEX = 'data/home_index.json';
+
+function proxyBase(){
+  return localStorage.getItem('rt_proxy') || RT_PROXY_DEFAULT;
+}
+function setHint(t){ document.getElementById('hint').textContent = t || ''; }
+function setNote(t){ const n=document.getElementById('note'); n.textContent=t; n.style.display = t ? 'block' : 'none'; }
+
+async function fetchRealtime(uid){
+  const url = proxyBase() + '/home?uid=' + uid;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('代理返回 HTTP ' + res.status);
+  const j = await res.json();
+  if (j.error || !j.data) throw new Error('数据异常: ' + (j.message || 'no data'));
+  return j.data;
+}
+
+async function fetchSnapshot(uid){
+  const ir = await fetch(FALLBACK_INDEX + '?t=' + Date.now());
+  if (!ir.ok) throw new Error('快照索引失败 HTTP ' + ir.status);
+  const idx = await ir.json();
+  const hit = (idx.uids || []).find(u => String(u.uid) === String(uid) && u.ok);
+  if (!hit) throw new Error('该 UID 无每小时快照数据');
+  const fr = await fetch('data/home_' + uid + '.json?t=' + Date.now());
+  if (!fr.ok) throw new Error('快照读取失败 HTTP ' + fr.status);
+  return (await fr.json()).data;
+}
+
+function isXuancai(p){
+  const m = String(p.mutationName || '');
+  return m.includes('炫彩');
+}
+
+function renderPets(pets, source){
+  const xc = pets.filter(isXuancai);
+  const grid = document.getElementById('xgrid');
+  document.getElementById('count').textContent = '共 ' + pets.length + ' 只精灵，其中炫彩 ' + xc.length + ' 只（数据源：' + source + '）';
+  if (xc.length === 0){
+    grid.innerHTML = '<div class="empty">该账号下暂无炫彩精灵。</div>';
+    return;
+  }
+  grid.innerHTML = xc.map(function(p){
+    const icon = p.icon ? ICON_BASE + p.icon : '';
+    const img = icon ? '<img src="' + icon + '" alt="' + (p.name||'') + '" loading="lazy" onerror="this.style.display=\'none\'">' : '';
+    const def = (p.defaultName && p.defaultName !== p.name) ? '<div class="default">原型：' + p.defaultName + '</div>' : '';
+    return '<div class="xcard">'
+      + '<div class="imgwrap">' + img + '</div>'
+      + '<div class="name">' + (p.name || '?') + '</div>'
+      + def
+      + '<div class="xc-badge">' + (p.mutationName || '炫彩') + '</div>'
+      + '<div class="meta">Lv.' + (p.level || '?') + ' · ' + (p.genderText || '?') + '</div>'
+      + '<div class="gid">gid: ' + (p.gid || '?') + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+async function query(){
+  const uid = (document.getElementById('uid').value || '').trim();
+  if (!uid){ setHint('请输入 UID'); return; }
+  setHint('查询中…'); setNote('');
+  document.getElementById('xgrid').innerHTML = '';
+  document.getElementById('count').textContent = '';
+  try {
+    const data = await fetchRealtime(uid);
+    renderPets(data.pets || [], '云端代理（实时）');
+    setHint('✓ 实时');
+  } catch(e1){
+    setHint('实时失败，回退快照…');
+    try {
+      const data = await fetchSnapshot(uid);
+      renderPets(data.pets || [], '每小时快照');
+      setNote('实时查询失败（' + e1.message + '），已回退每小时快照（数据可能滞后数小时）。');
+    } catch(e2){
+      setHint('失败');
+      setNote('实时 + 快照都失败：' + e1.message + ' / ' + e2.message);
+      document.getElementById('xgrid').innerHTML = '<div class="empty">无法获取该 UID 的精灵数据。</div>';
+    }
+  }
+}
+
+document.getElementById('queryBtn').addEventListener('click', query);
+document.getElementById('uid').addEventListener('keydown', function(e){ if (e.key === 'Enter') query(); });
+
+function toggleTheme(){
+  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+  if (isLight){
+    document.documentElement.removeAttribute('data-theme');
+    localStorage.setItem('theme','dark');
+    document.getElementById('themeToggle').innerHTML = '<span class="tt-icon">🌙</span><span class="tt-text">深色</span>';
+  } else {
+    document.documentElement.setAttribute('data-theme','light');
+    localStorage.setItem('theme','light');
+    document.getElementById('themeToggle').innerHTML = '<span class="tt-icon">☀️</span><span class="tt-text">日间</span>';
+  }
+}
+document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+(function(){
+  const t = localStorage.getItem('theme');
+  if (t === 'light'){
+    document.documentElement.setAttribute('data-theme','light');
+    document.getElementById('themeToggle').innerHTML = '<span class="tt-icon">☀️</span><span class="tt-text">日间</span>';
+  }
+})();
+
+query();
+</script>
+</body>
+</html>
