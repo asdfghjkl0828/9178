@@ -25,22 +25,20 @@
   .section-title { font-size:17px; font-weight:800; color:var(--text); margin:26px 0 10px; display:flex; align-items:center; gap:8px; }
   .section-title .badge { font-size:11px; font-weight:700; background:var(--accent); color:#fff; border-radius:8px; padding:2px 9px; }
 
-  /* 真实色卡 */
-  .chroma-card { position:relative; width:100%; aspect-ratio:279/154; border-radius:12px; overflow:hidden; box-shadow:inset 0 0 0 1px rgba(255,255,255,.18), 0 4px 14px rgba(0,0,0,.25); }
-  .chroma-card .shine { position:absolute; inset:0; background:radial-gradient(120% 80% at 28% 18%, rgba(255,255,255,.55), rgba(255,255,255,0) 55%); mix-blend-mode:screen; pointer-events:none; }
-  .chroma-card .particle { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; }
-  .chroma-card .particle svg { width:46%; height:46%; filter:drop-shadow(0 2px 4px rgba(0,0,0,.35)); }
-  .chroma-card .cid { position:absolute; left:9px; top:8px; background:rgba(0,0,0,.4); color:#fff; font-size:11px; font-weight:700; padding:1px 8px; border-radius:7px; }
-  .chroma-card .cname { position:absolute; left:9px; right:9px; bottom:7px; color:#fff; font-size:12px; font-weight:700; text-shadow:0 1px 3px rgba(0,0,0,.6); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  /* 真实色卡图片（游戏玻璃质感卡，来自 aismile.dev 后端渲染） */
+  .chroma-card { position:relative; width:100%; aspect-ratio:280/154; border-radius:12px; overflow:hidden; background:#11131f; box-shadow:0 6px 16px rgba(0,0,0,.28); }
+  .chroma-card img { display:block; width:100%; height:100%; object-fit:cover; }
+  .chroma-card .cid { position:absolute; left:8px; top:7px; background:rgba(0,0,0,.42); color:#fff; font-size:11px; font-weight:700; padding:1px 8px; border-radius:7px; pointer-events:none; }
+  .chroma-card .cname { position:absolute; left:8px; right:8px; bottom:6px; color:#fff; font-size:12px; font-weight:700; text-shadow:0 1px 3px rgba(0,0,0,.7); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; pointer-events:none; }
 
-  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:14px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:14px; }
   .gitem { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:12px; display:flex; flex-direction:column; gap:8px; }
   .gitem .meta { display:flex; justify-content:space-between; font-size:12px; color:var(--text2); }
   .gitem.pickable { cursor:pointer; transition:transform .12s, border-color .12s; }
   .gitem.pickable:hover { transform:translateY(-3px); border-color:var(--accent); }
 
   /* 我的宠物色卡 */
-  .petlist { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:14px; }
+  .petlist { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:14px; }
   .pet { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:10px; }
   .pet.sel { border-color:var(--accent); box-shadow:0 0 0 2px var(--accent) inset; }
   .pet .top { display:flex; gap:12px; align-items:center; }
@@ -52,9 +50,7 @@
   .pet .ctrls { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
   .pet select { background:var(--card2); color:var(--text); border:1px solid var(--border); border-radius:8px; padding:6px 8px; font-size:12.5px; flex:1; min-width:0; }
   .pet .assign-hint { font-size:11px; color:var(--text2); }
-  .pet .shot { width:100%; border-radius:8px; border:1px solid var(--border); margin-top:4px; }
   .empty { padding:30px; text-align:center; color:var(--text2); grid-column:1/-1; }
-  .hidden-card { background:linear-gradient(135deg,#1a1d2e,#3a2f4a); }
 </style>
 </head>
 <body>
@@ -79,7 +75,7 @@
 <div class="main">
   <h2>🌈 炫彩粒子图鉴</h2>
   <p class="sub">
-    真实色卡数据，<b>爬取自 aismile.dev（BeSmile / BetterTools）的游戏配置 RocoDataRows</b>——共 <b>39 张官方配置色卡</b> + <b>4 种粒子</b> + <b>4 个隐藏炫彩</b>，配色为游戏原值（ui_color_1 / ui_color_2 十六进制）。<br>
+    真实色卡图片，<b>爬取自 aismile.dev（BeSmile / BetterTools）的游戏配置后端渲染</b>——共 <b>39 张官方配置色卡</b> + <b>4 种粒子</b> + <b>4 个隐藏炫彩</b>，每张都是游戏内的真实玻璃质感色卡（与游戏内色卡图鉴一致）。<br>
     <b>怎么对应到你自己的精灵：</b>炫彩精灵在游戏里用 <code>glass_value</code>（色卡 ID）+ <code>glass_type</code>（粒子 ID）表示。免费接口不返回这两字段，所以下方「我的炫彩精灵」里，<b>每只宠物用下拉框选一下它用的色卡 + 粒子</b>即可（存本机，刷新不丢）。选完就会显示真实色卡。
   </p>
 
@@ -95,34 +91,29 @@
   <div class="count" id="petHint">输入 UID 查询；每只宠物用下拉框选「色卡 + 粒子」即可显示真实色卡。</div>
   <div class="petlist" id="petlist"></div>
 
-  <div class="section-title">全部 39 张官方色卡（真实配色）<span class="badge">点击可标记给选中的宠物</span></div>
+  <div class="section-title">全部 39 张官方色卡（真实玻璃卡）<span class="badge">点击可标记给选中的宠物</span></div>
   <div class="grid" id="gallery"></div>
 
   <div class="section-title">4 种粒子（glass_type）</div>
-  <div class="grid" id="particles" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr));"></div>
+  <div class="grid" id="particles" style="grid-template-columns:repeat(auto-fill,minmax(210px,1fr));"></div>
 
   <div class="section-title">4 个隐藏炫彩</div>
-  <div class="grid" id="hidden" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr));"></div>
+  <div class="grid" id="hidden" style="grid-template-columns:repeat(auto-fill,minmax(210px,1fr));"></div>
 </div>
 
 <script>
 const RT_PROXY_DEFAULT = 'https://db643367.roco-proxy.pages.dev';
 const ICON_BASE = 'https://rocodex.org';
+const IMG_BASE = 'data/chroma-images';
 const DEFAULT_PARTICLE = 4; // 镂空五角星（aismile 默认）
 
 function proxyBase(){ return localStorage.getItem('rt_proxy') || RT_PROXY_DEFAULT; }
 function setHint(t){ document.getElementById('hint').textContent = t || ''; }
 function setNote(t){ const n=document.getElementById('note'); n.textContent=t; n.style.display = t ? 'block' : 'none'; }
 
-// 粒子 SVG
-function particleSVG(name){
-  const w='#fff';
-  if (name === '四角星') return '<svg viewBox="0 0 100 100" fill="'+w+'"><path d="M50 6 L60 40 L94 50 L60 60 L50 94 L40 60 L6 50 L40 40 Z"/></svg>';
-  if (name === '爱心') return '<svg viewBox="0 0 100 100" fill="'+w+'"><path d="M50 84 C18 60 14 32 38 26 C49 23 50 36 50 39 C50 36 51 23 62 26 C86 32 82 60 50 84 Z"/></svg>';
-  if (name === '方块') return '<svg viewBox="0 0 100 100" fill="'+w+'"><path d="M50 14 L86 50 L50 86 L14 50 Z"/></svg>';
-  // 镂空五角星（描边）
-  return '<svg viewBox="0 0 100 100" fill="none" stroke="'+w+'" stroke-width="6" stroke-linejoin="round"><path d="M50 10 L61 40 L93 40 L67 60 L77 92 L50 72 L23 92 L33 60 L7 40 L39 40 Z"/></svg>';
-}
+function cardImg(cardId, particleId){ return IMG_BASE + '/card_' + cardId + '_p' + (particleId||DEFAULT_PARTICLE) + '.webp'; }
+function particleImg(id){ return IMG_BASE + '/particle_' + id + '.webp'; }
+function specialImg(id){ return IMG_BASE + '/special_' + id + '.webp'; }
 
 function cardById(id){ return CHROMA_CARDS.find(c => c.id === id) || CHROMA_CARDS[0]; }
 function particleById(id){ return CHROMA_PARTICLES.find(p => p.id === id) || CHROMA_PARTICLES.find(p=>p.id===DEFAULT_PARTICLE); }
@@ -144,12 +135,11 @@ function nearestCardForGid(gid){
   return { card: best, particle: DEFAULT_PARTICLE, guessed: true };
 }
 
+// 真实色卡图片
 function chromaCardHTML(cardId, particleId, extraClass){
   const c = cardById(cardId);
-  const p = particleById(particleId);
-  return '<div class="chroma-card '+(extraClass||'')+'" style="background:linear-gradient(135deg,'+c.ui_color_1+','+c.ui_color_2+');">'
-    + '<div class="shine"></div>'
-    + '<div class="particle">'+particleSVG(p.name)+'</div>'
+  return '<div class="chroma-card '+(extraClass||'')+'">'
+    + '<img src="'+cardImg(cardId, particleId)+'" alt="色卡 '+c.id+'" loading="lazy">'
     + '<div class="cid">色卡 '+c.id+'</div>'
     + '<div class="cname">'+c.name+'</div>'
     + '</div>';
@@ -178,16 +168,16 @@ function renderGallery(){
 
   const pp = document.getElementById('particles');
   pp.innerHTML = CHROMA_PARTICLES.map(p =>
-    '<div class="gitem"><div class="chroma-card" style="background:linear-gradient(135deg,#2b2f45,#454a66);">'
-    + '<div class="shine"></div><div class="particle">'+particleSVG(p.name)+'</div>'
+    '<div class="gitem"><div class="chroma-card" style="background:#2b2f45">'
+    + '<img src="'+particleImg(p.id)+'" alt="粒子 '+p.id+'" style="object-fit:contain;padding:14px" loading="lazy">'
     + '<div class="cid">粒子 '+p.id+'</div><div class="cname">'+p.name+'</div></div>'
     + '<div class="meta"><span>glass_type '+p.id+'</span><span>'+p.name+'</span></div></div>'
   ).join('');
 
   const hd = document.getElementById('hidden');
   hd.innerHTML = CHROMA_HIDDEN.map(h =>
-    '<div class="gitem"><div class="chroma-card hidden-card">'
-    + '<div class="shine"></div><div class="particle">'+particleSVG('镂空五角星')+'</div>'
+    '<div class="gitem"><div class="chroma-card">'
+    + '<img src="'+specialImg(h.id)+'" alt="隐藏 '+h.id+'" loading="lazy">'
     + '<div class="cid">隐藏 '+h.id+'</div><div class="cname">'+h.name+'</div></div>'
     + '<div class="meta"><span>'+h.season+'</span><span>'+h.name+'</span></div></div>'
   ).join('');
@@ -232,7 +222,7 @@ function renderPets(){
     const partOpts = CHROMA_PARTICLES.map(pp => '<option value="'+pp.id+'"'+(a.particle==pp.id?' selected':'')+'>'+pp.id+' · '+pp.name+'</option>').join('');
     const preview = a.card
       ? chromaCardHTML(a.card, a.particle || DEFAULT_PARTICLE) + (guessed ? '<div class="cname" style="position:static;color:#ffcf8a;font-size:11px;margin-top:4px;text-shadow:none">↑ 按异色基准色推测，点选可改</div>' : '')
-      : '<div class="chroma-card" style="background:linear-gradient(135deg,#333,#222);"><div class="cid">未选</div><div class="cname">点此卡选中后，再点上方色卡</div></div>';
+      : '<div class="chroma-card" style="background:#333"><div class="cid">未选</div><div class="cname">点此卡选中后，再点上方色卡</div></div>';
     const tag = guessed ? '推测' : '已标记';
     return '<div class="pet'+sel+'" id="pet_'+gid+'" onclick="selectPet(\''+gid+'\')">'
       + preview
