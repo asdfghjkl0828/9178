@@ -6,6 +6,7 @@
 <title>炫彩粒子图鉴 - 洛克王国 PVP 计算器</title>
 <link rel="stylesheet" href="css/head.css">
 <script src="data/chroma_cards.js"></script>
+<script src="data/shiny_colors.js"></script>
 <style>
   .dex-nav { display:flex; gap:6px; margin-left:16px; align-items:center; flex-wrap:wrap; }
   .dex-nav a { color:rgba(255,255,255,.82); text-decoration:none; font-size:13px; padding:5px 11px; border-radius:18px; border:1px solid rgba(255,255,255,.18); white-space:nowrap; }
@@ -126,6 +127,23 @@ function particleSVG(name){
 function cardById(id){ return CHROMA_CARDS.find(c => c.id === id) || CHROMA_CARDS[0]; }
 function particleById(id){ return CHROMA_PARTICLES.find(p => p.id === id) || CHROMA_PARTICLES.find(p=>p.id===DEFAULT_PARTICLE); }
 
+// 异色基准色 → 39 张真实色卡 色相就近推测（仅作起始建议，可手动改）
+function hexToRgb(h){ h=h.replace('#',''); if(h.length===3) h=h.split('').map(c=>c+c).join(''); return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]; }
+function rgbDist(a,b){ return Math.sqrt((a[0]-b[0])**2+(a[1]-b[1])**2+(a[2]-b[2])**2); }
+function nearestCardForGid(gid){
+  const sc = (window.SHINY_COLORS && window.SHINY_COLORS[gid]);
+  if (!sc) return null;
+  const petCols = [hexToRgb(sc.base||'#888'), hexToRgb(sc.accent||sc.base||'#888')];
+  let best=null, bestD=1e9;
+  for (const c of CHROMA_CARDS){
+    const cardCols=[hexToRgb(c.ui_color_1), hexToRgb(c.ui_color_2)];
+    let d=1e9;
+    for (const pc of petCols) for (const cc of cardCols) d=Math.min(d, rgbDist(pc,cc));
+    if (d<bestD){ bestD=d; best=c.id; }
+  }
+  return { card: best, particle: DEFAULT_PARTICLE, guessed: true };
+}
+
 function chromaCardHTML(cardId, particleId, extraClass){
   const c = cardById(cardId);
   const p = particleById(particleId);
@@ -203,7 +221,9 @@ function renderPets(){
   const map = loadAssign(CUR_UID);
   box.innerHTML = list.map(function(p){
     const gid = String(p.gid || p.petId || '');
-    const a = map[gid] || {};
+    let a = map[gid] || {};
+    let guessed = false;
+    if (!a.card){ const d = nearestCardForGid(gid); if (d){ a = d; guessed = true; } }
     const icon = p.icon ? ICON_BASE + p.icon : '';
     const ava = icon ? '<img src="'+icon+'" alt="" onerror="this.style.display=\'none\'">' : '';
     const def = (p.defaultName && p.defaultName !== p.name) ? '<div class="def">原型：'+p.defaultName+'</div>' : '';
@@ -211,15 +231,16 @@ function renderPets(){
     const cardOpts = CHROMA_CARDS.map(c => '<option value="'+c.id+'"'+(a.card==c.id?' selected':'')+'>'+c.id+' · '+c.name+'</option>').join('');
     const partOpts = CHROMA_PARTICLES.map(pp => '<option value="'+pp.id+'"'+(a.particle==pp.id?' selected':'')+'>'+pp.id+' · '+pp.name+'</option>').join('');
     const preview = a.card
-      ? chromaCardHTML(a.card, a.particle || DEFAULT_PARTICLE)
+      ? chromaCardHTML(a.card, a.particle || DEFAULT_PARTICLE) + (guessed ? '<div class="cname" style="position:static;color:#ffcf8a;font-size:11px;margin-top:4px;text-shadow:none">↑ 按异色基准色推测，点选可改</div>' : '')
       : '<div class="chroma-card" style="background:linear-gradient(135deg,#333,#222);"><div class="cid">未选</div><div class="cname">点此卡选中后，再点上方色卡</div></div>';
+    const tag = guessed ? '推测' : '已标记';
     return '<div class="pet'+sel+'" id="pet_'+gid+'" onclick="selectPet(\''+gid+'\')">'
       + preview
       + '<div class="top"><div class="ava">'+ava+'</div>'
       + '<div><div class="nm">'+(p.name||'?')+'</div>'+def+'<span class="mut">'+(p.mutationName||'异色')+'</span></div></div>'
       + '<div class="ctrls"><select onchange="setCard(\''+gid+'\',this.value)" onclick="event.stopPropagation()">'+cardOpts+'</select>'
       + '<select onchange="setParticle(\''+gid+'\',this.value)" onclick="event.stopPropagation()">'+partOpts+'</select></div>'
-      + '<div class="assign-hint">gid '+gid+' · Lv.'+(p.lv||'?')+' · glass_value='+(a.card||'—')+' / glass_type='+(a.particle||'—')+'</div>'
+      + '<div class="assign-hint">'+tag+' · gid '+gid+' · Lv.'+(p.lv||'?')+' · glass_value='+(a.card||'—')+' / glass_type='+(a.particle||'—')+'</div>'
       + '</div>';
   }).join('');
 }
