@@ -1,8 +1,8 @@
 {
   "date": "2026-09-03",
-  "updated_at": "2026-09-03T16:23:18.387485+08:00",
-  "server_now": 1788423798,
-  "active_round": "16:00-20:00",
+  "updated_at": "2026-09-03T20:27:43.446566+08:00",
+  "server_now": 1788438463,
+  "active_round": "20:00-24:00",
   "rounds": {
     "1": {
       "label": "08:00-12:00",
@@ -53,7 +53,7 @@
           "type": "炼金材料",
           "high_value": false,
           "recommend": true,
-          "remain": "3小时36分钟",
+          "remain": "已结束",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c5/k8wzdzechd88qs9bxuvcnyg0pv4tzl4.png/100px-100681.png"
         },
         {
@@ -64,7 +64,7 @@
           "type": "精灵喂养材料",
           "high_value": false,
           "recommend": false,
-          "remain": "3小时36分钟",
+          "remain": "已结束",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c6/5qe6rcdtfxe1gsrvgj3lrn033athx9p.png/100px-100668.png"
         },
         {
@@ -75,7 +75,7 @@
           "type": "精灵蛋",
           "high_value": false,
           "recommend": false,
-          "remain": "3小时36分钟",
+          "remain": "已结束",
           "image": "//img.71acg.net/whd~hykb/comm/hd_admin_upload_2982_5390e1a946446e64d929ad89a3ad3eed.png"
         }
       ]
@@ -93,6 +93,22 @@
           "recommend": false,
           "remain": "已结束",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/3/35/5mp1ohcm72pgsxax5kq3x1aophw3lh0.png/100px-100136.png"
+        }
+      ]
+    },
+    "4": {
+      "label": "20:00-24:00",
+      "items": [
+        {
+          "name": "黄石榴石",
+          "price": "1000",
+          "limit": "100",
+          "desc": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 特殊的晶体排列解构，精灵打喷嚏可能会令这种晶体发生爆炸。",
+          "type": "炼金材料",
+          "high_value": false,
+          "recommend": true,
+          "remain": "3小时32分钟",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/f/f3/c5x5f0lgk33ly801m8w1n9aod8ny4sh.png/100px-100683.png"
         }
       ]
     }
