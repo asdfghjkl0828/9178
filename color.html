@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>炫彩精灵 - 洛克王国 PVP 计算器</title>
+<title>炫彩粒子图鉴 - 洛克王国 PVP 计算器</title>
 <link rel="stylesheet" href="css/head.css">
-<script src="data/shiny_colors.js"></script>
+<script src="data/chroma_cards.js"></script>
 <style>
   .dex-nav { display:flex; gap:6px; margin-left:16px; align-items:center; flex-wrap:wrap; }
   .dex-nav a { color:rgba(255,255,255,.82); text-decoration:none; font-size:13px; padding:5px 11px; border-radius:18px; border:1px solid rgba(255,255,255,.18); white-space:nowrap; }
@@ -13,7 +13,7 @@
   .dex-nav a.active { background:var(--accent); border-color:var(--accent); color:#fff; }
   .sub { color:var(--text2); font-size:13px; margin-bottom:14px; line-height:1.7; }
   .sub b { color:var(--text); }
-  .note { background:rgba(255,170,80,.1); border:1px solid rgba(255,170,80,.35); border-radius:10px; padding:11px 14px; font-size:12.5px; color:rgba(255,210,150,.95); margin:10px 0; line-height:1.7; }
+  .note { background:rgba(120,160,255,.1); border:1px solid rgba(120,160,255,.35); border-radius:10px; padding:11px 14px; font-size:12.5px; color:rgba(190,210,255,.95); margin:10px 0; line-height:1.7; }
   .rt-box { display:flex; flex-wrap:wrap; gap:8px; align-items:center; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; margin:14px 0; }
   .rt-box input { flex:1; min-width:120px; background:var(--card2); border:1px solid var(--border); color:var(--text); border-radius:8px; padding:7px 11px; font-size:14px; }
   .rt-box button { background:var(--accent); color:#fff; border:none; border-radius:8px; padding:7px 14px; font-size:14px; cursor:pointer; }
@@ -21,36 +21,45 @@
   .rt-box button.ghost { background:transparent; border:1px solid var(--border); color:var(--text2); }
   .rt-box .hint { font-size:12px; color:var(--text2); }
   .count { font-size:13px; color:var(--text2); margin:8px 0 14px; }
-  .xgrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:14px; }
-  .xcard { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px; text-align:center; display:flex; flex-direction:column; align-items:center; }
-  .xcard .imgwrap { width:120px; height:120px; margin:0 auto 8px; background:#f5f6fa; border-radius:50%; overflow:hidden; display:flex; align-items:center; justify-content:center; }
-  .xcard img.origin { max-width:100%; max-height:100%; object-fit:contain; }
-  .xcard .name { font-size:16px; font-weight:700; color:var(--text); margin-top:2px; }
-  .xcard .default { font-size:12px; color:var(--text2); margin-top:2px; }
-  .xcard .xc-badge { display:inline-block; margin-top:8px; background:linear-gradient(135deg,#ff6ec4,#7873f5); color:#fff; font-size:12px; font-weight:700; padding:3px 10px; border-radius:10px; }
-  .xcard .meta { font-size:12px; color:var(--text2); margin-top:8px; line-height:1.6; }
-  .xcard .gid { font-family:monospace; font-size:11px; color:var(--text2); margin-top:6px; opacity:.7; }
-  .xcard { position:relative; }
-  .xcard .swatch { width:100%; height:104px; border-radius:10px; margin-bottom:10px; position:relative; box-shadow: inset 0 0 0 1px rgba(255,255,255,.14); overflow:hidden; }
-  .xcard .swatch .stars { position:absolute; top:8px; right:10px; color:#FFD95E; font-size:17px; text-shadow:0 1px 3px rgba(0,0,0,.55); letter-spacing:1px; }
-  .xcard .swatch .ctype { position:absolute; left:10px; bottom:8px; background:rgba(0,0,0,.42); color:#fff; font-size:11px; font-weight:700; padding:2px 8px; border-radius:8px; }
-  .xcard .swatch .cdesc { position:absolute; right:10px; bottom:8px; background:rgba(0,0,0,.42); color:#fff; font-size:10.5px; padding:2px 8px; border-radius:8px; max-width:62%; text-align:right; line-height:1.4; }
-  .xcard .swatch .csrc { position:absolute; left:10px; top:8px; background:rgba(0,0,0,.32); color:rgba(255,255,255,.8); font-size:9.5px; padding:1px 6px; border-radius:6px; }
-  .shot-area { margin-top:10px; width:100%; }
-  .shot-area img.shot { width:100%; border-radius:8px; border:1px solid var(--border); display:block; }
-  .shot-area .shot-tag { font-size:11px; color:#7fe0a0; margin-top:4px; }
-  .upload-btn { margin-top:8px; font-size:11px; background:var(--card2); border:1px dashed var(--border); color:var(--text2); border-radius:8px; padding:6px 10px; cursor:pointer; width:100%; }
-  .upload-btn:hover { border-color:var(--accent); color:var(--text); }
-  .del-shot { font-size:10px; color:#ff8a8a; background:none; border:none; cursor:pointer; margin-top:5px; text-decoration:underline; }
-  .empty { padding:40px; text-align:center; color:var(--text2); font-size:14px; grid-column:1/-1; }
+  .section-title { font-size:17px; font-weight:800; color:var(--text); margin:26px 0 10px; display:flex; align-items:center; gap:8px; }
+  .section-title .badge { font-size:11px; font-weight:700; background:var(--accent); color:#fff; border-radius:8px; padding:2px 9px; }
+
+  /* 真实色卡 */
+  .chroma-card { position:relative; width:100%; aspect-ratio:279/154; border-radius:12px; overflow:hidden; box-shadow:inset 0 0 0 1px rgba(255,255,255,.18), 0 4px 14px rgba(0,0,0,.25); }
+  .chroma-card .shine { position:absolute; inset:0; background:radial-gradient(120% 80% at 28% 18%, rgba(255,255,255,.55), rgba(255,255,255,0) 55%); mix-blend-mode:screen; pointer-events:none; }
+  .chroma-card .particle { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; }
+  .chroma-card .particle svg { width:46%; height:46%; filter:drop-shadow(0 2px 4px rgba(0,0,0,.35)); }
+  .chroma-card .cid { position:absolute; left:9px; top:8px; background:rgba(0,0,0,.4); color:#fff; font-size:11px; font-weight:700; padding:1px 8px; border-radius:7px; }
+  .chroma-card .cname { position:absolute; left:9px; right:9px; bottom:7px; color:#fff; font-size:12px; font-weight:700; text-shadow:0 1px 3px rgba(0,0,0,.6); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:14px; }
+  .gitem { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:12px; display:flex; flex-direction:column; gap:8px; }
+  .gitem .meta { display:flex; justify-content:space-between; font-size:12px; color:var(--text2); }
+  .gitem.pickable { cursor:pointer; transition:transform .12s, border-color .12s; }
+  .gitem.pickable:hover { transform:translateY(-3px); border-color:var(--accent); }
+
+  /* 我的宠物色卡 */
+  .petlist { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:14px; }
+  .pet { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:10px; }
+  .pet.sel { border-color:var(--accent); box-shadow:0 0 0 2px var(--accent) inset; }
+  .pet .top { display:flex; gap:12px; align-items:center; }
+  .pet .ava { width:58px; height:58px; border-radius:50%; background:var(--card2); overflow:hidden; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+  .pet .ava img { max-width:100%; max-height:100%; object-fit:contain; }
+  .pet .nm { font-size:16px; font-weight:700; color:var(--text); }
+  .pet .def { font-size:12px; color:var(--text2); }
+  .pet .mut { display:inline-block; margin-top:4px; font-size:11px; font-weight:700; color:#fff; background:linear-gradient(135deg,#ff6ec4,#7873f5); padding:2px 9px; border-radius:9px; }
+  .pet .ctrls { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .pet select { background:var(--card2); color:var(--text); border:1px solid var(--border); border-radius:8px; padding:6px 8px; font-size:12.5px; flex:1; min-width:0; }
+  .pet .assign-hint { font-size:11px; color:var(--text2); }
+  .pet .shot { width:100%; border-radius:8px; border:1px solid var(--border); margin-top:4px; }
+  .empty { padding:30px; text-align:center; color:var(--text2); grid-column:1/-1; }
+  .hidden-card { background:linear-gradient(135deg,#1a1d2e,#3a2f4a); }
 </style>
 </head>
 <body>
 <header>
   <div style="font-size:24px">🛠️</div>
-  <div style="display:flex;flex-direction:column;gap:2px">
-    <h1>洛克王国 PVP 工具箱</h1>
-  </div>
+  <div style="display:flex;flex-direction:column;gap:2px"><h1>洛克王国 PVP 工具箱</h1></div>
   <nav class="dex-nav">
     <a href="index.html" class="home-link">工具箱</a>
     <a href="calc.html">伤害计算器</a>
@@ -63,174 +72,199 @@
     <a href="color.html" class="active">炫彩精灵</a>
     <a href="home.html">家园查询</a>
   </nav>
-  <div class="header-actions">
-    <div class="theme-toggle" id="themeToggle"><span class="tt-icon">🌙</span><span class="tt-text">深色</span></div>
-  </div>
+  <div class="header-actions"><div class="theme-toggle" id="themeToggle"><span class="tt-icon">🌙</span><span class="tt-text">深色</span></div></div>
 </header>
 
 <div class="main">
-  <h2>🌈 炫彩 / 异色精灵</h2>
+  <h2>🌈 炫彩粒子图鉴</h2>
   <p class="sub">
-    输入游戏 UID，列出该账号下所有带<b>特殊配色</b>的精灵（异色 / 异色炫彩）。<br>
-    每张卡的<b>大色块 = 该精灵的真实「异色基准配色」</b>——这是按物种固定的游戏数据（来源：百度百科 / 3DM / 各攻略站公开资料），<b>免费爬取即可显示</b>。<br>
-    <b>边界说明：</b>异色基准色固定可显示；而「炫彩」的随机特效是逐个体不同的，游戏服务器不存、免费源拿不到，所以色块是异色底色、不含炫彩动态光效。想看真实炫彩实机效果，可<b>上传游戏内截图</b>存本机展示（下方按钮）。
+    真实色卡数据，<b>爬取自 aismile.dev（BeSmile / BetterTools）的游戏配置 RocoDataRows</b>——共 <b>39 张官方配置色卡</b> + <b>4 种粒子</b> + <b>4 个隐藏炫彩</b>，配色为游戏原值（ui_color_1 / ui_color_2 十六进制）。<br>
+    <b>怎么对应到你自己的精灵：</b>炫彩精灵在游戏里用 <code>glass_value</code>（色卡 ID）+ <code>glass_type</code>（粒子 ID）表示。免费接口不返回这两字段，所以下方「我的炫彩精灵」里，<b>每只宠物用下拉框选一下它用的色卡 + 粒子</b>即可（存本机，刷新不丢）。选完就会显示真实色卡。
   </p>
 
   <div class="rt-box">
     <input id="uid" type="text" inputmode="numeric" placeholder="UID" value="5678116">
-    <button id="queryBtn">查询最新</button>
-    <button id="clearBtn" class="ghost" title="清除本机保存的所有截图">清空本机截图</button>
+    <button id="queryBtn">查询我的炫彩</button>
+    <button id="clearBtn" class="ghost" title="清除本机存档">清空本机标记</button>
     <span class="hint" id="hint"></span>
   </div>
-
   <div class="note" id="note" style="display:none"></div>
-  <div class="count" id="count"></div>
-  <div class="xgrid" id="xgrid"></div>
+
+  <div class="section-title">我的炫彩精灵 <span class="badge" id="petCount">—</span></div>
+  <div class="count" id="petHint">输入 UID 查询；每只宠物用下拉框选「色卡 + 粒子」即可显示真实色卡。</div>
+  <div class="petlist" id="petlist"></div>
+
+  <div class="section-title">全部 39 张官方色卡（真实配色）<span class="badge">点击可标记给选中的宠物</span></div>
+  <div class="grid" id="gallery"></div>
+
+  <div class="section-title">4 种粒子（glass_type）</div>
+  <div class="grid" id="particles" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr));"></div>
+
+  <div class="section-title">4 个隐藏炫彩</div>
+  <div class="grid" id="hidden" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr));"></div>
 </div>
 
 <script>
 const RT_PROXY_DEFAULT = 'https://db643367.roco-proxy.pages.dev';
 const ICON_BASE = 'https://rocodex.org';
-const FALLBACK_INDEX = 'data/home_index.json';
+const DEFAULT_PARTICLE = 4; // 镂空五角星（aismile 默认）
 
 function proxyBase(){ return localStorage.getItem('rt_proxy') || RT_PROXY_DEFAULT; }
 function setHint(t){ document.getElementById('hint').textContent = t || ''; }
 function setNote(t){ const n=document.getElementById('note'); n.textContent=t; n.style.display = t ? 'block' : 'none'; }
 
-function shotKey(uid, gid){ return 'xcshot_' + uid + '_' + gid; }
-function loadShot(uid, gid){ try { return localStorage.getItem(shotKey(uid, gid)); } catch(e){ return null; } }
-function saveShot(uid, gid, data){ try { localStorage.setItem(shotKey(uid, gid), data); } catch(e){ alert('保存失败：本机存储可能已满（截图太大）'); } }
-function delShot(uid, gid){ try { localStorage.removeItem(shotKey(uid, gid)); } catch(e){} }
+// 粒子 SVG
+function particleSVG(name){
+  const w='#fff';
+  if (name === '四角星') return '<svg viewBox="0 0 100 100" fill="'+w+'"><path d="M50 6 L60 40 L94 50 L60 60 L50 94 L40 60 L6 50 L40 40 Z"/></svg>';
+  if (name === '爱心') return '<svg viewBox="0 0 100 100" fill="'+w+'"><path d="M50 84 C18 60 14 32 38 26 C49 23 50 36 50 39 C50 36 51 23 62 26 C86 32 82 60 50 84 Z"/></svg>';
+  if (name === '方块') return '<svg viewBox="0 0 100 100" fill="'+w+'"><path d="M50 14 L86 50 L50 86 L14 50 Z"/></svg>';
+  // 镂空五角星（描边）
+  return '<svg viewBox="0 0 100 100" fill="none" stroke="'+w+'" stroke-width="6" stroke-linejoin="round"><path d="M50 10 L61 40 L93 40 L67 60 L77 92 L50 72 L23 92 L33 60 L7 40 L39 40 Z"/></svg>';
+}
 
-async function fetchRealtime(uid){
-  const res = await fetch(proxyBase() + '/home?uid=' + uid);
-  if (!res.ok) throw new Error('代理返回 HTTP ' + res.status);
-  const j = await res.json();
-  if (j.error || !j.data) throw new Error('数据异常: ' + (j.message || 'no data'));
-  return j.data;
+function cardById(id){ return CHROMA_CARDS.find(c => c.id === id) || CHROMA_CARDS[0]; }
+function particleById(id){ return CHROMA_PARTICLES.find(p => p.id === id) || CHROMA_PARTICLES.find(p=>p.id===DEFAULT_PARTICLE); }
+
+function chromaCardHTML(cardId, particleId, extraClass){
+  const c = cardById(cardId);
+  const p = particleById(particleId);
+  return '<div class="chroma-card '+(extraClass||'')+'" style="background:linear-gradient(135deg,'+c.ui_color_1+','+c.ui_color_2+');">'
+    + '<div class="shine"></div>'
+    + '<div class="particle">'+particleSVG(p.name)+'</div>'
+    + '<div class="cid">色卡 '+c.id+'</div>'
+    + '<div class="cname">'+c.name+'</div>'
+    + '</div>';
 }
-async function fetchSnapshot(uid){
-  const idx = await (await fetch(FALLBACK_INDEX + '?t=' + Date.now())).json();
-  const hit = (idx.uids || []).find(u => String(u.uid) === String(uid) && u.ok);
-  if (!hit) throw new Error('该 UID 无每小时快照数据');
-  const fr = await fetch('data/home_' + uid + '.json?t=' + Date.now());
-  if (!fr.ok) throw new Error('快照读取失败 HTTP ' + fr.status);
-  return (await fr.json()).data;
-}
+
+// 本机标记：gid -> {card, particle}
+function assignKey(uid){ return 'chroma_assign_' + uid; }
+function loadAssign(uid){ try { return JSON.parse(localStorage.getItem(assignKey(uid)) || '{}'); } catch(e){ return {}; } }
+function saveAssign(uid, map){ try { localStorage.setItem(assignKey(uid), JSON.stringify(map)); } catch(e){ alert('保存失败：本机存储可能已满'); } }
+
+let CUR_UID = '', SELECTED_GID = null;
 
 function isColorful(p){
   const m = String(p.mutationName || '');
   return m.includes('异色') || m.includes('炫彩');
 }
 
-const CUR_UID = { v: '' };
+function renderGallery(){
+  const g = document.getElementById('gallery');
+  g.innerHTML = CHROMA_CARDS.map(c =>
+    '<div class="gitem pickable" onclick="assignToSelected('+c.id+')">'
+    + chromaCardHTML(c.id, DEFAULT_PARTICLE)
+    + '<div class="meta"><span>ID '+c.id+'</span><span>'+(SELECTED_GID?'点此标记给选中宠物':'点击标记')+'</span></div>'
+    + '</div>'
+  ).join('');
 
-function renderPets(pets, source){
+  const pp = document.getElementById('particles');
+  pp.innerHTML = CHROMA_PARTICLES.map(p =>
+    '<div class="gitem"><div class="chroma-card" style="background:linear-gradient(135deg,#2b2f45,#454a66);">'
+    + '<div class="shine"></div><div class="particle">'+particleSVG(p.name)+'</div>'
+    + '<div class="cid">粒子 '+p.id+'</div><div class="cname">'+p.name+'</div></div>'
+    + '<div class="meta"><span>glass_type '+p.id+'</span><span>'+p.name+'</span></div></div>'
+  ).join('');
+
+  const hd = document.getElementById('hidden');
+  hd.innerHTML = CHROMA_HIDDEN.map(h =>
+    '<div class="gitem"><div class="chroma-card hidden-card">'
+    + '<div class="shine"></div><div class="particle">'+particleSVG('镂空五角星')+'</div>'
+    + '<div class="cid">隐藏 '+h.id+'</div><div class="cname">'+h.name+'</div></div>'
+    + '<div class="meta"><span>'+h.season+'</span><span>'+h.name+'</span></div></div>'
+  ).join('');
+}
+
+function assignToSelected(cardId){
+  if (!SELECTED_GID){ setNote('请先在下方「我的炫彩精灵」里点选一只宠物（卡片高亮），再点色卡标记。'); return; }
+  const map = loadAssign(CUR_UID);
+  const cur = map[SELECTED_GID] || {};
+  const pid = cur.particle || DEFAULT_PARTICLE;
+  map[SELECTED_GID] = { card: cardId, particle: pid };
+  saveAssign(CUR_UID, map);
+  renderPets();
+  setNote('已将 色卡 '+cardId+' 标记给选中的宠物（gid '+SELECTED_GID+'）。粒子保持 '+pid+'，可在宠物卡里改。');
+}
+
+async function fetchRealtime(uid){
+  const res = await fetch(proxyBase() + '/home?uid=' + uid);
+  if (!res.ok) throw new Error('代理 HTTP ' + res.status);
+  const j = await res.json();
+  if (j.error || !j.data) throw new Error(j.message || '无数据');
+  return j.data;
+}
+
+function renderPets(){
+  const pets = window._PETS || [];
   const list = pets.filter(isColorful);
-  const uid = CUR_UID.v;
-  const grid = document.getElementById('xgrid');
-  document.getElementById('count').textContent = '共 ' + pets.length + ' 只精灵，其中异色/炫彩 ' + list.length + ' 只（数据源：' + source + '）';
-  if (list.length === 0){
-    grid.innerHTML = '<div class="empty">该账号下暂无异色 / 炫彩精灵。</div>';
-    return;
-  }
-  grid.innerHTML = list.map(function(p){
+  const box = document.getElementById('petlist');
+  document.getElementById('petCount').textContent = list.length + ' 只';
+  if (list.length === 0){ box.innerHTML = '<div class="empty">该账号下暂无异色 / 炫彩精灵（或数据未取到）。</div>'; return; }
+  const map = loadAssign(CUR_UID);
+  box.innerHTML = list.map(function(p){
     const gid = String(p.gid || p.petId || '');
-    const spName = p.defaultName || p.name || '';
+    const a = map[gid] || {};
     const icon = p.icon ? ICON_BASE + p.icon : '';
-    const originImg = icon ? '<img class="origin" src="' + icon + '" alt="' + spName + '" loading="lazy" onerror="this.style.display=\'none\'">' : '<span style="color:#999;font-size:12px">无立绘</span>';
-    const def = (p.defaultName && p.defaultName !== p.name) ? '<div class="default">原型：' + p.defaultName + '</div>' : '';
-    // 真实异色基准配色（免费公开数据）
-    const sc = (window.SHINY_COLORS && window.SHINY_COLORS[gid]) || null;
-    const stars = (p.mutationName && p.mutationName.indexOf('炫彩') >= 0) ? '★★★' : '★★';
-    const swatchHtml = sc
-      ? '<div class="swatch" style="background:' + sc.grad + '">'
-        + '<span class="csrc">配色源 ' + sc.src + '</span>'
-        + '<span class="stars">' + stars + '</span>'
-        + '<span class="ctype">' + (sc.name) + '</span>'
-        + '<span class="cdesc">' + sc.desc + '</span>'
-        + '</div>'
-      : '<div class="swatch" style="background:linear-gradient(135deg,#555,#333);">'
-        + '<span class="stars">' + stars + '</span>'
-        + '<span class="ctype">无基准配色数据</span>'
-        + '</div>';
-    const shot = loadShot(uid, gid);
-    const shotHtml = shot
-      ? '<img class="shot" src="' + shot + '" alt="炫彩截图"><div class="shot-tag">✓ 已存本机截图（真实炫彩实机）</div><button class="del-shot" onclick="delOne(\'' + uid + '\',\'' + gid + '\')">删除这张</button>'
-      : '<button class="upload-btn" onclick="document.getElementById(\'file_' + gid + '\').click()">📷 上传炫彩实机截图</button>';
-    return '<div class="xcard">'
-      + swatchHtml
-      + '<div class="imgwrap">' + originImg + '</div>'
-      + '<div class="name">' + (p.name || '?') + '</div>'
-      + def
-      + '<div class="xc-badge">' + (p.mutationName || '异色') + '</div>'
-      + '<div class="meta">Lv.' + (p.lv || '?') + (p.sex != null ? ' · ' + (p.sex === 1 ? '雄' : (p.sex === 2 ? '雌' : '无')) : '') + ' · 异色基准色已据公开数据还原</div>'
-      + '<div class="gid">gid: ' + gid + '</div>'
-      + '<div class="shot-area">' + shotHtml
-      + '<input id="file_' + gid + '" type="file" accept="image/*" style="display:none" onchange="onShot(this,\'' + uid + '\',\'' + gid + '\')">'
-      + '</div>'
+    const ava = icon ? '<img src="'+icon+'" alt="" onerror="this.style.display=\'none\'">' : '';
+    const def = (p.defaultName && p.defaultName !== p.name) ? '<div class="def">原型：'+p.defaultName+'</div>' : '';
+    const sel = (gid === SELECTED_GID) ? ' sel' : '';
+    const cardOpts = CHROMA_CARDS.map(c => '<option value="'+c.id+'"'+(a.card==c.id?' selected':'')+'>'+c.id+' · '+c.name+'</option>').join('');
+    const partOpts = CHROMA_PARTICLES.map(pp => '<option value="'+pp.id+'"'+(a.particle==pp.id?' selected':'')+'>'+pp.id+' · '+pp.name+'</option>').join('');
+    const preview = a.card
+      ? chromaCardHTML(a.card, a.particle || DEFAULT_PARTICLE)
+      : '<div class="chroma-card" style="background:linear-gradient(135deg,#333,#222);"><div class="cid">未选</div><div class="cname">点此卡选中后，再点上方色卡</div></div>';
+    return '<div class="pet'+sel+'" id="pet_'+gid+'" onclick="selectPet(\''+gid+'\')">'
+      + preview
+      + '<div class="top"><div class="ava">'+ava+'</div>'
+      + '<div><div class="nm">'+(p.name||'?')+'</div>'+def+'<span class="mut">'+(p.mutationName||'异色')+'</span></div></div>'
+      + '<div class="ctrls"><select onchange="setCard(\''+gid+'\',this.value)" onclick="event.stopPropagation()">'+cardOpts+'</select>'
+      + '<select onchange="setParticle(\''+gid+'\',this.value)" onclick="event.stopPropagation()">'+partOpts+'</select></div>'
+      + '<div class="assign-hint">gid '+gid+' · Lv.'+(p.lv||'?')+' · glass_value='+(a.card||'—')+' / glass_type='+(a.particle||'—')+'</div>'
       + '</div>';
   }).join('');
 }
-
-function onShot(input, uid, gid){
-  const f = input.files && input.files[0];
-  if (!f) return;
-  const reader = new FileReader();
-  reader.onload = function(e){
-    saveShot(uid, gid, e.target.result);
-    query();
-  };
-  reader.readAsDataURL(f);
-}
-function delOne(uid, gid){ delShot(uid, gid); query(); }
+function selectPet(gid){ SELECTED_GID = (SELECTED_GID === gid) ? null : gid; renderPets(); }
+function setCard(gid, v){ const map=loadAssign(CUR_UID); map[gid]=map[gid]||{}; map[gid].card=parseInt(v,10); saveAssign(CUR_UID, map); renderPets(); }
+function setParticle(gid, v){ const map=loadAssign(CUR_UID); map[gid]=map[gid]||{}; map[gid].particle=parseInt(v,10); saveAssign(CUR_UID, map); renderPets(); }
 
 async function query(){
-  const uid = (document.getElementById('uid').value || '').trim();
+  const uid = (document.getElementById('uid').value||'').trim();
   if (!uid){ setHint('请输入 UID'); return; }
-  CUR_UID.v = uid;
+  CUR_UID = uid; SELECTED_GID = null;
   setHint('查询中…'); setNote('');
-  document.getElementById('xgrid').innerHTML = '';
-  document.getElementById('count').textContent = '';
+  document.getElementById('petlist').innerHTML = '';
   try {
     const data = await fetchRealtime(uid);
-    renderPets(data.pets || [], '云端代理（实时）');
+    window._PETS = data.pets || [];
+    renderPets();
     setHint('✓ 实时');
-  } catch(e1){
-    setHint('实时失败，回退快照…');
-    try {
-      const data = await fetchSnapshot(uid);
-      renderPets(data.pets || [], '每小时快照');
-      setNote('实时查询失败（' + e1.message + '），已回退每小时快照（数据可能滞后数小时）。');
-    } catch(e2){
-      setHint('失败');
-      setNote('实时 + 快照都失败：' + e1.message + ' / ' + e2.message);
-      document.getElementById('xgrid').innerHTML = '<div class="empty">无法获取该 UID 的精灵数据。</div>';
-    }
+  } catch(e){
+    setHint('失败');
+    setNote('实时查询失败：'+e.message+'。请确认代理可用，或稍后重试。');
+    document.getElementById('petlist').innerHTML = '<div class="empty">无法获取该 UID 的精灵数据。</div>';
   }
 }
 
 document.getElementById('queryBtn').addEventListener('click', query);
-document.getElementById('uid').addEventListener('keydown', function(e){ if (e.key === 'Enter') query(); });
+document.getElementById('uid').addEventListener('keydown', function(e){ if (e.key==='Enter') query(); });
 document.getElementById('clearBtn').addEventListener('click', function(){
-  const uid = CUR_UID.v || (document.getElementById('uid').value || '').trim();
+  const uid = CUR_UID || (document.getElementById('uid').value||'').trim();
   if (!uid){ alert('请先输入 UID'); return; }
-  if (!confirm('确认清除本机保存的「' + uid + '」全部炫彩截图？')) return;
-  const keys = [];
-  for (let i = 0; i < localStorage.length; i++){ const k = localStorage.key(i); if (k && k.indexOf('xcshot_' + uid + '_') === 0) keys.push(k); }
-  keys.forEach(k => localStorage.removeItem(k));
-  alert('已清除 ' + keys.length + ' 张截图（仅本机）');
-  query();
+  if (!confirm('清除本机保存的「'+uid+'」全部色卡标记？')) return;
+  localStorage.removeItem(assignKey(uid));
+  SELECTED_GID = null; renderPets();
+  alert('已清除（仅本机）');
 });
 
 function toggleTheme(){
   const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-  if (isLight){ document.documentElement.removeAttribute('data-theme'); localStorage.setItem('theme','dark'); document.getElementById('themeToggle').innerHTML = '<span class="tt-icon">🌙</span><span class="tt-text">深色</span>'; }
-  else { document.documentElement.setAttribute('data-theme','light'); localStorage.setItem('theme','light'); document.getElementById('themeToggle').innerHTML = '<span class="tt-icon">☀️</span><span class="tt-text">日间</span>'; }
+  if (isLight){ document.documentElement.removeAttribute('data-theme'); localStorage.setItem('theme','dark'); document.getElementById('themeToggle').innerHTML='<span class="tt-icon">🌙</span><span class="tt-text">深色</span>'; }
+  else { document.documentElement.setAttribute('data-theme','light'); localStorage.setItem('theme','light'); document.getElementById('themeToggle').innerHTML='<span class="tt-icon">☀️</span><span class="tt-text">日间</span>'; }
 }
 document.getElementById('themeToggle').addEventListener('click', toggleTheme);
-(function(){ if (localStorage.getItem('theme') === 'light'){ document.documentElement.setAttribute('data-theme','light'); document.getElementById('themeToggle').innerHTML = '<span class="tt-icon">☀️</span><span class="tt-text">日间</span>'; } })();
+(function(){ if (localStorage.getItem('theme')==='light'){ document.documentElement.setAttribute('data-theme','light'); document.getElementById('themeToggle').innerHTML='<span class="tt-icon">☀️</span><span class="tt-text">日间</span>'; } })();
 
+renderGallery();
 query();
 </script>
 </body>
