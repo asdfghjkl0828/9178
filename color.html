@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>炫彩精灵 - 洛克王国 PVP 计算器</title>
 <link rel="stylesheet" href="css/head.css">
+<script src="data/shiny_colors.js"></script>
 <style>
   .dex-nav { display:flex; gap:6px; margin-left:16px; align-items:center; flex-wrap:wrap; }
   .dex-nav a { color:rgba(255,255,255,.82); text-decoration:none; font-size:13px; padding:5px 11px; border-radius:18px; border:1px solid rgba(255,255,255,.18); white-space:nowrap; }
@@ -29,6 +30,12 @@
   .xcard .xc-badge { display:inline-block; margin-top:8px; background:linear-gradient(135deg,#ff6ec4,#7873f5); color:#fff; font-size:12px; font-weight:700; padding:3px 10px; border-radius:10px; }
   .xcard .meta { font-size:12px; color:var(--text2); margin-top:8px; line-height:1.6; }
   .xcard .gid { font-family:monospace; font-size:11px; color:var(--text2); margin-top:6px; opacity:.7; }
+  .xcard { position:relative; }
+  .xcard .swatch { width:100%; height:104px; border-radius:10px; margin-bottom:10px; position:relative; box-shadow: inset 0 0 0 1px rgba(255,255,255,.14); overflow:hidden; }
+  .xcard .swatch .stars { position:absolute; top:8px; right:10px; color:#FFD95E; font-size:17px; text-shadow:0 1px 3px rgba(0,0,0,.55); letter-spacing:1px; }
+  .xcard .swatch .ctype { position:absolute; left:10px; bottom:8px; background:rgba(0,0,0,.42); color:#fff; font-size:11px; font-weight:700; padding:2px 8px; border-radius:8px; }
+  .xcard .swatch .cdesc { position:absolute; right:10px; bottom:8px; background:rgba(0,0,0,.42); color:#fff; font-size:10.5px; padding:2px 8px; border-radius:8px; max-width:62%; text-align:right; line-height:1.4; }
+  .xcard .swatch .csrc { position:absolute; left:10px; top:8px; background:rgba(0,0,0,.32); color:rgba(255,255,255,.8); font-size:9.5px; padding:1px 6px; border-radius:6px; }
   .shot-area { margin-top:10px; width:100%; }
   .shot-area img.shot { width:100%; border-radius:8px; border:1px solid var(--border); display:block; }
   .shot-area .shot-tag { font-size:11px; color:#7fe0a0; margin-top:4px; }
@@ -65,7 +72,8 @@
   <h2>🌈 炫彩 / 异色精灵</h2>
   <p class="sub">
     输入游戏 UID，列出该账号下所有带<b>特殊配色</b>的精灵（异色 / 异色炫彩）。<br>
-    <b>重要限制：</b>炫彩的随机配色是游戏客户端实时渲染的，<b>服务器不存、公开图库（BWiki / rocodex）也无独立资源</b>，所以网页无法自动显示某只精灵真实的炫彩颜色。本页给出两条路：① 下方「原型立绘」是该精灵的普通形态（仅作对照，<b>不是</b>炫彩色）；② 你可以<b>上传游戏内的炫彩实机截图</b>，本页会把它存在本机浏览器并展示——这才是看到真实炫彩颜色的唯一办法。
+    每张卡的<b>大色块 = 该精灵的真实「异色基准配色」</b>——这是按物种固定的游戏数据（来源：百度百科 / 3DM / 各攻略站公开资料），<b>免费爬取即可显示</b>。<br>
+    <b>边界说明：</b>异色基准色固定可显示；而「炫彩」的随机特效是逐个体不同的，游戏服务器不存、免费源拿不到，所以色块是异色底色、不含炫彩动态光效。想看真实炫彩实机效果，可<b>上传游戏内截图</b>存本机展示（下方按钮）。
   </p>
 
   <div class="rt-box">
@@ -127,21 +135,36 @@ function renderPets(pets, source){
     return;
   }
   grid.innerHTML = list.map(function(p){
-    const gid = p.gid || p.petId || '';
+    const gid = String(p.gid || p.petId || '');
     const spName = p.defaultName || p.name || '';
     const icon = p.icon ? ICON_BASE + p.icon : '';
     const originImg = icon ? '<img class="origin" src="' + icon + '" alt="' + spName + '" loading="lazy" onerror="this.style.display=\'none\'">' : '<span style="color:#999;font-size:12px">无立绘</span>';
     const def = (p.defaultName && p.defaultName !== p.name) ? '<div class="default">原型：' + p.defaultName + '</div>' : '';
+    // 真实异色基准配色（免费公开数据）
+    const sc = (window.SHINY_COLORS && window.SHINY_COLORS[gid]) || null;
+    const stars = (p.mutationName && p.mutationName.indexOf('炫彩') >= 0) ? '★★★' : '★★';
+    const swatchHtml = sc
+      ? '<div class="swatch" style="background:' + sc.grad + '">'
+        + '<span class="csrc">配色源 ' + sc.src + '</span>'
+        + '<span class="stars">' + stars + '</span>'
+        + '<span class="ctype">' + (sc.name) + '</span>'
+        + '<span class="cdesc">' + sc.desc + '</span>'
+        + '</div>'
+      : '<div class="swatch" style="background:linear-gradient(135deg,#555,#333);">'
+        + '<span class="stars">' + stars + '</span>'
+        + '<span class="ctype">无基准配色数据</span>'
+        + '</div>';
     const shot = loadShot(uid, gid);
     const shotHtml = shot
-      ? '<img class="shot" src="' + shot + '" alt="炫彩截图"><div class="shot-tag">✓ 已存本机截图</div><button class="del-shot" onclick="delOne(\'' + uid + '\',\'' + gid + '\')">删除这张</button>'
+      ? '<img class="shot" src="' + shot + '" alt="炫彩截图"><div class="shot-tag">✓ 已存本机截图（真实炫彩实机）</div><button class="del-shot" onclick="delOne(\'' + uid + '\',\'' + gid + '\')">删除这张</button>'
       : '<button class="upload-btn" onclick="document.getElementById(\'file_' + gid + '\').click()">📷 上传炫彩实机截图</button>';
     return '<div class="xcard">'
+      + swatchHtml
       + '<div class="imgwrap">' + originImg + '</div>'
       + '<div class="name">' + (p.name || '?') + '</div>'
       + def
       + '<div class="xc-badge">' + (p.mutationName || '异色') + '</div>'
-      + '<div class="meta">Lv.' + (p.lv || '?') + (p.sex != null ? ' · ' + (p.sex === 1 ? '雄' : (p.sex === 2 ? '雌' : '无')) : '') + '</div>'
+      + '<div class="meta">Lv.' + (p.lv || '?') + (p.sex != null ? ' · ' + (p.sex === 1 ? '雄' : (p.sex === 2 ? '雌' : '无')) : '') + ' · 异色基准色已据公开数据还原</div>'
       + '<div class="gid">gid: ' + gid + '</div>'
       + '<div class="shot-area">' + shotHtml
       + '<input id="file_' + gid + '" type="file" accept="image/*" style="display:none" onchange="onShot(this,\'' + uid + '\',\'' + gid + '\')">'
