@@ -1,22 +1,66 @@
 {
-  "date": "2026-09-03",
-  "updated_at": "2026-09-03T20:27:43.446566+08:00",
-  "server_now": 1788438463,
-  "active_round": "20:00-24:00",
+  "date": "2026-09-04",
+  "updated_at": "2026-09-04T08:28:44.039300+08:00",
+  "server_now": 1788481723,
+  "active_round": "08:00-12:00",
   "rounds": {
     "1": {
       "label": "08:00-12:00",
       "items": [
         {
-          "name": "蓝晶碧玺",
-          "price": "1000",
+          "name": "好战球",
+          "price": "3000",
           "limit": "100",
-          "desc": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 某些晶石蜗会产出珍贵的粉蓝色碧玺，为此商人翻着花样研究晶石蜗的食谱喜好。",
-          "type": "炼金材料",
+          "desc": "更适合用来捕捉武系、龙系的精灵。 好斗的球，攻击中的精灵会被吸引。",
+          "type": "特制咕噜球",
           "high_value": false,
           "recommend": true,
-          "remain": "已结束",
-          "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c5/k8wzdzechd88qs9bxuvcnyg0pv4tzl4.png/100px-100681.png"
+          "remain": "15小时31分钟",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/7/79/kdfs6bmfy54gk7ak70arjxug91zv1z5.png/100px-Img_lumangqiu.png"
+        },
+        {
+          "name": "网兜球",
+          "price": "3000",
+          "limit": "100",
+          "desc": "更适合用来捕捉水系、翼系精灵。 轻快的球，能直线飞跃很远的距离。",
+          "type": "特制咕噜球",
+          "high_value": false,
+          "recommend": true,
+          "remain": "15小时31分钟",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/4/4b/60uvwzet0brdqlhtoa89domccpbo4hr.png/100px-Img_wangdiuqiu.png"
+        },
+        {
+          "name": "残缺魔镜",
+          "price": "48w",
+          "limit": "1",
+          "desc": "可以修正性格带来的负面影响。 “我不知道，我将消除自己。”",
+          "type": "性格影响修改道具",
+          "high_value": false,
+          "recommend": true,
+          "remain": "63小时31分钟",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/1/10/nssw03fprximwkgzjqdaq8r8pq3q3le.png/100px-100716.png"
+        },
+        {
+          "name": "适格钥匙",
+          "price": "32w",
+          "limit": "1",
+          "desc": "可以修改精灵的个体资质种类，或激活一条初始值为8的新资质。",
+          "type": "个体资质属性修改道具",
+          "high_value": false,
+          "recommend": true,
+          "remain": "63小时31分钟",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/1/11/6l0tqz9gytrn8r10gk5bgcj4rxnfx57.png/100px-100714.png"
+        },
+        {
+          "name": "能力钥匙",
+          "price": "16w",
+          "limit": "6",
+          "desc": "对初始个体资质小于10的精灵使用，使该项个体资质的初始值增加1。",
+          "type": "个体资质增强道具",
+          "high_value": false,
+          "recommend": true,
+          "remain": "63小时31分钟",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/2d/749ek9zbh79fvll7f5vtpxa33dz3mze.png/100px-100009.png"
         },
         {
           "name": "魔力果",
@@ -26,89 +70,8 @@
           "type": "精灵喂养材料",
           "high_value": false,
           "recommend": false,
-          "remain": "已结束",
+          "remain": "3小时31分钟",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c6/5qe6rcdtfxe1gsrvgj3lrn033athx9p.png/100px-100668.png"
-        },
-        {
-          "name": "神奇的蛋",
-          "price": "36000",
-          "limit": "5",
-          "desc": "蕴含着难以捉摸的魔力，不知道可以孵化出哪种精灵。",
-          "type": "精灵蛋",
-          "high_value": false,
-          "recommend": false,
-          "remain": "已结束",
-          "image": "//img.71acg.net/whd~hykb/comm/hd_admin_upload_2982_5390e1a946446e64d929ad89a3ad3eed.png"
-        }
-      ]
-    },
-    "3": {
-      "label": "16:00-20:00",
-      "items": [
-        {
-          "name": "蓝晶碧玺",
-          "price": "1000",
-          "limit": "100",
-          "desc": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 某些晶石蜗会产出珍贵的粉蓝色碧玺，为此商人翻着花样研究晶石蜗的食谱喜好。",
-          "type": "炼金材料",
-          "high_value": false,
-          "recommend": true,
-          "remain": "已结束",
-          "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c5/k8wzdzechd88qs9bxuvcnyg0pv4tzl4.png/100px-100681.png"
-        },
-        {
-          "name": "魔力果",
-          "price": "6000",
-          "limit": "20",
-          "desc": "不太常见的果实，精灵食用后获得能力提升。 “精灵食物营养科的研究总是不见进展，这么多年了精灵还在吃果子。”",
-          "type": "精灵喂养材料",
-          "high_value": false,
-          "recommend": false,
-          "remain": "已结束",
-          "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c6/5qe6rcdtfxe1gsrvgj3lrn033athx9p.png/100px-100668.png"
-        },
-        {
-          "name": "神奇的蛋",
-          "price": "36000",
-          "limit": "5",
-          "desc": "蕴含着难以捉摸的魔力，不知道可以孵化出哪种精灵。",
-          "type": "精灵蛋",
-          "high_value": false,
-          "recommend": false,
-          "remain": "已结束",
-          "image": "//img.71acg.net/whd~hykb/comm/hd_admin_upload_2982_5390e1a946446e64d929ad89a3ad3eed.png"
-        }
-      ]
-    },
-    "2": {
-      "label": "12:00-16:00",
-      "items": [
-        {
-          "name": "翼系粉尘",
-          "price": "500",
-          "limit": "100",
-          "desc": "常见的炼金材料，蕴含少量翼系魔法，是合成技能石的主要触媒。",
-          "type": "炼金材料",
-          "high_value": false,
-          "recommend": false,
-          "remain": "已结束",
-          "image": "https://patchwiki.biligame.com/images/rocom/thumb/3/35/5mp1ohcm72pgsxax5kq3x1aophw3lh0.png/100px-100136.png"
-        }
-      ]
-    },
-    "4": {
-      "label": "20:00-24:00",
-      "items": [
-        {
-          "name": "黄石榴石",
-          "price": "1000",
-          "limit": "100",
-          "desc": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 特殊的晶体排列解构，精灵打喷嚏可能会令这种晶体发生爆炸。",
-          "type": "炼金材料",
-          "high_value": false,
-          "recommend": true,
-          "remain": "3小时32分钟",
-          "image": "https://patchwiki.biligame.com/images/rocom/thumb/f/f3/c5x5f0lgk33ly801m8w1n9aod8ny4sh.png/100px-100683.png"
         }
       ]
     }
