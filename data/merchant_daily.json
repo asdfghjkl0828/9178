@@ -1,8 +1,8 @@
 {
   "date": "2026-09-04",
-  "updated_at": "2026-09-04T16:23:13.855374+08:00",
-  "server_now": 1788510193,
-  "active_round": "16:00-20:00",
+  "updated_at": "2026-09-04T20:26:58.909506+08:00",
+  "server_now": 1788524818,
+  "active_round": "20:00-24:00",
   "rounds": {
     "1": {
       "label": "08:00-12:00",
@@ -15,7 +15,7 @@
           "type": "特制咕噜球",
           "high_value": false,
           "recommend": true,
-          "remain": "7小时36分钟",
+          "remain": "3小时33分钟",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/7/79/kdfs6bmfy54gk7ak70arjxug91zv1z5.png/100px-Img_lumangqiu.png"
         },
         {
@@ -26,7 +26,7 @@
           "type": "特制咕噜球",
           "high_value": false,
           "recommend": true,
-          "remain": "7小时36分钟",
+          "remain": "3小时33分钟",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/4/4b/60uvwzet0brdqlhtoa89domccpbo4hr.png/100px-Img_wangdiuqiu.png"
         },
         {
@@ -37,7 +37,7 @@
           "type": "性格影响修改道具",
           "high_value": false,
           "recommend": true,
-          "remain": "55小时36分钟",
+          "remain": "51小时33分钟",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/1/10/nssw03fprximwkgzjqdaq8r8pq3q3le.png/100px-100716.png"
         },
         {
@@ -48,7 +48,7 @@
           "type": "个体资质属性修改道具",
           "high_value": false,
           "recommend": true,
-          "remain": "55小时36分钟",
+          "remain": "51小时33分钟",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/1/11/6l0tqz9gytrn8r10gk5bgcj4rxnfx57.png/100px-100714.png"
         },
         {
@@ -59,7 +59,7 @@
           "type": "个体资质增强道具",
           "high_value": false,
           "recommend": true,
-          "remain": "55小时36分钟",
+          "remain": "51小时33分钟",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/2d/749ek9zbh79fvll7f5vtpxa33dz3mze.png/100px-100009.png"
         },
         {
@@ -124,8 +124,24 @@
           "type": "炼金材料",
           "high_value": false,
           "recommend": true,
-          "remain": "3小时36分钟",
+          "remain": "已结束",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/9/9c/s7ej54xr4magmv0h0zag15jah6avwlc.png/100px-100682.png"
+        }
+      ]
+    },
+    "4": {
+      "label": "20:00-24:00",
+      "items": [
+        {
+          "name": "蓝晶碧玺",
+          "price": "1000",
+          "limit": "100",
+          "desc": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 某些晶石蜗会产出珍贵的粉蓝色碧玺，为此商人翻着花样研究晶石蜗的食谱喜好。",
+          "type": "炼金材料",
+          "high_value": false,
+          "recommend": true,
+          "remain": "3小时33分钟",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c5/k8wzdzechd88qs9bxuvcnyg0pv4tzl4.png/100px-100681.png"
         }
       ]
     }
