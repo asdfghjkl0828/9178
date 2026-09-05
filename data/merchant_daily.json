@@ -1,8 +1,8 @@
 {
   "date": "2026-09-05",
-  "updated_at": "2026-09-05T16:20:46.993057+08:00",
-  "server_now": 1788596446,
-  "active_round": "16:00-20:00",
+  "updated_at": "2026-09-05T20:24:05.083959+08:00",
+  "server_now": 1788611044,
+  "active_round": "20:00-24:00",
   "rounds": {
     "1": {
       "label": "08:00-12:00",
@@ -15,7 +15,7 @@
           "type": "性格影响修改道具",
           "high_value": false,
           "recommend": true,
-          "remain": "31小时39分钟",
+          "remain": "27小时35分钟",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/1/10/nssw03fprximwkgzjqdaq8r8pq3q3le.png/100px-100716.png"
         },
         {
@@ -26,7 +26,7 @@
           "type": "个体资质属性修改道具",
           "high_value": false,
           "recommend": true,
-          "remain": "31小时39分钟",
+          "remain": "27小时35分钟",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/1/11/6l0tqz9gytrn8r10gk5bgcj4rxnfx57.png/100px-100714.png"
         },
         {
@@ -37,7 +37,7 @@
           "type": "个体资质增强道具",
           "high_value": false,
           "recommend": true,
-          "remain": "31小时39分钟",
+          "remain": "27小时35分钟",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/2d/749ek9zbh79fvll7f5vtpxa33dz3mze.png/100px-100009.png"
         },
         {
@@ -70,7 +70,7 @@
           "type": "特制咕噜球",
           "high_value": false,
           "recommend": true,
-          "remain": "7小时39分钟",
+          "remain": "3小时35分钟",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/7/79/kdfs6bmfy54gk7ak70arjxug91zv1z5.png/100px-Img_lumangqiu.png"
         },
         {
@@ -81,7 +81,7 @@
           "type": "特制咕噜球",
           "high_value": false,
           "recommend": true,
-          "remain": "7小时39分钟",
+          "remain": "3小时35分钟",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/4/4b/60uvwzet0brdqlhtoa89domccpbo4hr.png/100px-Img_wangdiuqiu.png"
         },
         {
@@ -146,7 +146,7 @@
           "type": "炼金材料",
           "high_value": false,
           "recommend": true,
-          "remain": "3小时39分钟",
+          "remain": "已结束",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c5/k8wzdzechd88qs9bxuvcnyg0pv4tzl4.png/100px-100681.png"
         },
         {
@@ -157,8 +157,46 @@
           "type": "血脉修改道具",
           "high_value": false,
           "recommend": false,
-          "remain": "3小时39分钟",
+          "remain": "已结束",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/a/a8/lx9q220586a1qpy109sy34ghfgtrs6w.png/100px-Xuemai_putong.png"
+        }
+      ]
+    },
+    "4": {
+      "label": "20:00-24:00",
+      "items": [
+        {
+          "name": "黑晶琉璃",
+          "price": "1000",
+          "limit": "100",
+          "desc": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 “我的阿米亚特说这玩意儿太香了，嚼起来有些呛口，像火山灰，有纯正的拉布朗矿山味道。”",
+          "type": "炼金材料",
+          "high_value": false,
+          "recommend": true,
+          "remain": "3小时35分钟",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/b/bc/khe20j8lwkt1bg9g4b0gbnsff48g93c.png/100px-100628.png"
+        },
+        {
+          "name": "奇异血脉秘药",
+          "price": "16w",
+          "limit": "3",
+          "desc": "修改血脉的秘药，使精灵获得“奇异血脉”。",
+          "type": "血脉修改道具",
+          "high_value": false,
+          "recommend": false,
+          "remain": "3小时35分钟",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/a/ab/eg7zj03u487p1l3f91z499w1nxdzac1.png/100px-Xuemai_qiyixuemai.png"
+        },
+        {
+          "name": "普通粉尘",
+          "price": "500",
+          "limit": "100",
+          "desc": "常见的炼金材料，蕴含少量普通系魔法，是合成技能石的主要触媒。",
+          "type": "炼金材料",
+          "high_value": false,
+          "recommend": false,
+          "remain": "3小时35分钟",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/f/f6/ls7hsygs9epizddf1xo4q9b2iu1dduu.png/100px-100127.png"
         }
       ]
     }
