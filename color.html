@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="css/head.css">
 <script src="data/chroma_cards.js"></script>
 <script src="data/shiny_colors.js"></script>
-<script src="data/my_chroma.js"></script>
+<script>document.write('<scr'+'ipt src="data/my_chroma.js?v='+Date.now()+'"><\/scr'+'ipt>');</script>
 <style>
   .dex-nav { display:flex; gap:6px; margin-left:16px; align-items:center; flex-wrap:wrap; }
   .dex-nav a { color:rgba(255,255,255,.82); text-decoration:none; font-size:13px; padding:5px 11px; border-radius:18px; border:1px solid rgba(255,255,255,.18); white-space:nowrap; }
@@ -17,6 +17,7 @@
   .sub b { color:var(--text); }
   .note { background:rgba(120,160,255,.1); border:1px solid rgba(120,160,255,.35); border-radius:10px; padding:11px 14px; font-size:12.5px; color:rgba(190,210,255,.95); margin:10px 0; line-height:1.7; }
   .note.warn { background:rgba(255,170,90,.1); border-color:rgba(255,170,90,.4); color:rgba(255,220,180,.95); }
+  .note.ok { background:rgba(90,230,140,.12); border-color:rgba(90,230,140,.45); color:#b6f5cd; font-weight:600; }
   .rt-box { display:flex; flex-wrap:wrap; gap:8px; align-items:center; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; margin:14px 0; }
   .rt-box input { flex:1; min-width:120px; background:var(--card2); border:1px solid var(--border); color:var(--text); border-radius:8px; padding:7px 11px; font-size:14px; }
   .rt-box button { background:var(--accent); color:#fff; border:none; border-radius:8px; padding:7px 14px; font-size:14px; cursor:pointer; }
@@ -83,9 +84,9 @@
 <div class="main">
   <h2>🌈 炫彩粒子图鉴</h2>
   <p class="sub">
-    <b>色卡图本身是真的</b>：下方 39 张官方色卡 + 4 粒子 + 4 隐藏炫彩，均来自 aismile.dev 对游戏配置的后端渲染，与游戏内色卡图鉴一致。<br>
-    <b>为什么「我的炫彩精灵」会不匹配：</b>免费接口（rocodex）只返回「这是只异色炫彩宠」，<b>不返回它具体套了哪张色卡（glass_value）/ 哪种粒子（glass_type）</b>。所以页面默认用「异色基准色相」猜一张——基本都是错的。<br>
-    <b>正确做法：</b>从你游戏里看每只宠实际用的色卡 → 填进 <code>data/my_chroma.js</code>（或本机下拉标记），页面即显示真实色卡。详见下方「怎么填真实色卡」。
+    <b>你的真实炫彩色卡：</b>下方展示的是从你游戏本机抓包（roco_helper）解码出的<b>全部炫彩精灵</b>，每张都是游戏内真实色卡（玻璃卡 + 粒子），标 <span class="tag-game">✓ 游戏真实</span>。<br>
+    <b>数据来源：</b><code>data/my_chroma.js</code>（由 chroma_kit 自动生成并上传，共 <b id="totalChroma">—</b> 只）。抓到新宠后：roco_helper 抓包 → 双击 chroma_kit.exe → 本页自动刷新。<br>
+    <b>实时补充：</b>点「查询我的炫彩」可走云端代理拉取全账号（含未抓到的），但色卡始终以本机真实数据为准。
   </p>
 
   <div class="rt-box">
@@ -112,7 +113,8 @@
   </details>
 
   <div class="section-title">我的炫彩精灵 <span class="badge" id="petCount">—</span></div>
-  <div class="count" id="petHint">输入 UID 查询；每只宠物用下拉框选「色卡 + 粒子」即可显示真实色卡（标 <span class="tag-game">✓ 游戏真实</span> 为已写死，<span class="tag-local">✓ 本机已标</span> 为本机存档，<span style="color:#ffcf8a">⚠ 推测</span> 为色相猜测需改）。</div>
+  <div class="count" id="petHint">下方为你本机抓包解码出的<b>全部真实炫彩色卡</b>（标 <span class="tag-game">✓ 游戏真实</span>）。点「查询我的炫彩」可走云端代理拉取全账号并补充未抓到的；色卡始终以本机真实数据为准。</div>
+  <div class="note ok" id="selfcheck">⏳ 正在加载本机炫彩数据…</div>
   <div class="petlist" id="petlist"></div>
 
   <div class="section-title">全部 39 张官方色卡（真实玻璃卡）<span class="badge">点击可标记给选中的宠物</span></div>
@@ -254,6 +256,53 @@ async function fetchRealtime(uid){
   return j.data;
 }
 
+// 把本机抓到的 MY_CHROMA 虚拟补进实时 pets（让实时查询也不漏掉本地已解码的炫彩）
+function mergeLocalIntoPets(pets, uid){
+  const local = (window.MY_CHROMA && window.MY_CHROMA[uid]) || {};
+  const out = pets ? pets.slice() : [];
+  const have = new Set(out.map(p => String(p.gid || p.petId || '')));
+  Object.keys(local).forEach(function(gid){
+    if (!have.has(gid)) out.push({ gid: parseInt(gid,10), name: local[gid].name || ('gid '+gid), mutationName: '炫彩' });
+  });
+  return out;
+}
+
+// 直接用本机 MY_CHROMA 渲染全部真实炫彩（页面默认视图，不依赖网络）
+function renderMyChroma(){
+  const uid = (document.getElementById('uid').value || '').trim();
+  CUR_UID = uid;
+  const local = (window.MY_CHROMA && window.MY_CHROMA[uid]) || {};
+  const keys = Object.keys(local);
+  const box = document.getElementById('petlist');
+  if (keys.length === 0){
+    box.innerHTML = '<div class="empty">本账号（'+uid+'）暂无本机抓到的炫彩色卡数据（data/my_chroma.js）。点「查询我的炫彩」实时拉取，或用 roco_helper 抓包后跑 chroma_kit 上传。</div>';
+    document.getElementById('petCount').textContent = '0 只';
+    var sc0 = document.getElementById('selfcheck');
+    if (sc0){ sc0.className='note warn'; sc0.innerHTML = '⚠ 未读到本机炫彩数据（uid '+uid+'）。请确认 data/my_chroma.js 已加载，或用 chroma_kit 重新解码上传。'; }
+    return false;
+  }
+  document.getElementById('petCount').textContent = keys.length + ' 只（本机真实）';
+  box.innerHTML = keys.map(function(gid){
+    const mc = local[gid];
+    const preview = mc.hidden ? hiddenCardHTML(mc.glassType) : chromaCardHTML(mc.card, mc.particle || DEFAULT_PARTICLE);
+    return '<div class="pet">'+preview
+      + '<div class="top"><div class="ava"></div><div><div class="nm">'+(mc.name || ('gid '+gid))+'</div><span class="mut">炫彩</span></div></div>'
+      + '<div class="assign-hint ok">✓ 游戏真实 · gid '+gid+' · 色卡 '+mc.card+' · 粒子 '+mc.particle+'</div></div>';
+  }).join('');
+  var sc = document.getElementById('selfcheck');
+  if (sc){
+    var n = box.querySelectorAll('.pet').length;
+    if (n === keys.length){
+      sc.className = 'note ok';
+      sc.innerHTML = '✅ 已渲染 <b>' + n + '</b> 张炫彩卡片（数据共 ' + keys.length + ' 只）· 向下滚动查看全部';
+    } else {
+      sc.className = 'note warn';
+      sc.innerHTML = '⚠ 数据有 ' + keys.length + ' 只，但只渲染出 ' + n + ' 张，页面异常，请截图反馈';
+    }
+  }
+  return true;
+}
+
 function renderPets(){
   const pets = window._PETS || [];
   const list = pets.filter(isColorful);
@@ -318,9 +367,9 @@ async function query(){
   document.getElementById('petlist').innerHTML = '';
   try {
     const data = await fetchRealtime(uid);
-    window._PETS = data.pets || [];
+    window._PETS = mergeLocalIntoPets(data.pets || [], uid);
     renderPets();
-    setHint('✓ 实时');
+    setHint('✓ 实时+本机');
   } catch(e){
     setHint('失败');
     setNote('实时查询失败：'+e.message+'。请确认代理可用，或稍后重试。', true);
@@ -375,7 +424,13 @@ document.getElementById('themeToggle').addEventListener('click', toggleTheme);
 (function(){ if (localStorage.getItem('theme')==='light'){ document.documentElement.setAttribute('data-theme','light'); document.getElementById('themeToggle').innerHTML='<span class="tt-icon">☀️</span><span class="tt-text">日间</span>'; } })();
 
 renderGallery();
-query();
+(function(){
+  const uid = (document.getElementById('uid').value || '').trim();
+  CUR_UID = uid;
+  const total = (window.MY_CHROMA && window.MY_CHROMA[uid]) ? Object.keys(window.MY_CHROMA[uid]).length : 0;
+  const tEl = document.getElementById('totalChroma'); if (tEl) tEl.textContent = total;
+  if (!renderMyChroma()){ query(); }
+})();
 </script>
 </body>
 </html>
