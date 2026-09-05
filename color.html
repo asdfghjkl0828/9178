@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="css/head.css">
 <script src="data/chroma_cards.js"></script>
 <script src="data/shiny_colors.js"></script>
+<script src="data/my_chroma.js"></script>
 <style>
   .dex-nav { display:flex; gap:6px; margin-left:16px; align-items:center; flex-wrap:wrap; }
   .dex-nav a { color:rgba(255,255,255,.82); text-decoration:none; font-size:13px; padding:5px 11px; border-radius:18px; border:1px solid rgba(255,255,255,.18); white-space:nowrap; }
@@ -15,6 +16,7 @@
   .sub { color:var(--text2); font-size:13px; margin-bottom:14px; line-height:1.7; }
   .sub b { color:var(--text); }
   .note { background:rgba(120,160,255,.1); border:1px solid rgba(120,160,255,.35); border-radius:10px; padding:11px 14px; font-size:12.5px; color:rgba(190,210,255,.95); margin:10px 0; line-height:1.7; }
+  .note.warn { background:rgba(255,170,90,.1); border-color:rgba(255,170,90,.4); color:rgba(255,220,180,.95); }
   .rt-box { display:flex; flex-wrap:wrap; gap:8px; align-items:center; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; margin:14px 0; }
   .rt-box input { flex:1; min-width:120px; background:var(--card2); border:1px solid var(--border); color:var(--text); border-radius:8px; padding:7px 11px; font-size:14px; }
   .rt-box button { background:var(--accent); color:#fff; border:none; border-radius:8px; padding:7px 14px; font-size:14px; cursor:pointer; }
@@ -25,7 +27,6 @@
   .section-title { font-size:17px; font-weight:800; color:var(--text); margin:26px 0 10px; display:flex; align-items:center; gap:8px; }
   .section-title .badge { font-size:11px; font-weight:700; background:var(--accent); color:#fff; border-radius:8px; padding:2px 9px; }
 
-  /* 真实色卡图片（游戏玻璃质感卡，来自 aismile.dev 后端渲染） */
   .chroma-card { position:relative; width:100%; aspect-ratio:280/154; border-radius:12px; overflow:hidden; background:#11131f; box-shadow:0 6px 16px rgba(0,0,0,.28); }
   .chroma-card img { display:block; width:100%; height:100%; object-fit:cover; }
   .chroma-card .cid { position:absolute; left:8px; top:7px; background:rgba(0,0,0,.42); color:#fff; font-size:11px; font-weight:700; padding:1px 8px; border-radius:7px; pointer-events:none; }
@@ -37,7 +38,6 @@
   .gitem.pickable { cursor:pointer; transition:transform .12s, border-color .12s; }
   .gitem.pickable:hover { transform:translateY(-3px); border-color:var(--accent); }
 
-  /* 我的宠物色卡 */
   .petlist { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:14px; }
   .pet { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:10px; }
   .pet.sel { border-color:var(--accent); box-shadow:0 0 0 2px var(--accent) inset; }
@@ -47,10 +47,18 @@
   .pet .nm { font-size:16px; font-weight:700; color:var(--text); }
   .pet .def { font-size:12px; color:var(--text2); }
   .pet .mut { display:inline-block; margin-top:4px; font-size:11px; font-weight:700; color:#fff; background:linear-gradient(135deg,#ff6ec4,#7873f5); padding:2px 9px; border-radius:9px; }
+  .pet .mut.shiny { background:linear-gradient(135deg,#f7b733,#fc4a1a); }
   .pet .ctrls { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
   .pet select { background:var(--card2); color:var(--text); border:1px solid var(--border); border-radius:8px; padding:6px 8px; font-size:12.5px; flex:1; min-width:0; }
-  .pet .assign-hint { font-size:11px; color:var(--text2); }
+  .pet .assign-hint { font-size:11px; color:var(--text2); line-height:1.5; }
+  .pet .assign-hint.ok { color:#8ff0a8; }
+  .pet .assign-hint.warn { color:#ffcf8a; }
   .empty { padding:30px; text-align:center; color:var(--text2); grid-column:1/-1; }
+  details.guide { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; margin:12px 0; }
+  details.guide summary { cursor:pointer; font-size:13px; color:var(--text); font-weight:700; }
+  details.guide ol { font-size:12.5px; color:var(--text2); line-height:1.8; margin:10px 0 0; padding-left:20px; }
+  .tag-game { color:#8ff0a8; font-weight:700; }
+  .tag-local { color:#9ad0ff; font-weight:700; }
 </style>
 </head>
 <body>
@@ -75,20 +83,36 @@
 <div class="main">
   <h2>🌈 炫彩粒子图鉴</h2>
   <p class="sub">
-    真实色卡图片，<b>爬取自 aismile.dev（BeSmile / BetterTools）的游戏配置后端渲染</b>——共 <b>39 张官方配置色卡</b> + <b>4 种粒子</b> + <b>4 个隐藏炫彩</b>，每张都是游戏内的真实玻璃质感色卡（与游戏内色卡图鉴一致）。<br>
-    <b>怎么对应到你自己的精灵：</b>炫彩精灵在游戏里用 <code>glass_value</code>（色卡 ID）+ <code>glass_type</code>（粒子 ID）表示。免费接口不返回这两字段，所以下方「我的炫彩精灵」里，<b>每只宠物用下拉框选一下它用的色卡 + 粒子</b>即可（存本机，刷新不丢）。选完就会显示真实色卡。
+    <b>色卡图本身是真的</b>：下方 39 张官方色卡 + 4 粒子 + 4 隐藏炫彩，均来自 aismile.dev 对游戏配置的后端渲染，与游戏内色卡图鉴一致。<br>
+    <b>为什么「我的炫彩精灵」会不匹配：</b>免费接口（rocodex）只返回「这是只异色炫彩宠」，<b>不返回它具体套了哪张色卡（glass_value）/ 哪种粒子（glass_type）</b>。所以页面默认用「异色基准色相」猜一张——基本都是错的。<br>
+    <b>正确做法：</b>从你游戏里看每只宠实际用的色卡 → 填进 <code>data/my_chroma.js</code>（或本机下拉标记），页面即显示真实色卡。详见下方「怎么填真实色卡」。
   </p>
 
   <div class="rt-box">
     <input id="uid" type="text" inputmode="numeric" placeholder="UID" value="5678116">
     <button id="queryBtn">查询我的炫彩</button>
+    <button id="exportBtn" class="ghost" title="导出本机标记">导出</button>
+    <button id="importBtn" class="ghost" title="导入标记">导入</button>
+    <input id="importFile" type="file" accept="application/json" style="display:none">
     <button id="clearBtn" class="ghost" title="清除本机存档">清空本机标记</button>
     <span class="hint" id="hint"></span>
   </div>
   <div class="note" id="note" style="display:none"></div>
 
+  <details class="guide">
+    <summary>📌 怎么填真实色卡（让你账号永远显示正确）</summary>
+    <ol>
+      <li>在游戏里点开一只「异色炫彩」宠物，进详情页，找到它应用的<b>炫彩色卡</b>（有名称/编号）和<b>粒子形状</b>。</li>
+      <li>对照下方「全部 39 张官方色卡」画廊，记下该色卡的 <b>ID（1-39）</b> 与粒子的 <b>ID（1-4：四角星/爱心/方块/镂空五角星）</b>。</li>
+      <li>两种方式之一：<br>
+        &nbsp;· <b>简单</b>：在本页该宠物卡的下拉框直接选「色卡 + 粒子」，自动存本机（换设备/清缓存会丢）。<br>
+        &nbsp;· <b>永久</b>：把 <code>gid → {card, particle}</code> 告诉我，我写进 <code>data/my_chroma.js</code>，你的账号打开即正确、不丢。</li>
+      <li>纯「异色」（非炫彩）宠没有炫彩色卡，只显示异色底色，无需填。</li>
+    </ol>
+  </details>
+
   <div class="section-title">我的炫彩精灵 <span class="badge" id="petCount">—</span></div>
-  <div class="count" id="petHint">输入 UID 查询；每只宠物用下拉框选「色卡 + 粒子」即可显示真实色卡。</div>
+  <div class="count" id="petHint">输入 UID 查询；每只宠物用下拉框选「色卡 + 粒子」即可显示真实色卡（标 <span class="tag-game">✓ 游戏真实</span> 为已写死，<span class="tag-local">✓ 本机已标</span> 为本机存档，<span style="color:#ffcf8a">⚠ 推测</span> 为色相猜测需改）。</div>
   <div class="petlist" id="petlist"></div>
 
   <div class="section-title">全部 39 张官方色卡（真实玻璃卡）<span class="badge">点击可标记给选中的宠物</span></div>
@@ -109,7 +133,7 @@ const DEFAULT_PARTICLE = 4; // 镂空五角星（aismile 默认）
 
 function proxyBase(){ return localStorage.getItem('rt_proxy') || RT_PROXY_DEFAULT; }
 function setHint(t){ document.getElementById('hint').textContent = t || ''; }
-function setNote(t){ const n=document.getElementById('note'); n.textContent=t; n.style.display = t ? 'block' : 'none'; }
+function setNote(t, warn){ const n=document.getElementById('note'); n.textContent=t; n.style.display = t ? 'block' : 'none'; n.className = 'note' + (warn ? ' warn' : ''); }
 
 function cardImg(cardId, particleId){ return IMG_BASE + '/card_' + cardId + '_p' + (particleId||DEFAULT_PARTICLE) + '.webp'; }
 function particleImg(id){ return IMG_BASE + '/particle_' + id + '.webp'; }
@@ -132,7 +156,7 @@ function nearestCardForGid(gid){
     for (const pc of petCols) for (const cc of cardCols) d=Math.min(d, rgbDist(pc,cc));
     if (d<bestD){ bestD=d; best=c.id; }
   }
-  return { card: best, particle: DEFAULT_PARTICLE, guessed: true };
+  return { card: best, particle: DEFAULT_PARTICLE, src: 'guess' };
 }
 
 // 真实色卡图片
@@ -144,6 +168,19 @@ function chromaCardHTML(cardId, particleId, extraClass){
     + '<div class="cname">'+c.name+'</div>'
     + '</div>';
 }
+function shinySwatchHTML(gid){
+  const sc = (window.SHINY_COLORS && window.SHINY_COLORS[gid]) || {};
+  const a = sc.base||'#888', b = sc.accent||sc.base||'#ccc';
+  return '<div class="chroma-card" style="background:linear-gradient(135deg,'+a+','+b+')">'
+    + '<div class="cid">异色</div><div class="cname">异色底色（无炫彩色卡）</div></div>';
+}
+// 隐藏炫彩：整张预烤卡，按 glassType 走 special_{id}.webp
+function hiddenCardHTML(hid){
+  const h = (window.CHROMA_HIDDEN || []).find(x => x.id === hid) || { id: hid, name: '隐藏'+hid };
+  return '<div class="chroma-card">'
+    + '<img src="'+specialImg(hid)+'" alt="隐藏 '+hid+'" loading="lazy" onerror="this.style.display=\'none\'">'
+    + '<div class="cid">隐藏 '+hid+'</div><div class="cname">'+h.name+'</div></div>';
+}
 
 // 本机标记：gid -> {card, particle}
 function assignKey(uid){ return 'chroma_assign_' + uid; }
@@ -152,9 +189,24 @@ function saveAssign(uid, map){ try { localStorage.setItem(assignKey(uid), JSON.s
 
 let CUR_UID = '', SELECTED_GID = null;
 
-function isColorful(p){
-  const m = String(p.mutationName || '');
-  return m.includes('异色') || m.includes('炫彩');
+function isColorful(p){ const m = String(p.mutationName || ''); return m.includes('异色') || m.includes('炫彩'); }
+function isChroma(p){ const m = String(p.mutationName || ''); return m.includes('炫彩'); } // 异色炫彩才有色卡
+
+// 解析某宠的最终色卡来源：游戏真实 > 本机标记 > 色相推测
+function resolveAssign(gid){
+  const mc = (window.MY_CHROMA && CUR_UID && window.MY_CHROMA[CUR_UID] && window.MY_CHROMA[CUR_UID][gid]);
+  if (mc){
+    // 隐藏炫彩：整张预烤卡，按 glassType 走 special_{id}.webp
+    if (mc.hidden || (mc.glassType !== undefined && [1,2,3,1000].includes(mc.glassType) && !(mc.card >= 1 && mc.card <= 39))){
+      return { hidden: true, card: mc.glassType, particle: 0, src: 'game', raw: mc };
+    }
+    if (mc.card){ return { card: mc.card, particle: mc.particle||DEFAULT_PARTICLE, src: 'game', raw: mc }; }
+  }
+  const map = loadAssign(CUR_UID);
+  if (map[gid] && map[gid].card){ return { card: map[gid].card, particle: map[gid].particle||DEFAULT_PARTICLE, src: 'local' }; }
+  const d = nearestCardForGid(gid);
+  if (d){ return d; }
+  return { card: null, particle: DEFAULT_PARTICLE, src: 'none' };
 }
 
 function renderGallery(){
@@ -191,7 +243,7 @@ function assignToSelected(cardId){
   map[SELECTED_GID] = { card: cardId, particle: pid };
   saveAssign(CUR_UID, map);
   renderPets();
-  setNote('已将 色卡 '+cardId+' 标记给选中的宠物（gid '+SELECTED_GID+'）。粒子保持 '+pid+'，可在宠物卡里改。');
+  setNote('已将 色卡 '+cardId+' 标记给选中的宠物（gid '+SELECTED_GID+'）。粒子保持 '+pid+'，可在宠物卡里改。本机存档，换设备会丢；要永久生效告诉我写进文件。');
 }
 
 async function fetchRealtime(uid){
@@ -208,29 +260,49 @@ function renderPets(){
   const box = document.getElementById('petlist');
   document.getElementById('petCount').textContent = list.length + ' 只';
   if (list.length === 0){ box.innerHTML = '<div class="empty">该账号下暂无异色 / 炫彩精灵（或数据未取到）。</div>'; return; }
-  const map = loadAssign(CUR_UID);
   box.innerHTML = list.map(function(p){
     const gid = String(p.gid || p.petId || '');
-    let a = map[gid] || {};
-    let guessed = false;
-    if (!a.card){ const d = nearestCardForGid(gid); if (d){ a = d; guessed = true; } }
+    const chroma = isChroma(p);
+    const a = resolveAssign(gid);
     const icon = p.icon ? ICON_BASE + p.icon : '';
     const ava = icon ? '<img src="'+icon+'" alt="" onerror="this.style.display=\'none\'">' : '';
     const def = (p.defaultName && p.defaultName !== p.name) ? '<div class="def">原型：'+p.defaultName+'</div>' : '';
     const sel = (gid === SELECTED_GID) ? ' sel' : '';
-    const cardOpts = CHROMA_CARDS.map(c => '<option value="'+c.id+'"'+(a.card==c.id?' selected':'')+'>'+c.id+' · '+c.name+'</option>').join('');
-    const partOpts = CHROMA_PARTICLES.map(pp => '<option value="'+pp.id+'"'+(a.particle==pp.id?' selected':'')+'>'+pp.id+' · '+pp.name+'</option>').join('');
-    const preview = a.card
-      ? chromaCardHTML(a.card, a.particle || DEFAULT_PARTICLE) + (guessed ? '<div class="cname" style="position:static;color:#ffcf8a;font-size:11px;margin-top:4px;text-shadow:none">↑ 按异色基准色推测，点选可改</div>' : '')
-      : '<div class="chroma-card" style="background:#333"><div class="cid">未选</div><div class="cname">点此卡选中后，再点上方色卡</div></div>';
-    const tag = guessed ? '推测' : '已标记';
+    const mutCls = chroma ? 'mut' : 'mut shiny';
+
+    let preview, hintHtml, hintCls;
+    if (chroma){
+      if (a.hidden){
+        // 隐藏炫彩：整张预烤卡，无粒子/配色分层
+        preview = hiddenCardHTML(a.card);
+        const hname = ((window.CHROMA_HIDDEN||[]).find(x=>x.id===a.card)||{}).name || ('隐藏'+a.card);
+        if (a.src === 'game'){ hintHtml = '<span class="tag-game">✓ 游戏真实(隐藏炫彩)</span> · '+hname+' · gid '+gid; hintCls='ok'; }
+        else if (a.src === 'local'){ hintHtml = '<span class="tag-local">✓ 本机已标(隐藏炫彩)</span> · '+hname+' · gid '+gid; hintCls='ok'; }
+        else { hintHtml = '<span style="color:#ffcf8a">⚠ 推测·可能不准</span> · '+hname+' · gid '+gid; hintCls='warn'; }
+      } else if (a.card){
+        preview = chromaCardHTML(a.card, a.particle || DEFAULT_PARTICLE);
+        if (a.src === 'game'){ hintHtml = '<span class="tag-game">✓ 游戏真实</span> · gid '+gid+' · Lv.'+(p.lv||p.level||'?'); hintCls='ok'; }
+        else if (a.src === 'local'){ hintHtml = '<span class="tag-local">✓ 本机已标</span> · gid '+gid+' · Lv.'+(p.lv||p.level||'?'); hintCls='ok'; }
+        else { preview += '<div class="cname" style="position:static;color:#ffcf8a;font-size:11px;margin-top:4px;text-shadow:none">↑ 色相推测，点下拉选真实色卡</div>'; hintHtml = '<span style="color:#ffcf8a">⚠ 推测·可能不准</span> · gid '+gid+' · Lv.'+(p.lv||p.level||'?'); hintCls='warn'; }
+        const cardOpts = CHROMA_CARDS.map(c => '<option value="'+c.id+'"'+(a.card==c.id?' selected':'')+'>'+c.id+' · '+c.name+'</option>').join('');
+        const partOpts = CHROMA_PARTICLES.map(pp => '<option value="'+pp.id+'"'+(a.particle==pp.id?' selected':'')+'>'+pp.id+' · '+pp.name+'</option>').join('');
+        preview += '<div class="ctrls"><select onchange="setCard(\''+gid+'\',this.value)" onclick="event.stopPropagation()">'+cardOpts+'</select>'
+          + '<select onchange="setParticle(\''+gid+'\',this.value)" onclick="event.stopPropagation()">'+partOpts+'</select></div>';
+      } else {
+        preview = '<div class="chroma-card" style="background:#333"><div class="cid">未选</div><div class="cname">点此卡选中后，再点上方色卡</div></div>';
+        hintHtml = '未确认 · gid '+gid; hintCls='';
+      }
+    } else {
+      // 纯异色（无炫彩色卡）→ 显示异色底色
+      preview = shinySwatchHTML(gid);
+      hintHtml = '异色（无炫彩色卡）· gid '+gid+' · Lv.'+(p.lv||p.level||'?'); hintCls='';
+    }
+
     return '<div class="pet'+sel+'" id="pet_'+gid+'" onclick="selectPet(\''+gid+'\')">'
       + preview
       + '<div class="top"><div class="ava">'+ava+'</div>'
-      + '<div><div class="nm">'+(p.name||'?')+'</div>'+def+'<span class="mut">'+(p.mutationName||'异色')+'</span></div></div>'
-      + '<div class="ctrls"><select onchange="setCard(\''+gid+'\',this.value)" onclick="event.stopPropagation()">'+cardOpts+'</select>'
-      + '<select onchange="setParticle(\''+gid+'\',this.value)" onclick="event.stopPropagation()">'+partOpts+'</select></div>'
-      + '<div class="assign-hint">'+tag+' · gid '+gid+' · Lv.'+(p.lv||'?')+' · glass_value='+(a.card||'—')+' / glass_type='+(a.particle||'—')+'</div>'
+      + '<div><div class="nm">'+(p.name||'?')+'</div>'+def+'<span class="'+mutCls+'">'+(p.mutationName||'异色')+'</span></div></div>'
+      + '<div class="assign-hint '+(hintCls||'')+'">'+hintHtml+'</div>'
       + '</div>';
   }).join('');
 }
@@ -251,20 +323,47 @@ async function query(){
     setHint('✓ 实时');
   } catch(e){
     setHint('失败');
-    setNote('实时查询失败：'+e.message+'。请确认代理可用，或稍后重试。');
+    setNote('实时查询失败：'+e.message+'。请确认代理可用，或稍后重试。', true);
     document.getElementById('petlist').innerHTML = '<div class="empty">无法获取该 UID 的精灵数据。</div>';
   }
 }
 
+// 导入/导出本机标记
+function exportAssign(){
+  if (!CUR_UID){ alert('请先查询一个 UID'); return; }
+  const map = loadAssign(CUR_UID);
+  const blob = new Blob([JSON.stringify(map, null, 2)], {type:'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'chroma_assign_' + CUR_UID + '.json'; a.click();
+  URL.revokeObjectURL(a.href);
+  setHint('已导出 ' + Object.keys(map).length + ' 条');
+}
+function importAssign(file){
+  const reader = new FileReader();
+  reader.onload = function(){
+    try {
+      const map = JSON.parse(reader.result);
+      if (typeof map !== 'object' || !CUR_UID) throw new Error('格式错误');
+      saveAssign(CUR_UID, map); renderPets();
+      setHint('已导入 ' + Object.keys(map).length + ' 条');
+      setNote('导入成功。注意：本机存档换设备/清缓存会丢；要永久生效把 gid→{card,particle} 告诉我写进文件。');
+    } catch(e){ alert('导入失败：' + e.message); }
+  };
+  reader.readAsText(file);
+}
+
 document.getElementById('queryBtn').addEventListener('click', query);
 document.getElementById('uid').addEventListener('keydown', function(e){ if (e.key==='Enter') query(); });
+document.getElementById('exportBtn').addEventListener('click', exportAssign);
+document.getElementById('importBtn').addEventListener('click', function(){ document.getElementById('importFile').click(); });
+document.getElementById('importFile').addEventListener('change', function(e){ if (e.target.files[0]) importAssign(e.target.files[0]); e.target.value=''; });
 document.getElementById('clearBtn').addEventListener('click', function(){
   const uid = CUR_UID || (document.getElementById('uid').value||'').trim();
   if (!uid){ alert('请先输入 UID'); return; }
-  if (!confirm('清除本机保存的「'+uid+'」全部色卡标记？')) return;
+  if (!confirm('清除本机保存的「'+uid+'」全部色卡标记？（不影响已写进 data/my_chroma.js 的游戏真实数据）')) return;
   localStorage.removeItem(assignKey(uid));
   SELECTED_GID = null; renderPets();
-  alert('已清除（仅本机）');
+  alert('已清除本机标记（仅本机）');
 });
 
 function toggleTheme(){
