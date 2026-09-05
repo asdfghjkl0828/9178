@@ -18,6 +18,18 @@
   .note { background:rgba(120,160,255,.1); border:1px solid rgba(120,160,255,.35); border-radius:10px; padding:11px 14px; font-size:12.5px; color:rgba(190,210,255,.95); margin:10px 0; line-height:1.7; }
   .note.warn { background:rgba(255,170,90,.1); border-color:rgba(255,170,90,.4); color:rgba(255,220,180,.95); }
   .note.ok { background:rgba(90,230,140,.12); border-color:rgba(90,230,140,.45); color:#b6f5cd; font-weight:600; }
+  .stats { display:flex; flex-direction:column; gap:7px; margin:10px 0 20px; }
+  .stat-row { display:flex; align-items:center; gap:10px; background:var(--card); border:1px solid var(--border); border-radius:10px; padding:6px 10px; cursor:pointer; transition:border-color .12s, transform .12s; }
+  .stat-row:hover { border-color:var(--accent); transform:translateX(2px); }
+  .stat-row.on { border-color:var(--accent); box-shadow:0 0 0 2px var(--accent) inset; }
+  .stat-row .rk { width:20px; font-size:12px; color:var(--text2); font-weight:800; text-align:right; flex-shrink:0; }
+  .stat-row .thumb { width:54px; height:34px; border-radius:6px; overflow:hidden; flex-shrink:0; background:#11131f; }
+  .stat-row .thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+  .stat-row .sname { width:112px; font-size:13px; color:var(--text); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex-shrink:0; }
+  .stat-row .bar-wrap { flex:1; height:12px; background:var(--card2); border-radius:7px; overflow:hidden; min-width:40px; }
+  .stat-row .bar { height:100%; background:linear-gradient(90deg,#ff6ec4,#7873f5); border-radius:7px; }
+  .stat-row .cnt { width:54px; text-align:right; font-size:12.5px; color:var(--text); font-weight:700; flex-shrink:0; }
+  @media (max-width:560px){ .stat-row .sname{ width:74px; font-size:12px; } .stat-row .thumb{ width:44px; height:30px; } }
   .rt-box { display:flex; flex-wrap:wrap; gap:8px; align-items:center; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; margin:14px 0; }
   .rt-box input { flex:1; min-width:120px; background:var(--card2); border:1px solid var(--border); color:var(--text); border-radius:8px; padding:7px 11px; font-size:14px; }
   .rt-box button { background:var(--accent); color:#fff; border:none; border-radius:8px; padding:7px 14px; font-size:14px; cursor:pointer; }
@@ -111,6 +123,11 @@
       <li>纯「异色」（非炫彩）宠没有炫彩色卡，只显示异色底色，无需填。</li>
     </ol>
   </details>
+
+  <div class="section-title">我的色卡分布统计 <span class="badge" id="statBadge">—</span></div>
+  <div class="count" id="particleSum"></div>
+  <div class="count">按<b>色卡种类</b>统计你号上每种炫彩出现的次数，<b>从多到少</b>排列。<b>点击任意一行</b>可只看该色卡的精灵，再点一次取消筛选。</div>
+  <div id="stats" class="stats"></div>
 
   <div class="section-title">我的炫彩精灵 <span class="badge" id="petCount">—</span></div>
   <div class="count" id="petHint">下方为你本机抓包解码出的<b>全部真实炫彩色卡</b>（标 <span class="tag-game">✓ 游戏真实</span>）。点「查询我的炫彩」可走云端代理拉取全账号并补充未抓到的；色卡始终以本机真实数据为准。</div>
@@ -267,21 +284,88 @@ function mergeLocalIntoPets(pets, uid){
   return out;
 }
 
+var STAT_FILTER = null;
+
+// 统计：每种色卡出现次数 + 粒子分布
+function statCounts(uid){
+  var local = (window.MY_CHROMA && window.MY_CHROMA[uid]) || {};
+  var byCard = {}, byParticle = {}, cardParticles = {}, total = 0;
+  Object.keys(local).forEach(function(gid){
+    var mc = local[gid];
+    if (!mc || mc.hidden) return;
+    var c = mc.card, p = mc.particle || DEFAULT_PARTICLE;
+    if (!c) return;
+    byCard[c] = (byCard[c] || 0) + 1;
+    byParticle[p] = (byParticle[p] || 0) + 1;
+    cardParticles[c] = cardParticles[c] || {};
+    cardParticles[c][p] = (cardParticles[c][p] || 0) + 1;
+    total++;
+  });
+  return { byCard: byCard, byParticle: byParticle, cardParticles: cardParticles, total: total };
+}
+
+function renderStats(){
+  var st = statCounts(CUR_UID);
+  var box = document.getElementById('stats'); if (!box) return;
+  var cards = CHROMA_CARDS || [];
+  var rows = Object.keys(st.byCard).map(function(c){ return { id: parseInt(c, 10), n: st.byCard[c] }; })
+             .sort(function(a, b){ return (b.n - a.n) || (a.id - b.id); });
+  var badge = document.getElementById('statBadge');
+  if (badge) badge.textContent = rows.length + ' 种配色 · 共 ' + st.total + ' 只';
+  var psEl = document.getElementById('particleSum');
+  if (psEl){
+    var ps = Object.keys(st.byParticle).sort().map(function(p){
+      var meta = (CHROMA_PARTICLES || []).filter(function(x){ return x.id === parseInt(p, 10); })[0];
+      return (meta ? meta.name : ('粒子 ' + p)) + ' <b>' + st.byParticle[p] + '</b> 只';
+    });
+    psEl.innerHTML = ps.length ? ('粒子分布：' + ps.join('　·　')) : '';
+  }
+  if (!rows.length){ box.innerHTML = '<div class="empty">暂无统计数据（本机 my_chroma.js 没有炫彩记录）</div>'; return; }
+  var max = rows[0].n;
+  box.innerHTML = rows.map(function(r, i){
+    var meta = cards.filter(function(c){ return c.id === r.id; })[0] || { name: ('色卡 ' + r.id) };
+    var pmap = st.cardParticles[r.id] || {}, topP = DEFAULT_PARTICLE, topN = 0;
+    Object.keys(pmap).forEach(function(p){ if (pmap[p] > topN){ topN = pmap[p]; topP = parseInt(p, 10); } });
+    var pct = Math.max(4, Math.round(r.n / max * 100));
+    var on = (STAT_FILTER === r.id) ? ' on' : '';
+    return '<div class="stat-row' + on + '" onclick="setStatFilter(' + r.id + ')" title="只看这一种色卡">'
+      + '<div class="rk">' + (i + 1) + '</div>'
+      + '<div class="thumb"><img src="data/chroma-images/card_' + r.id + '_p' + topP + '.webp" alt="" loading="lazy"></div>'
+      + '<div class="sname">' + meta.name + '</div>'
+      + '<div class="bar-wrap"><div class="bar" style="width:' + pct + '%"></div></div>'
+      + '<div class="cnt">' + r.n + ' 只</div></div>';
+  }).join('');
+}
+
+function setStatFilter(cardId){
+  STAT_FILTER = (STAT_FILTER === cardId) ? null : cardId;
+  renderStats();
+  renderMyChroma();
+  var el = document.getElementById('petlist');
+  if (el && el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
 // 直接用本机 MY_CHROMA 渲染全部真实炫彩（页面默认视图，不依赖网络）
 function renderMyChroma(){
   const uid = (document.getElementById('uid').value || '').trim();
   CUR_UID = uid;
   const local = (window.MY_CHROMA && window.MY_CHROMA[uid]) || {};
-  const keys = Object.keys(local);
+  const allKeys = Object.keys(local);
   const box = document.getElementById('petlist');
-  if (keys.length === 0){
+  let keys = allKeys;
+  if (STAT_FILTER !== null && STAT_FILTER !== undefined){
+    keys = allKeys.filter(function(gid){ return local[gid] && local[gid].card === STAT_FILTER; });
+  }
+  if (allKeys.length === 0){
     box.innerHTML = '<div class="empty">本账号（'+uid+'）暂无本机抓到的炫彩色卡数据（data/my_chroma.js）。点「查询我的炫彩」实时拉取，或用 roco_helper 抓包后跑 chroma_kit 上传。</div>';
     document.getElementById('petCount').textContent = '0 只';
     var sc0 = document.getElementById('selfcheck');
     if (sc0){ sc0.className='note warn'; sc0.innerHTML = '⚠ 未读到本机炫彩数据（uid '+uid+'）。请确认 data/my_chroma.js 已加载，或用 chroma_kit 重新解码上传。'; }
     return false;
   }
-  document.getElementById('petCount').textContent = keys.length + ' 只（本机真实）';
+  document.getElementById('petCount').textContent = (STAT_FILTER !== null && STAT_FILTER !== undefined)
+    ? (keys.length + ' / ' + allKeys.length + ' 只') : (allKeys.length + ' 只（本机真实）');
+  if (keys.length === 0){ box.innerHTML = '<div class="empty">该色卡下没有精灵。再点一次上方统计行可取消筛选。</div>'; return true; }
   box.innerHTML = keys.map(function(gid){
     const mc = local[gid];
     const preview = mc.hidden ? hiddenCardHTML(mc.glassType) : chromaCardHTML(mc.card, mc.particle || DEFAULT_PARTICLE);
@@ -294,7 +378,7 @@ function renderMyChroma(){
     var n = box.querySelectorAll('.pet').length;
     if (n === keys.length){
       sc.className = 'note ok';
-      sc.innerHTML = '✅ 已渲染 <b>' + n + '</b> 张炫彩卡片（数据共 ' + keys.length + ' 只）· 向下滚动查看全部';
+      sc.innerHTML = '✅ 已渲染 <b>' + n + '</b> 张炫彩卡片（数据共 ' + allKeys.length + ' 只）· 向下滚动查看全部';
     } else {
       sc.className = 'note warn';
       sc.innerHTML = '⚠ 数据有 ' + keys.length + ' 只，但只渲染出 ' + n + ' 张，页面异常，请截图反馈';
@@ -429,6 +513,7 @@ renderGallery();
   CUR_UID = uid;
   const total = (window.MY_CHROMA && window.MY_CHROMA[uid]) ? Object.keys(window.MY_CHROMA[uid]).length : 0;
   const tEl = document.getElementById('totalChroma'); if (tEl) tEl.textContent = total;
+  renderStats();
   if (!renderMyChroma()){ query(); }
 })();
 </script>
