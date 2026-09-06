@@ -1,7 +1,7 @@
 {
   "date": "2026-09-06",
-  "updated_at": "2026-09-06T20:06:39.669619+08:00",
-  "server_now": 1788696399,
+  "updated_at": "2026-09-06T23:26:43.172405+08:00",
+  "server_now": 1788708402,
   "active_round": "20:00-24:00",
   "rounds": {
     "1": {
@@ -15,7 +15,7 @@
           "type": "性格影响修改道具",
           "high_value": false,
           "recommend": true,
-          "remain": "3小时53分钟",
+          "remain": "0小时33分钟",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/1/10/nssw03fprximwkgzjqdaq8r8pq3q3le.png/100px-100716.png"
         },
         {
@@ -26,7 +26,7 @@
           "type": "个体资质属性修改道具",
           "high_value": false,
           "recommend": true,
-          "remain": "3小时53分钟",
+          "remain": "0小时33分钟",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/1/11/6l0tqz9gytrn8r10gk5bgcj4rxnfx57.png/100px-100714.png"
         },
         {
@@ -37,7 +37,7 @@
           "type": "个体资质增强道具",
           "high_value": false,
           "recommend": true,
-          "remain": "3小时53分钟",
+          "remain": "0小时33分钟",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/2d/749ek9zbh79fvll7f5vtpxa33dz3mze.png/100px-100009.png"
         },
         {
@@ -48,7 +48,7 @@
           "type": "特制咕噜球",
           "high_value": false,
           "recommend": true,
-          "remain": "3小时53分钟",
+          "remain": "0小时33分钟",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/7/79/kdfs6bmfy54gk7ak70arjxug91zv1z5.png/100px-Img_lumangqiu.png"
         },
         {
@@ -59,7 +59,7 @@
           "type": "特制咕噜球",
           "high_value": false,
           "recommend": true,
-          "remain": "3小时53分钟",
+          "remain": "0小时33分钟",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/4/4b/60uvwzet0brdqlhtoa89domccpbo4hr.png/100px-Img_wangdiuqiu.png"
         },
         {
@@ -173,7 +173,7 @@
           "type": "精灵蛋",
           "high_value": false,
           "recommend": false,
-          "remain": "3小时53分钟",
+          "remain": "0小时33分钟",
           "image": "//img.71acg.net/whd~hykb/comm/hd_admin_upload_2982_5390e1a946446e64d929ad89a3ad3eed.png"
         }
       ]
