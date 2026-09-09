@@ -1,8 +1,8 @@
 {
   "date": "2026-09-09",
-  "updated_at": "2026-09-09T12:33:22.699633+08:00",
-  "server_now": 1788928402,
-  "active_round": "12:00-16:00",
+  "updated_at": "2026-09-09T20:56:16.626511+08:00",
+  "server_now": 1788958576,
+  "active_round": "20:00-24:00",
   "rounds": {
     "1": {
       "label": "08:00-12:00",
@@ -42,7 +42,7 @@
           "type": "精灵蛋",
           "high_value": false,
           "recommend": true,
-          "remain": "3小时26分钟",
+          "remain": "已结束",
           "image": "//img.71acg.net/whd~hykb/comm/hd_admin_upload_2982_d3f07a7c316e2b71dc3e5fc1871bd6da.png"
         },
         {
@@ -53,7 +53,7 @@
           "type": "炼金材料",
           "high_value": false,
           "recommend": true,
-          "remain": "3小时26分钟",
+          "remain": "已结束",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/f/f3/c5x5f0lgk33ly801m8w1n9aod8ny4sh.png/100px-100683.png"
         },
         {
@@ -64,8 +64,62 @@
           "type": "精灵喂养材料",
           "high_value": false,
           "recommend": false,
-          "remain": "3小时26分钟",
+          "remain": "已结束",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c6/5qe6rcdtfxe1gsrvgj3lrn033athx9p.png/100px-100668.png"
+        }
+      ]
+    },
+    "4": {
+      "label": "20:00-24:00",
+      "items": [
+        {
+          "name": "国王球",
+          "price": "16w",
+          "limit": "3",
+          "desc": "昂贵且好用的咕噜球，能十分轻易地捕捉精灵，并能提升精灵的天分。 曾经专供贵族使用，制作方法不明。",
+          "type": "咕噜球",
+          "high_value": false,
+          "recommend": true,
+          "remain": "3小时3分钟",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/2e/jygbfxpdbup5weqy4zaqnyaw2fcfyrq.png/100px-100255.png"
+        },
+        {
+          "name": "草系粉尘",
+          "price": "500",
+          "limit": "100",
+          "desc": "常见的炼金材料，蕴含少量草系魔法，是合成技能石的主要触媒。",
+          "type": "炼金材料",
+          "high_value": false,
+          "recommend": false,
+          "remain": "3小时3分钟",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/3/32/2k88qbruf464xxyf02grnmkvun59h0c.png/100px-100121.png"
+        }
+      ]
+    },
+    "3": {
+      "label": "16:00-20:00",
+      "items": [
+        {
+          "name": "神奇的蛋",
+          "price": "36000",
+          "limit": "5",
+          "desc": "蕴含着难以捉摸的魔力，不知道可以孵化出哪种精灵。",
+          "type": "精灵蛋",
+          "high_value": false,
+          "recommend": false,
+          "remain": "已结束",
+          "image": "//img.71acg.net/whd~hykb/comm/hd_admin_upload_2982_5390e1a946446e64d929ad89a3ad3eed.png"
+        },
+        {
+          "name": "翼系粉尘",
+          "price": "500",
+          "limit": "100",
+          "desc": "常见的炼金材料，蕴含少量翼系魔法，是合成技能石的主要触媒。",
+          "type": "炼金材料",
+          "high_value": false,
+          "recommend": false,
+          "remain": "已结束",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/3/35/5mp1ohcm72pgsxax5kq3x1aophw3lh0.png/100px-100136.png"
         }
       ]
     }
