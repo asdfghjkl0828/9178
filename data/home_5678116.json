@@ -1,6 +1,6 @@
 {
  "uid": "5678116",
- "fetched_at": "2026-09-10T11:10:11Z",
+ "fetched_at": "2026-09-10T19:34:49Z",
  "source": "rocodex.org (免费)",
  "quota_remaining": 2,
  "from_cache": false,
@@ -21,35 +21,19 @@
   },
   "pets": [
    {
-    "id": 3007,
-    "gid": 61590,
-    "name": "将军",
-    "defaultName": "魔力猫",
-    "level": 60,
-    "gender": 2,
-    "genderText": "雌性",
-    "energy": 10,
-    "mutationName": "炫彩",
-    "haveEgg": false,
-    "feedRound": 1,
-    "status": 1701,
-    "statusText": "状态 1701",
-    "icon": "/images/spirits/3007/image.png"
-   },
-   {
     "id": 3071,
-    "gid": 64747,
+    "gid": 65401,
     "name": "音速犬",
     "defaultName": "音速犬",
-    "level": 60,
+    "level": 39,
     "gender": 1,
     "genderText": "雄性",
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 1,
-    "status": 1701,
-    "statusText": "状态 1701",
+    "status": 1702,
+    "statusText": "已驻守",
     "icon": "/images/spirits/3071/image.png"
    },
    {
@@ -64,25 +48,41 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 1,
-    "status": 1701,
-    "statusText": "状态 1701",
+    "status": 1702,
+    "statusText": "已驻守",
     "icon": "/images/spirits/3071/image.png"
    },
    {
     "id": 3071,
-    "gid": 65401,
+    "gid": 64747,
     "name": "音速犬",
     "defaultName": "音速犬",
-    "level": 39,
+    "level": 60,
     "gender": 1,
     "genderText": "雄性",
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 1,
-    "status": 1701,
-    "statusText": "状态 1701",
+    "status": 1702,
+    "statusText": "已驻守",
     "icon": "/images/spirits/3071/image.png"
+   },
+   {
+    "id": 3007,
+    "gid": 61590,
+    "name": "将军",
+    "defaultName": "魔力猫",
+    "level": 60,
+    "gender": 2,
+    "genderText": "雌性",
+    "energy": 10,
+    "mutationName": "炫彩",
+    "haveEgg": false,
+    "feedRound": 1,
+    "status": 1702,
+    "statusText": "已驻守",
+    "icon": "/images/spirits/3007/image.png"
    }
   ],
   "plants": [
@@ -238,9 +238,9 @@
    }
   ],
   "meta": {
-   "taskId": "tsk_dlbl9b83oonc_9l4z",
-   "createdAt": "2026-09-10T11:10:09.734Z",
-   "finishedAt": "2026-09-10T11:10:10.922Z"
+   "taskId": "tsk_dlbvzp41axpo_7p7",
+   "createdAt": "2026-09-10T19:34:48.530Z",
+   "finishedAt": "2026-09-10T19:34:49.620Z"
   }
  }
 }
