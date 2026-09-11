@@ -455,7 +455,7 @@ let currentSpirit = null;
 let PACK_BASE = (localStorage.getItem('pet3d_pack_base') || 'packs').trim() || 'packs';
 function resolveGlb(glb){
   if (!glb) return glb;
-  if (/^https?:\/\//i.test(glb)) return glb;
+  if (/^(https?|blob|data):/i.test(glb)) return glb;   // 绝对地址（远程/本机文件/blob）原样返回
   const rest = glb.replace(/^packs\//, '');   // 去掉 packs/ 前缀，保留子目录结构
   return PACK_BASE.replace(/\/+$/, '') + '/' + rest;
 }
@@ -663,6 +663,27 @@ window.toggleWallView = toggleWallView;
 // ---------- 事件 ----------
 document.getElementById('file').onchange = e => {
   const f = e.target.files[0]; if (f) loadModel(URL.createObjectURL(f), f.name);
+};
+// 选整个 packs 文件夹 → 读 index.json，用 blob URL 重建完整索引（离线全图鉴 3D）
+document.getElementById('dirGlb').onchange = e => {
+  const files = [...e.target.files];
+  const idxFile = files.find(f => f.name === 'index.json');
+  if (!idxFile){ document.getElementById('spNote').textContent = '所选文件夹里没找到 index.json（请直接选 packs 文件夹）'; return; }
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const list = JSON.parse(reader.result);
+      const mod = list.map(p => {
+        const f = files.find(x => x.webkitRelativePath && x.webkitRelativePath.endsWith(p.glb));
+        return f ? { ...p, glb: URL.createObjectURL(f) } : null;
+      }).filter(Boolean);
+      applyIndex(mod);
+      document.getElementById('spNote').textContent = '已从本地文件夹载入 ' + mod.length + ' 个模型，全图鉴可离线 3D 预览';
+    } catch (err) {
+      document.getElementById('spNote').textContent = '读取 index.json 失败：' + (err && err.message || err);
+    }
+  };
+  reader.readAsText(idxFile);
 };
 document.getElementById('clipSel').onchange = e => { playClip(parseInt(e.target.value, 10)); };
 document.getElementById('btnPause').onclick = () => setPaused(!paused);
