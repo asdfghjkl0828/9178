@@ -455,9 +455,9 @@ let currentSpirit = null;
 let PACK_BASE = (localStorage.getItem('pet3d_pack_base') || 'packs').trim() || 'packs';
 function resolveGlb(glb){
   if (!glb) return glb;
-  if (/^https?:\/\//.test(glb)) return glb;
-  const fn = glb.split('/').pop();
-  return PACK_BASE.replace(/\/+$/, '') + '/' + fn;
+  if (/^https?:\/\//i.test(glb)) return glb;
+  const rest = glb.replace(/^packs\//, '');   // 去掉 packs/ 前缀，保留子目录结构
+  return PACK_BASE.replace(/\/+$/, '') + '/' + rest;
 }
 function resolveIndexUrl(){ return PACK_BASE.replace(/\/+$/, '') + '/index.json'; }
 function applyIndex(list){
