@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>炫彩 3D 预览 — 洛克王国：世界 全图鉴</title>
+<link rel="stylesheet" href="css/head.css">
+<style>
+  .wrap { display:flex; gap:16px; align-items:stretch; flex-wrap:wrap; }
+  .stage { flex:1 1 520px; min-height:540px; position:relative; background:radial-gradient(ellipse at 50% 35%, #1e2338 0%, #0d0f18 70%);
+           border:1px solid var(--border); border-radius:14px; overflow:hidden; }
+  .stage canvas { display:block; width:100%; height:100%; }
+  .stage .hint { position:absolute; left:0; right:0; top:50%; transform:translateY(-50%); text-align:center;
+                 color:var(--text2); font-size:14px; line-height:2; pointer-events:none; padding:0 20px; }
+  .stage .hint b { color:var(--text); }
+  .stage.dragover { border-color:var(--accent); box-shadow:0 0 0 2px var(--accent) inset; }
+  .panel { flex:0 0 350px; display:flex; flex-direction:column; gap:12px; }
+  .box { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; }
+  .box h3 { font-size:14px; font-weight:800; color:var(--text); margin:0 0 10px; display:flex; align-items:center; gap:8px; }
+  .box h3 .badge { font-size:11px; font-weight:700; background:var(--accent); color:#fff; border-radius:8px; padding:2px 9px; }
+  .row { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .btn { background:var(--accent); color:#fff; border:none; border-radius:8px; padding:7px 13px; font-size:13px; cursor:pointer; }
+  .btn:hover { filter:brightness(1.1); }
+  .btn.ghost { background:transparent; border:1px solid var(--border); color:var(--text2); }
+  .btn.ghost.on { border-color:var(--accent); color:var(--accent); }
+  .swatches { display:grid; grid-template-columns:repeat(auto-fill,minmax(58px,1fr)); gap:6px; }
+  .sw { height:44px; border-radius:8px; border:2px solid transparent; cursor:pointer; position:relative; overflow:hidden;
+        display:flex; align-items:flex-end; justify-content:center; transition:transform .1s; }
+  .sw:hover { transform:translateY(-2px); }
+  .sw.on { border-color:#fff; box-shadow:0 0 0 2px var(--accent); }
+  .sw span { font-size:10px; font-weight:800; color:#fff; text-shadow:0 1px 3px rgba(0,0,0,.9); padding-bottom:2px; }
+  #spiritList { grid-template-columns:repeat(auto-fill,minmax(78px,1fr)); max-height:340px; overflow-y:auto; padding-right:4px; }
+  #spiritList .sw { height:40px; }
+  #spiritList .sw span { font-size:11px; }
+  .sw.off { opacity:.4; filter:grayscale(.8); cursor:not-allowed; }
+  .sw.off:hover { transform:none; }
+  .sw.owned { border-color:rgba(255,215,0,.45); }
+  .sw.owned::after { content:'★'; position:absolute; right:2px; top:1px; font-size:9px; color:#ffd700; text-shadow:0 0 2px #000; pointer-events:none; }
+  .parts { display:flex; gap:8px; }
+  .part { flex:1; aspect-ratio:1; border-radius:10px; border:2px solid transparent; background:#11131f center/contain no-repeat; cursor:pointer; }
+  .part.on { border-color:var(--accent); }
+  select, input[type=text] { background:var(--card2); color:var(--text); border:1px solid var(--border); border-radius:8px; padding:6px 9px; font-size:13px; }
+  .meta { font-size:12px; color:var(--text2); line-height:1.7; }
+  .meta b { color:var(--text); }
+  .empty-note { font-size:12px; color:var(--text2); }
+  .seg { display:flex; gap:4px; margin-bottom:8px; flex-wrap:wrap; }
+  .seg button { flex:1 0 auto; min-width:58px; font-size:11px; padding:5px 3px; border-radius:7px; border:1px solid var(--border); background:transparent; color:var(--text2); cursor:pointer; white-space:nowrap; }
+  .seg button.on { border-color:var(--accent); color:var(--accent); background:rgba(120,140,255,.08); }
+  #wallView { display:none; grid-template-columns:repeat(auto-fill,minmax(96px,1fr)); gap:8px; max-height:420px; overflow-y:auto; padding-right:4px; }
+  .thumb { background:var(--card2); border:1px solid var(--border); border-radius:10px; overflow:hidden; cursor:pointer; text-align:center; position:relative; }
+  .thumb canvas { display:block; width:100%; height:auto; background:#0b0d14; }
+  .thumb span { display:block; font-size:11px; padding:4px; color:var(--text2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .thumb:hover { border-color:var(--accent); }
+  .thumb.on { border-color:#fff; box-shadow:0 0 0 2px var(--accent); }
+  .thumb.owned span { color:#ffd700; }
+  .thumb.owned span::before { content:'★ '; }
+  @media (max-width:900px){ .panel{ flex:1 1 100%; } }
+</style>
+<script src="data/all_species.js?v=20260911"></script>
+<script src="data/chroma_cards.js?v=20260908a"></script>
+<script src="data/my_chroma.js?v=20260911"></script>
+<script type="importmap">
+{ "imports": {
+    "three": "./vendor/three/three.module.js",
+    "three/addons/": "./vendor/three/"
+} }
+</script>
+</head>
+<body>
+<header>
+  <div style="font-size:24px">🛠️</div>
+  <div style="display:flex;flex-direction:column;gap:2px"><h1>洛克王国：世界 · 炫彩 3D 预览</h1></div>
+  <nav class="dex-nav">
+    <a href="index.html" class="home-link">工具箱</a>
+    <a href="calc.html">伤害计算器</a>
+    <a href="pokedex.html">精灵图鉴</a>
+    <a href="skilldex.html">技能图鉴</a>
+    <a href="color.html">炫彩精灵</a>
+    <a href="pet3d.html" class="active">炫彩 3D 预览</a>
+  </nav>
+</header>
+
+<div class="main">
+  <h2>🎨 全图鉴炫彩预览</h2>
+  <p class="sub">
+    <b>左：选精灵</b>（全图鉴 1136 种，可搜可选，游戏内无模型的标灰）→ <b>右：选色卡</b>（43 张：39 基础 + 4 隐藏）→ 中央实时看该精灵的炫彩模样。<br>
+    模型来自你本机游戏 pak 解包（<code>rocom-pets</code> 导出器），<b>不上传任何数据</b>，全部本地运行。
+  </p>
+
+  <div class="box" style="margin-bottom:14px">
+    <div class="row">
+      <button class="btn" onclick="document.getElementById('file').click()">📂 选择 .glb 文件</button>
+      <button class="btn ghost" onclick="document.getElementById('dirGlb').click()">📁 选 manifest 同目录 glb</button>
+      <input id="file" type="file" accept=".glb,.gltf" style="display:none">
+      <input id="dirGlb" type="file" accept=".glb" webkitdirectory style="display:none">
+      <select id="packSel" style="flex:1;min-width:180px"><option value="">— 或从已导出包选择 —</option></select>
+      <span class="meta" id="loadMeta">未载入模型</span>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <input id="packBase" type="text" placeholder="模型源地址（留空=packs/；可填远程 URL，如 http://127.0.0.1:18917/packs）" style="flex:1;min-width:220px">
+      <button class="btn ghost" id="btnPackBase">应用模型源</button>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="stage" id="stage">
+      <div class="hint" id="hint">从右侧<b>全图鉴精灵</b>里挑一只，再点一张<b>色卡</b><br><span style="font-size:12px">模型由 rocom-pets 导出器从你本机游戏 pak 生成</span></div>
+    </div>
+
+    <div class="panel">
+      <div class="box" style="order:-1">
+        <h3>全图鉴精灵 <span class="badge" id="spCount">0</span><button class="btn ghost" id="btnWall" style="margin-left:auto;font-size:12px;padding:4px 10px">🧱 图鉴墙</button></h3>
+        <input id="spSearch" type="text" placeholder="搜索精灵名…" style="width:100%;margin-bottom:8px">
+        <div class="meta" id="colProgress" style="margin-bottom:8px">加载中…</div>
+        <div class="seg">
+          <button id="fAll" class="on" onclick="setFilter('all')">全部</button>
+          <button id="fLegal" onclick="setFilter('legal')">仅可捕捉</button>
+          <button id="fModel" onclick="setFilter('model')">仅已有模型</button>
+          <button id="fMine" onclick="setFilter('mine')">仅我的收藏</button>
+          <button id="fCard" onclick="setFilter('card')">我的该色</button>
+        </div>
+        <div class="swatches" id="spiritList"></div>
+        <div class="swatches" id="wallView"></div>
+        <div class="meta" id="spNote" style="margin-top:8px"></div>
+      </div>
+
+      <div class="box">
+        <h3>配色 <span class="badge">39 种</span></h3>
+        <div class="swatches" id="swatches" style="max-height:200px;overflow-y:auto;padding-right:4px"></div>
+        <div class="meta" id="cardMeta" style="margin-top:8px">未选择</div>
+      </div>
+
+      <div class="box">
+        <h3>隐藏 / 赛季炫彩 <span class="badge">4</span></h3>
+        <div class="swatches" id="hiddenCards" style="grid-template-columns:repeat(auto-fill,minmax(70px,1fr))"></div>
+        <div class="meta" id="hiddenMeta" style="margin-top:6px">赛季/隐藏炫彩无公开配色数据，选中为示意效果</div>
+      </div>
+
+      <div class="box">
+        <h3>粒子 <span class="badge">4 种</span></h3>
+        <div class="parts" id="parts"></div>
+        <div class="meta" id="partMeta" style="margin-top:8px">未选择</div>
+      </div>
+
+      <div class="box">
+        <h3>动作 / 展示</h3>
+        <select id="clipSel" style="width:100%"><option value="">— 无动画 —</option></select>
+        <div class="row" style="margin-top:8px">
+          <button class="btn ghost" id="btnPause">⏸ 暂停</button>
+          <button class="btn" id="btnShot">📸 下载截图</button>
+        </div>
+        <div class="row" style="margin-top:8px">
+          <label class="meta"><input type="checkbox" id="autoRot" checked> 自动旋转</label>
+          <label class="meta"><input type="checkbox" id="wire"> 线框</label>
+        </div>
+      </div>
+
+      <div class="box">
+        <h3>当前配置</h3>
+        <div class="meta" id="summary">—</div>
+      </div>
+
+      <div class="box">
+        <h3>图鉴信息</h3>
+        <div class="meta" id="dexInfo">从列表选择一只精灵查看图鉴信息</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/GLTFLoader.js';
+import { OrbitControls } from 'three/addons/OrbitControls.js';
+
+// ---------- 贴图映射（依据 data/chroma_cards.js 的 res 字段） ----------
+const MAIN_TEX = 'assets/glassy/Tex_PetGlassy_007_D.png';
+const PARTICLE_TEX = {
+  1: 'assets/glassy/Tex_PetGlassyStar_003.png', // 四角星
+  2: 'assets/glassy/Tex_PetGlassyStar_002.png', // 爱心
+  3: 'assets/glassy/Tex_PetGlassyStar_001.png', // 方块
+  4: 'assets/glassy/Tex_PetGlassyStar_006.png', // 镂空五角星
+};
+
+const stage = document.getElementById('stage');
+const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true, preserveDrawingBuffer:true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+stage.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(38, 1, 0.01, 1000);
+camera.position.set(0, 1.1, 3.2);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true; controls.target.set(0, 0.8, 0);
+
+scene.add(new THREE.HemisphereLight(0xffffff, 0x334455, 1.5));
+const dir = new THREE.DirectionalLight(0xffffff, 1.4); dir.position.set(2, 4, 3); scene.add(dir);
+const grid = new THREE.GridHelper(6, 12, 0x2a3050, 0x1a1f33); scene.add(grid);
+
+// ---------- 贴图 ----------
+const texLoader = new THREE.TextureLoader();
+function loadTex(p){ const t = texLoader.load(p); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.colorSpace = THREE.NoColorSpace; return t; }
+const mainTex = loadTex(MAIN_TEX);
+const starTex = {};
+for (const id of Object.keys(PARTICLE_TEX)) starTex[id] = loadTex(PARTICLE_TEX[id]);
+
+// ---------- 状态 ----------
+const state = { glass:false, card:null, particle:1, resolution:new THREE.Vector2(1,1), time:0, spirit:null };
+let mixer = null, clips = [], currentModel = null;
+
+// ---------- 炫彩 shader 注入 ----------
+function injectGlass(mat){
+  if (mat.__glassInjected) return;
+  mat.__glassInjected = true;
+  mat.onBeforeCompile = (shader) => {
+    shader.uniforms.uGlassOn   = { value: 0 };
+    shader.uniforms.uMatCol1   = { value: new THREE.Vector3(1,1,1) };
+    shader.uniforms.uMatCol2   = { value: new THREE.Vector3(1,1,1) };
+    shader.uniforms.uMainTex   = { value: mainTex };
+    shader.uniforms.uStarTex   = { value: starTex[1] };
+    shader.uniforms.uRes       = { value: state.resolution };
+    shader.uniforms.uTime      = { value: 0 };
+    mat.userData.shader = shader;
+    shader.fragmentShader = shader.fragmentShader
+      .replace('#include <common>', `#include <common>
+uniform float uGlassOn;
+uniform vec3  uMatCol1;
+uniform vec3  uMatCol2;
+uniform sampler2D uMainTex;
+uniform sampler2D uStarTex;
+uniform vec2  uRes;
+uniform float uTime;
+`)
+      .replace('#include <dithering_fragment>', `#include <dithering_fragment>
+if (uGlassOn > 0.5) {
+  vec2 suv = gl_FragCoord.xy / uRes;
+  vec4 mtex = texture2D(uMainTex, suv * 1.4 + vec2(uTime * 0.008, uTime * 0.004));
+  vec3 glass = uMatCol1 * mtex.r + uMatCol2 * mtex.g;
+  float lum = dot(gl_FragColor.rgb, vec3(0.299, 0.587, 0.114));
+  glass *= (0.55 + lum * 1.1);
+  vec4 star = texture2D(uStarTex, suv * 1.8 - vec2(0.0, uTime * 0.015));
+  gl_FragColor.rgb = mix(gl_FragColor.rgb, glass, 0.62);
+  gl_FragColor.rgb += star.rgb * star.a * 1.1;
+}
+`);
+  };
+  mat.needsUpdate = true;
+}
+
+function syncUniformsOf(model, resVec){
+  if (!model) return;
+  const c = state.card;
+  const on = state.glass && c ? 1 : 0;
+  const c1 = (state.glass && c) ? c.mat_color_1 : [1,1,1];
+  const c2 = (state.glass && c) ? c.mat_color_2 : [1,1,1];
+  model.traverse(o => {
+    if (!o.isMesh || !o.material) return;
+    const mats = Array.isArray(o.material) ? o.material : [o.material];
+    for (const m of mats){
+      const sh = m.userData.shader;
+      if (!sh) continue;
+      sh.uniforms.uGlassOn.value = on;
+      sh.uniforms.uMatCol1.value.set(c1[0], c1[1], c1[2]);
+      sh.uniforms.uMatCol2.value.set(c2[0], c2[1], c2[2]);
+      sh.uniforms.uStarTex.value = starTex[state.particle] || starTex[1];
+      sh.uniforms.uTime.value = state.time;
+      sh.uniforms.uRes.value = resVec;
+      m.wireframe = document.getElementById('wire').checked;
+    }
+  });
+}
+function syncUniforms(){ syncUniformsOf(currentModel, state.resolution); }
+
+// ---------- 模型加载 ----------
+const gltfLoader = new GLTFLoader();
+function loadModel(url, label){
+  document.getElementById('hint').style.display = 'none';
+  gltfLoader.load(url, (gltf) => {
+    if (currentModel){ scene.remove(currentModel); disposeModel(currentModel); }
+    currentModel = gltf.scene;
+    currentModel.traverse(o => {
+      if (o.isMesh){
+        const mats = Array.isArray(o.material) ? o.material : [o.material];
+        mats.forEach(injectGlass);
+        o.frustumCulled = false;
+      }
+    });
+    const box = new THREE.Box3().setFromObject(currentModel);
+    const size = box.getSize(new THREE.Vector3());
+    const center = box.getCenter(new THREE.Vector3());
+    const scale = 1.6 / Math.max(size.x, size.y, size.z, 0.001);
+    currentModel.scale.setScalar(scale);
+    currentModel.position.sub(center.multiplyScalar(scale));
+    currentModel.position.y += (size.y * scale) / 2;
+    scene.add(currentModel);
+
+    clips = gltf.animations || [];
+    const sel = document.getElementById('clipSel');
+    sel.innerHTML = '<option value="">— 无动画 —</option>' +
+      clips.map((c, i) => `<option value="${i}">${c.name || ('clip ' + i)}</option>`).join('');
+    if (clips.length){
+      mixer = new THREE.AnimationMixer(currentModel);
+      playClip(0); sel.value = '0';
+    }
+    syncUniforms();
+    document.getElementById('loadMeta').textContent = '已载入：' + (label || '模型') +
+      (clips.length ? ' · ' + clips.length + ' 个动作' : '');
+    updateSummary();
+  }, undefined, (err) => {
+    document.getElementById('loadMeta').textContent = '✗ 载入失败：' + err.message;
+    document.getElementById('hint').style.display = '';
+  });
+}
+function disposeModel(root){
+  root.traverse(o => { if (o.isMesh){ o.geometry?.dispose?.(); } });
+}
+let action = null, paused = false;
+function setPaused(p){
+  paused = p;
+  if (action) action.paused = p;
+  const b = document.getElementById('btnPause');
+  if (b) b.textContent = p ? '▶ 播放' : '⏸ 暂停';
+}
+function playClip(i){
+  if (!mixer || !clips[i]) return;
+  if (action) action.stop();
+  action = mixer.clipAction(clips[i]);
+  action.reset().play();
+  setPaused(false);
+}
+function downloadShot(){
+  const prev = scene.background;
+  scene.background = new THREE.Color(0x0d0f18);
+  renderer.render(scene, camera);
+  let url = '';
+  try { url = renderer.domElement.toDataURL('image/png'); }
+  catch (e) { scene.background = prev; alert('截图失败：' + e.message); return; }
+  scene.background = prev;
+  const a = document.createElement('a');
+  const tag = (state.spirit && state.spirit.name) ? state.spirit.name : (currentModel && currentModel.name ? currentModel.name : 'pet3d');
+  a.href = url; a.download = 'pet3d_' + tag + '_' + Date.now() + '.png';
+  a.click();
+}
+
+// ---------- 色卡 ----------
+function buildSwatches(){
+  const box = document.getElementById('swatches');
+  box.innerHTML = CHROMA_CARDS.map(c =>
+    `<div class="sw" data-id="${c.id}" title="${c.name}"
+       style="background:linear-gradient(135deg, ${c.ui_color_1} 0%, ${c.ui_color_2} 100%)">
+       <span>${c.id}</span></div>`).join('');
+  box.querySelectorAll('.sw').forEach(el => {
+    el.onclick = () => selectCard(parseInt(el.dataset.id, 10), false);
+  });
+}
+function buildHidden(){
+  const box = document.getElementById('hiddenCards');
+  box.innerHTML = CHROMA_HIDDEN.map(c =>
+    `<div class="sw" data-id="${c.id}" title="${c.name}（${c.season}）"
+       style="background:linear-gradient(135deg,#555 0%,#222 100%)">
+       <span>${c.name}</span></div>`).join('');
+  box.querySelectorAll('.sw').forEach(el => {
+    el.onclick = () => selectCard(parseInt(el.dataset.id, 10), true);
+  });
+}
+function buildParts(){
+  const box = document.getElementById('parts');
+  box.innerHTML = CHROMA_PARTICLES.map(p =>
+    `<div class="part" data-id="${p.id}" title="${p.name}"
+       style="background-image:url('${PARTICLE_TEX[p.id]}')"></div>`).join('');
+  box.querySelectorAll('.part').forEach(el => {
+    el.onclick = () => selectParticle(parseInt(el.dataset.id, 10));
+  });
+  selectParticle(1);
+}
+// 隐藏炫彩无公开配色，用灰阶示意
+const HIDDEN_COLORS = { 1:[0.55,0.55,0.6], 2:[0.6,0.4,0.7], 3:[0.4,0.6,0.7], 1000:[0.6,0.6,0.6] };
+function selectCard(id, isHidden){
+  curCard = isHidden ? -id : id;
+  document.querySelectorAll('#swatches .sw, #hiddenCards .sw').forEach(el => el.classList.toggle('on', +el.dataset.id === id));
+  if (isHidden){
+    const h = CHROMA_HIDDEN.find(x => x.id === id);
+    const col = HIDDEN_COLORS[id] || [0.6,0.6,0.6];
+    state.card = { id, name: h ? h.name : ('隐藏'+id), mat_color_1: col, mat_color_2: col };
+    document.getElementById('cardMeta').innerHTML = `<b>${state.card.name}</b>（${h?h.season:''}）<br><span style="color:#f0c674">示意效果 · 无公开配色</span>`;
+  } else {
+    state.card = CHROMA_CARDS.find(c => c.id === id) || null;
+    if (state.card){
+      document.getElementById('cardMeta').innerHTML =
+        `<b>色卡 ${state.card.id}</b> · ${state.card.name}<br>UI 色 ${state.card.ui_color_1} → ${state.card.ui_color_2}`;
+    }
+  }
+  if (state.card && !state.glass) setGlass(true);
+  syncUniforms(); updateSummary();
+  if (FILTER === 'card') buildSpiritList(); // 色卡切换后刷新「我的该色」筛选结果
+  if (WALL_MODE) buildWall(); // 色卡切换后刷新缩略图墙颜色
+}
+function selectParticle(id){
+  state.particle = id;
+  document.querySelectorAll('.part').forEach(el => el.classList.toggle('on', +el.dataset.id === id));
+  const p = CHROMA_PARTICLES.find(x => x.id === id);
+  document.getElementById('partMeta').innerHTML = p ? `<b>粒子 ${p.id}</b> · ${p.name}` : '';
+  syncUniforms(); updateSummary();
+  if (WALL_MODE) buildWall(); // 粒子切换后刷新缩略图墙
+}
+window.setGlass = function(on){
+  state.glass = on;
+  document.getElementById('glassBadge')?.remove?.();
+  syncUniforms(); updateSummary();
+};
+function updateSummary(){
+  const el = document.getElementById('summary');
+  if (!state.spirit && !currentModel){ el.textContent = '—'; return; }
+  const sp = state.spirit ? `<b>精灵</b> · ${state.spirit.name}<br>` : '';
+  el.innerHTML = sp + (state.glass && state.card
+    ? `<b>色卡 ${state.card.id}</b> · ${state.card.name}<br>
+       粒子 ${state.particle} · ${(CHROMA_PARTICLES.find(p=>p.id===state.particle)||{}).name||''}<br>
+       <span style="color:#8ff0a8">✓ 炫彩已套用</span>`
+    : (state.glass ? '炫彩开启，但未选配色' : '未开启炫彩（原色）'));
+}
+function showDexInfo(s){
+  const el = document.getElementById('dexInfo');
+  if (!s){ el.textContent = '从列表选择一只精灵查看图鉴信息'; return; }
+  const stageText = s.stage === 1 ? '幼年期' : s.stage === 2 ? '成长期' : s.stage === 3 ? '成熟期' : `第${s.stage}阶`;
+  const move = s.move_type || '未知';
+  const desc = s.description || '暂无描述';
+  const cry = s.pet_text ? `<div style="margin-top:6px;color:#8ff0a8"><b>叫声</b> · ${s.pet_text}</div>` : '';
+  const quality = s.quality ? `<b>品质</b> · ${s.quality}<br>` : '';
+  el.innerHTML = `<b style="font-size:13px;color:var(--text)">${s.name}</b> <span style="color:var(--text2)">#${s.id}</span> · ${stageText}<br>
+    ${quality}<b>移动</b> · ${move}<br>
+    <div style="margin-top:6px;line-height:1.6">${desc}</div>${cry}`;
+}
+
+// ---------- 全图鉴精灵选择器 ----------
+const SPIRITS = (typeof ALL_SPIRITS !== 'undefined') ? ALL_SPIRITS : [];
+const LEGAL_COUNT = SPIRITS.filter(s => s.legal === 1).length;
+
+// 接入本机用户炫彩收藏
+const UID = (typeof MY_CHROMA !== 'undefined') ? Object.keys(MY_CHROMA)[0] : null;
+const MY_PETS = UID ? (MY_CHROMA[UID] || {}) : {};
+const OWNED_SIDS = new Set();
+const OWNED_FIRST = {}; // sid -> first owned entry (card/particle)
+Object.values(MY_PETS).forEach(p => {
+  const sid = p.species ? Number(p.species) : 0;
+  if (sid) { OWNED_SIDS.add(sid); if (!OWNED_FIRST[sid]) OWNED_FIRST[sid] = p; }
+});
+
+let INDEX = {};          // sid -> {glb,name,clips,stage}
+let FILTER = 'all';
+let curCard = null;      // 正卡：普通色卡 id；隐藏色卡：-id
+let currentSpirit = null;
+
+// 模型源：默认相对 packs/；网站版可粘贴远程地址（如 http://127.0.0.1:18917/packs 或 R2 桶 URL）
+let PACK_BASE = (localStorage.getItem('pet3d_pack_base') || 'packs').trim() || 'packs';
+function resolveGlb(glb){
+  if (!glb) return glb;
+  if (/^https?:\/\//.test(glb)) return glb;
+  const fn = glb.split('/').pop();
+  return PACK_BASE.replace(/\/+$/, '') + '/' + fn;
+}
+function resolveIndexUrl(){ return PACK_BASE.replace(/\/+$/, '') + '/index.json'; }
+function applyIndex(list){
+  list.forEach(p => { if (p.sid != null) INDEX[Number(p.sid)] = p; });
+  const sel = document.getElementById('packSel');
+  sel.innerHTML = '<option value="">— 或从已导出包选择 —</option>' +
+    list.map(p => `<option value="${resolveGlb(p.glb)}">${p.name}</option>`).join('');
+  sel.onchange = () => { if (sel.value) loadModel(sel.value, sel.options[sel.selectedIndex].text); };
+  buildSpiritList();
+}
+function loadIndex(){
+  document.getElementById('spNote').textContent = '正在从 ' + PACK_BASE + ' 加载模型索引…';
+  fetch(resolveIndexUrl(), {cache: 'no-store'})
+    .then(r => r.ok ? r.json() : Promise.reject(new Error('HTTP ' + r.status)))
+    .then(applyIndex)
+    .catch(err => {
+      console.error('[pet3d] 模型索引加载失败:', err);
+      document.getElementById('spNote').innerHTML = '⚠ 模型索引加载失败（' + (err && err.message || err) +
+        '）。可在此粘贴本机/远程「模型源地址」后点「应用模型源」，或直接用上方「选 .glb」按钮。';
+      buildSpiritList();
+    });
+}
+loadIndex();
+
+function matchesFilter(s){
+  if (FILTER === 'legal') return s.legal === 1;
+  if (FILTER === 'model') return INDEX[s.id] != null;
+  if (FILTER === 'mine') return OWNED_SIDS.has(s.id);
+  if (FILTER === 'card'){
+    if (curCard == null) return false;
+    const o = OWNED_FIRST[s.id];
+    if (!o) return false;
+    const isHiddenCard = curCard < 0;
+    const ownedHidden = !!o.hidden;
+    return ownedHidden === isHiddenCard && Number(o.card) === Math.abs(curCard);
+  }
+  return true;
+}
+function setFilter(f){
+  if (f === 'card' && curCard == null){
+    document.getElementById('spNote').textContent = '先点一张色卡或赛季卡，再切「我的该色」筛选';
+    return;
+  }
+  FILTER = f;
+  ['all','legal','model','mine','card'].forEach(k => document.getElementById('f'+k[0].toUpperCase()+k.slice(1)).classList.toggle('on', k===f));
+  buildSpiritList();
+  if (WALL_MODE) buildWall();
+}
+function renderProgress(){
+  const el = document.getElementById('colProgress');
+  if (!el) return;
+  el.innerHTML = `你拥有 <b style="color:#ffd700">${OWNED_SIDS.size}</b> 只炫彩 · 全图鉴 ${SPIRITS.length} 种 · 可捕捉 ${LEGAL_COUNT} 种`;
+}
+function buildSpiritList(){
+  renderProgress();
+  const q = (document.getElementById('spSearch').value || '').trim();
+  const hit = SPIRITS.filter(s => matchesFilter(s) && (!q || (s.name||'').includes(q)));
+  const box = document.getElementById('spiritList');
+  box.innerHTML = hit.map(s => {
+    const avail = INDEX[s.id] != null;
+    const owned = OWNED_SIDS.has(s.id);
+    const cls = 'sw' + (avail ? '' : ' off') + (owned ? ' owned' : '');
+    const title = (owned ? '★ 你的炫彩 · ' : '') + (avail ? s.name + ' · 点击载入 3D' : s.name + ' · 游戏内无模型');
+    return `<div class="${cls}" data-id="${s.id}" title="${title}"><span>${s.name||s.id}</span></div>`;
+  }).join('') || '<div class="empty-note">无匹配</div>';
+  document.getElementById('spCount').textContent = hit.length;
+  box.querySelectorAll('.sw').forEach(el => {
+    el.onclick = () => {
+      if (el.classList.contains('off')){
+        document.getElementById('spNote').textContent = '「' + el.querySelector('span').textContent + '」游戏内未打包 3D 模型，无法预览（本机 pak 无该骨骼网格）';
+        return;
+      }
+      const s = SPIRITS.find(x => x.id === Number(el.dataset.id));
+      selectSpirit(s);
+    };
+  });
+}
+function selectSpirit(s){
+  const entry = INDEX[s.id];
+  if (!entry){ document.getElementById('spNote').textContent = '「'+s.name+'」无 3D 模型'; return; }
+  currentSpirit = s; state.spirit = s;
+  document.getElementById('spNote').textContent = '已载入：' + s.name + '（色卡套用中…）';
+  // 高亮选中
+  document.querySelectorAll('#spiritList .sw').forEach(el => el.classList.toggle('on', +el.dataset.id === s.id));
+  loadModel(resolveGlb(entry.glb), s.name);
+  showDexInfo(s);
+  setGlass(true);
+  // 若是用户已收藏的炫彩精灵，自动套用其真实色卡/粒子
+  const owned = OWNED_FIRST[s.id];
+  if (owned && !isNaN(Number(owned.card))){
+    if (owned.hidden) selectCard(Number(owned.card), true);
+    else { selectCard(Number(owned.card), false); selectParticle(Number(owned.particle) || 1); }
+    document.getElementById('spNote').textContent = '已载入：' + s.name + ' · 使用你的炫彩色卡 #' + owned.card;
+  } else if (!state.card) {
+    selectCard(CHROMA_CARDS[0].id, false);
+  } else {
+    syncUniforms();
+  }
+}
+document.getElementById('spSearch').oninput = () => { buildSpiritList(); if (WALL_MODE) buildWall(); };
+
+// ---------- 图鉴墙（缩略图墙） ----------
+let WALL_MODE = false;
+let thumbRenderer = null, thumbScene = null, thumbCam = null;
+const thumbRes = new THREE.Vector2(120, 120);
+function ensureThumbRenderer(){
+  if (thumbRenderer) return;
+  thumbRenderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
+  thumbRenderer.setSize(120, 120, false);
+  thumbRenderer.outputColorSpace = THREE.SRGBColorSpace;
+  thumbScene = new THREE.Scene();
+  thumbScene.background = new THREE.Color(0x0b0d14);
+  thumbCam = new THREE.PerspectiveCamera(38, 1, 0.01, 1000);
+  thumbCam.position.set(0, 1.1, 3.2);
+  thumbCam.lookAt(0, 0.8, 0);
+  thumbScene.add(new THREE.HemisphereLight(0xffffff, 0x334455, 1.5));
+  const d = new THREE.DirectionalLight(0xffffff, 1.4); d.position.set(2, 4, 3); thumbScene.add(d);
+}
+function toggleWallView(){
+  WALL_MODE = !WALL_MODE;
+  document.getElementById('spiritList').style.display = WALL_MODE ? 'none' : 'grid';
+  document.getElementById('wallView').style.display = WALL_MODE ? 'grid' : 'none';
+  const b = document.getElementById('btnWall');
+  b.textContent = WALL_MODE ? '📃 列表' : '🧱 图鉴墙';
+  b.classList.toggle('on', WALL_MODE);
+  if (WALL_MODE) buildWall();
+}
+function buildWall(){
+  const box = document.getElementById('wallView');
+  const hit = SPIRITS.filter(s => INDEX[s.id] != null && matchesFilter(s));
+  if (!hit.length){ box.innerHTML = '<div class="empty-note">当前筛选无模型精灵</div>'; return; }
+  box.innerHTML = hit.map(s => {
+    const owned = OWNED_SIDS.has(s.id);
+    const on = currentSpirit && s.id === currentSpirit.id;
+    const cls = 'thumb' + (owned ? ' owned' : '') + (on ? ' on' : '');
+    return `<div class="${cls}" data-id="${s.id}" data-done="0">
+              <canvas width="120" height="120"></canvas>
+              <span>${s.name}</span>
+            </div>`;
+  }).join('');
+  box.querySelectorAll('.thumb').forEach(el => {
+    el.onclick = () => {
+      const s = SPIRITS.find(x => x.id === Number(el.dataset.id));
+      selectSpirit(s);
+      toggleWallView(); // 点缩略图切回列表，方便调色卡
+    };
+  });
+  setTimeout(renderVisibleThumbs, 50);
+}
+function renderVisibleThumbs(){
+  if (!WALL_MODE) return;
+  const box = document.getElementById('wallView');
+  if (!box) return;
+  const contRect = box.getBoundingClientRect();
+  const cells = [...box.querySelectorAll('.thumb[data-done="0"]')];
+  cells.forEach(cell => {
+    const rect = cell.getBoundingClientRect();
+    if (rect.top < contRect.bottom + 120 && rect.bottom > contRect.top - 120) renderThumb(cell);
+  });
+}
+function renderThumb(cell){
+  const sid = Number(cell.dataset.id);
+  const entry = INDEX[sid];
+  if (!entry) { cell.dataset.done = '1'; return; }
+  cell.dataset.done = 'loading';
+  gltfLoader.load(resolveGlb(entry.glb), gltf => {
+    if (!WALL_MODE || cell.dataset.done === '1') return;
+    ensureThumbRenderer();
+    const m = gltf.scene;
+    const box = new THREE.Box3().setFromObject(m);
+    const size = box.getSize(new THREE.Vector3());
+    const center = box.getCenter(new THREE.Vector3());
+    const scale = 1.6 / Math.max(size.x, size.y, size.z, 0.001);
+    m.scale.setScalar(scale);
+    m.position.sub(center.multiplyScalar(scale));
+    m.position.y += (size.y * scale) / 2;
+    m.rotation.y = 0;
+    // 给缩略图也注入炫彩 shader 并套用当前色卡/粒子
+    m.traverse(o => { if (o.isMesh){ const mats = Array.isArray(o.material)?o.material:[o.material]; mats.forEach(injectGlass); } });
+    thumbScene.add(m);
+    thumbRenderer.render(thumbScene, thumbCam); // 第一次编译 shader
+    syncUniformsOf(m, thumbRes);               // 注入当前色卡/粒子
+    thumbRenderer.render(thumbScene, thumbCam); // 第二次应用炫彩
+    const canvas = cell.querySelector('canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, 120, 120);
+    ctx.drawImage(thumbRenderer.domElement, 0, 0, 120, 120);
+    thumbScene.remove(m);
+    disposeModel(m);
+    cell.dataset.done = '1';
+  }, undefined, err => { cell.dataset.done = '1'; });
+}
+document.getElementById('wallView').onscroll = () => {
+  clearTimeout(window.__thumbScrollT);
+  window.__thumbScrollT = setTimeout(renderVisibleThumbs, 80);
+};
+window.SPIRITS = SPIRITS;
+window.setFilter = setFilter;
+window.selectCard = selectCard;
+window.selectParticle = selectParticle;
+window.toggleWallView = toggleWallView;
+
+// ---------- 事件 ----------
+document.getElementById('file').onchange = e => {
+  const f = e.target.files[0]; if (f) loadModel(URL.createObjectURL(f), f.name);
+};
+document.getElementById('clipSel').onchange = e => { playClip(parseInt(e.target.value, 10)); };
+document.getElementById('btnPause').onclick = () => setPaused(!paused);
+document.getElementById('btnShot').onclick = () => downloadShot();
+document.getElementById('btnWall').onclick = () => toggleWallView();
+document.getElementById('packBase').value = (PACK_BASE === 'packs') ? '' : PACK_BASE;
+document.getElementById('btnPackBase').onclick = () => {
+  const v = document.getElementById('packBase').value.trim();
+  PACK_BASE = v || 'packs';
+  localStorage.setItem('pet3d_pack_base', PACK_BASE);
+  loadIndex();
+};
+stage.addEventListener('dragover', e => { e.preventDefault(); stage.classList.add('dragover'); });
+stage.addEventListener('dragleave', () => stage.classList.remove('dragover'));
+stage.addEventListener('drop', e => {
+  e.preventDefault(); stage.classList.remove('dragover');
+  const f = e.dataTransfer.files[0];
+  if (f && /\.glb$|\.gltf$/i.test(f.name)) loadModel(URL.createObjectURL(f), f.name);
+});
+
+// ---------- 渲染循环 ----------
+function resize(){
+  const w = stage.clientWidth, h = stage.clientHeight || 540;
+  renderer.setSize(w, h, false);
+  camera.aspect = w / h; camera.updateProjectionMatrix();
+  state.resolution.set(w * renderer.getPixelRatio(), h * renderer.getPixelRatio());
+}
+new ResizeObserver(resize).observe(stage);
+resize();
+
+const clock = new THREE.Clock();
+renderer.setAnimationLoop(() => {
+  const dt = clock.getDelta();
+  state.time += dt;
+  if (mixer) mixer.update(dt);
+  if (document.getElementById('autoRot').checked && currentModel) currentModel.rotation.y += dt * 0.35;
+  controls.update();
+  renderer.render(scene, camera);
+});
+
+buildSwatches();
+buildHidden();
+buildParts();
+window.__pet3d = { state, loadModel, scene };
+</script>
+</body>
+</html>
