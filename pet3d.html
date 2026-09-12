@@ -102,8 +102,9 @@
     </div>
     <div class="row" style="margin-top:6px;gap:6px;flex-wrap:wrap;align-items:center">
       <span style="color:#8f96b3;font-size:12px">快速切换：</span>
-      <button class="btn ghost preset-source" data-url="https://cdn.jsdelivr.net/gh/asdfghjkl0828/pet3d-models@main/packs">jsDelivr 镜像</button>
       <button class="btn ghost preset-source" data-url="https://raw.githubusercontent.com/asdfghjkl0828/pet3d-models/main/packs">GitHub raw</button>
+      <button class="btn ghost preset-source" data-url="https://cdn.jsdelivr.net/gh/asdfghjkl0828/pet3d-models@main/packs">jsDelivr 镜像</button>
+      <button class="btn ghost preset-source" data-url="https://gh-proxy.com/https://raw.githubusercontent.com/asdfghjkl0828/pet3d-models/main/packs">gh-proxy 镜像</button>
       <button class="btn ghost preset-source" data-url="packs">本地 packs</button>
     </div>
   </div>
@@ -457,11 +458,12 @@ let FILTER = 'all';
 let curCard = null;      // 正卡：普通色卡 id；隐藏色卡：-id
 let currentSpirit = null;
 
-// 模型源：默认 jsDelivr 镜像（国内更稳、CORS 全），失败时回退 GitHub raw / 本地 packs
-const DEFAULT_PACK_BASE = 'https://cdn.jsdelivr.net/gh/asdfghjkl0828/pet3d-models@main/packs';
+// 模型源：默认 GitHub raw（用户有 Steam++，raw 可达），失败时回退 jsDelivr / gh-proxy / 本地 packs
+const DEFAULT_PACK_BASE = 'https://raw.githubusercontent.com/asdfghjkl0828/pet3d-models/main/packs';
 const SOURCE_PRESETS = [
-  { name: 'jsDelivr 镜像', url: DEFAULT_PACK_BASE },
-  { name: 'GitHub raw', url: 'https://raw.githubusercontent.com/asdfghjkl0828/pet3d-models/main/packs' },
+  { name: 'GitHub raw', url: DEFAULT_PACK_BASE },
+  { name: 'jsDelivr 镜像', url: 'https://cdn.jsdelivr.net/gh/asdfghjkl0828/pet3d-models@main/packs' },
+  { name: 'gh-proxy 镜像', url: 'https://gh-proxy.com/https://raw.githubusercontent.com/asdfghjkl0828/pet3d-models/main/packs' },
   { name: '本地 packs', url: 'packs' }
 ];
 let PACK_BASE = (localStorage.getItem('pet3d_pack_base') || DEFAULT_PACK_BASE).trim() || DEFAULT_PACK_BASE;
@@ -481,8 +483,13 @@ function applyIndex(list){
   sel.onchange = () => { if (sel.value) loadModel(sel.value, sel.options[sel.selectedIndex].text); };
   buildSpiritList();
 }
+function fetchWithTimeout(url, ms = 8000) {
+  const c = new AbortController();
+  const t = setTimeout(() => c.abort(), ms);
+  return fetch(url, { cache: 'no-store', signal: c.signal }).finally(() => clearTimeout(t));
+}
 async function tryLoadIndexFrom(base){
-  const r = await fetch(resolveIndexUrl(base), {cache: 'no-store'});
+  const r = await fetchWithTimeout(resolveIndexUrl(base), 8000);
   if (!r.ok) throw new Error('HTTP ' + r.status);
   return await r.json();
 }
