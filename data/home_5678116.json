@@ -1,6 +1,6 @@
 {
  "uid": "5678116",
- "fetched_at": "2026-09-12T05:42:03Z",
+ "fetched_at": "2026-09-12T10:38:41Z",
  "source": "rocodex.org (免费)",
  "quota_remaining": 2,
  "from_cache": false,
@@ -9,7 +9,7 @@
   "homeName": "牢大",
   "roomLevel": 5,
   "homeLevel": 25,
-  "homeExperience": 1206359,
+  "homeExperience": 1208909,
   "comfortLevel": 75855,
   "residentPetCount": 11,
   "guardianPetName": "",
@@ -63,7 +63,7 @@
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 2,
+    "feedRound": 3,
     "status": 1701,
     "statusText": "状态 1701",
     "icon": "/images/spirits/3070/image.png"
@@ -95,7 +95,7 @@
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 2,
+    "feedRound": 3,
     "status": 1701,
     "statusText": "状态 1701",
     "icon": "/images/spirits/3070/image.png"
@@ -199,9 +199,9 @@
   ],
   "plants": [],
   "meta": {
-   "taskId": "tsk_dld3j565ev18_irp",
-   "createdAt": "2026-09-12T05:42:00.132Z",
-   "finishedAt": "2026-09-12T05:42:01.171Z"
+   "taskId": "tsk_dld9uadrcg3w_p1p",
+   "createdAt": "2026-09-12T10:38:40.141Z",
+   "finishedAt": "2026-09-12T10:38:41.200Z"
   }
  }
 }
