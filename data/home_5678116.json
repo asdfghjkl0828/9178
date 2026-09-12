@@ -1,6 +1,6 @@
 {
  "uid": "5678116",
- "fetched_at": "2026-09-12T01:03:31Z",
+ "fetched_at": "2026-09-12T05:42:03Z",
  "source": "rocodex.org (免费)",
  "quota_remaining": 2,
  "from_cache": false,
@@ -20,6 +20,22 @@
    "startedAt": null
   },
   "pets": [
+   {
+    "id": 3122,
+    "gid": 66091,
+    "name": "帽兜娃娃",
+    "defaultName": "帽兜娃娃",
+    "level": 60,
+    "gender": 2,
+    "genderText": "雌性",
+    "energy": 10,
+    "mutationName": "异色炫彩",
+    "haveEgg": false,
+    "feedRound": 1,
+    "status": 1701,
+    "statusText": "状态 1701",
+    "icon": "/images/spirits/3122/image.png"
+   },
    {
     "id": 3032,
     "gid": 53205,
@@ -149,38 +165,6 @@
     "icon": "/images/spirits/3071/image.png"
    },
    {
-    "id": 3007,
-    "gid": 78452,
-    "name": "魔力猫",
-    "defaultName": "魔力猫",
-    "level": 60,
-    "gender": 1,
-    "genderText": "雄性",
-    "energy": 10,
-    "mutationName": "普通",
-    "haveEgg": false,
-    "feedRound": 2,
-    "status": 1701,
-    "statusText": "状态 1701",
-    "icon": "/images/spirits/3007/image.png"
-   },
-   {
-    "id": 3122,
-    "gid": 66091,
-    "name": "帽兜娃娃",
-    "defaultName": "帽兜娃娃",
-    "level": 60,
-    "gender": 2,
-    "genderText": "雌性",
-    "energy": 10,
-    "mutationName": "异色炫彩",
-    "haveEgg": false,
-    "feedRound": 1,
-    "status": 1701,
-    "statusText": "状态 1701",
-    "icon": "/images/spirits/3122/image.png"
-   },
-   {
     "id": 3121,
     "gid": 54509,
     "name": "大耳帽兜",
@@ -195,13 +179,29 @@
     "status": 1701,
     "statusText": "状态 1701",
     "icon": "/images/spirits/3121/image.png"
+   },
+   {
+    "id": 3007,
+    "gid": 78452,
+    "name": "魔力猫",
+    "defaultName": "魔力猫",
+    "level": 60,
+    "gender": 1,
+    "genderText": "雄性",
+    "energy": 10,
+    "mutationName": "普通",
+    "haveEgg": false,
+    "feedRound": 2,
+    "status": 1701,
+    "statusText": "状态 1701",
+    "icon": "/images/spirits/3007/image.png"
    }
   ],
   "plants": [],
   "meta": {
-   "taskId": "tsk_dlcxlwiy1n5j_ciu",
-   "createdAt": "2026-09-12T01:03:29.747Z",
-   "finishedAt": "2026-09-12T01:03:30.835Z"
+   "taskId": "tsk_dld3j565ev18_irp",
+   "createdAt": "2026-09-12T05:42:00.132Z",
+   "finishedAt": "2026-09-12T05:42:01.171Z"
   }
  }
 }
