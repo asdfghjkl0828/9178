@@ -97,7 +97,7 @@
       <span class="meta" id="loadMeta">未载入模型</span>
     </div>
     <div class="row" style="margin-top:8px">
-      <input id="packBase" type="text" placeholder="模型源地址（留空=packs/；可填远程 URL，如 http://127.0.0.1:18917/packs）" style="flex:1;min-width:220px">
+      <input id="packBase" type="text" placeholder="模型源地址（默认=GitHub 远程仓库；可改本地 packs/ 或更快镜像，如 https://gh-proxy.com/https://raw.githubusercontent.com/...）" style="flex:1;min-width:220px">
       <button class="btn ghost" id="btnPackBase">应用模型源</button>
     </div>
   </div>
@@ -451,8 +451,9 @@ let FILTER = 'all';
 let curCard = null;      // 正卡：普通色卡 id；隐藏色卡：-id
 let currentSpirit = null;
 
-// 模型源：默认相对 packs/；网站版可粘贴远程地址（如 http://127.0.0.1:18917/packs 或 R2 桶 URL）
-let PACK_BASE = (localStorage.getItem('pet3d_pack_base') || 'packs').trim() || 'packs';
+// 模型源：默认远程 GitHub raw 仓库（全图鉴 1.3GB 模型库，开箱即用）；可改为本地 packs/ 或更快镜像
+const DEFAULT_PACK_BASE = 'https://raw.githubusercontent.com/asdfghjkl0828/pet3d-models/main/packs';
+let PACK_BASE = (localStorage.getItem('pet3d_pack_base') || DEFAULT_PACK_BASE).trim() || DEFAULT_PACK_BASE;
 function resolveGlb(glb){
   if (!glb) return glb;
   if (/^(https?|blob|data):/i.test(glb)) return glb;   // 绝对地址（远程/本机文件/blob）原样返回
