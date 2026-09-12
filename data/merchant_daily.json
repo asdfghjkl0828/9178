@@ -1,11 +1,38 @@
 {
-  "date": "2026-09-11",
-  "updated_at": "2026-09-11T20:47:27.779846+08:00",
-  "server_now": 1789130847,
-  "active_round": "20:00-24:00",
+  "date": "2026-09-12",
+  "updated_at": "2026-09-12T12:27:22.505410+08:00",
+  "server_now": 1789187242,
+  "active_round": "12:00-16:00",
   "rounds": {
     "1": {
       "label": "08:00-12:00",
+      "items": [
+        {
+          "name": "暗星球",
+          "price": "3000",
+          "limit": "200",
+          "desc": "更适合用来捕捉幽系、恶系精灵。 爱捉弄的球，喜欢偷袭精灵。",
+          "type": "特制咕噜球",
+          "high_value": false,
+          "recommend": true,
+          "remain": "11小时32分钟",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/5/5a/hif6470l7ojdexwm72t9brp0f0x3h4x.png/100px-Img_daodanqiu.png"
+        },
+        {
+          "name": "奇异血脉秘药",
+          "price": "16w",
+          "limit": "3",
+          "desc": "修改血脉的秘药，使精灵获得“奇异血脉”。",
+          "type": "血脉修改道具",
+          "high_value": false,
+          "recommend": false,
+          "remain": "已结束",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/a/ab/eg7zj03u487p1l3f91z499w1nxdzac1.png/100px-Xuemai_qiyixuemai.png"
+        }
+      ]
+    },
+    "2": {
+      "label": "12:00-16:00",
       "items": [
         {
           "name": "黑晶琉璃",
@@ -15,111 +42,30 @@
           "type": "炼金材料",
           "high_value": false,
           "recommend": true,
-          "remain": "已结束",
+          "remain": "3小时32分钟",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/b/bc/khe20j8lwkt1bg9g4b0gbnsff48g93c.png/100px-100628.png"
         },
         {
-          "name": "暗星球",
-          "price": "3000",
-          "limit": "200",
-          "desc": "更适合用来捕捉幽系、恶系精灵。 爱捉弄的球，喜欢偷袭精灵。",
-          "type": "特制咕噜球",
-          "high_value": false,
-          "recommend": true,
-          "remain": "3小时12分钟",
-          "image": "https://patchwiki.biligame.com/images/rocom/thumb/5/5a/hif6470l7ojdexwm72t9brp0f0x3h4x.png/100px-Img_daodanqiu.png"
-        },
-        {
-          "name": "魔力果",
-          "price": "6000",
-          "limit": "20",
-          "desc": "不太常见的果实，精灵食用后获得能力提升。 “精灵食物营养科的研究总是不见进展，这么多年了精灵还在吃果子。”",
-          "type": "精灵喂养材料",
-          "high_value": false,
-          "recommend": false,
-          "remain": "已结束",
-          "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c6/5qe6rcdtfxe1gsrvgj3lrn033athx9p.png/100px-100668.png"
-        },
-        {
-          "name": "神奇的蛋",
-          "price": "36000",
-          "limit": "5",
-          "desc": "蕴含着难以捉摸的魔力，不知道可以孵化出哪种精灵。",
-          "type": "精灵蛋",
-          "high_value": false,
-          "recommend": false,
-          "remain": "已结束",
-          "image": "//img.71acg.net/whd~hykb/comm/hd_admin_upload_2982_5390e1a946446e64d929ad89a3ad3eed.png"
-        }
-      ]
-    },
-    "2": {
-      "label": "12:00-16:00",
-      "items": [
-        {
-          "name": "水系粉尘",
+          "name": "恶系粉尘",
           "price": "500",
           "limit": "100",
-          "desc": "常见的炼金材料，蕴含少量水系魔法，是合成技能石的主要触媒。",
+          "desc": "常见的炼金材料，蕴含少量恶系魔法，是合成技能石的主要触媒。",
           "type": "炼金材料",
           "high_value": false,
           "recommend": false,
-          "remain": "已结束",
-          "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c7/4fxef31uslze9psd9375td9zbqtbllv.png/100px-100123.png"
-        }
-      ]
-    },
-    "3": {
-      "label": "16:00-20:00",
-      "items": [
-        {
-          "name": "蓝晶碧玺",
-          "price": "1000",
-          "limit": "100",
-          "desc": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 某些晶石蜗会产出珍贵的粉蓝色碧玺，为此商人翻着花样研究晶石蜗的食谱喜好。",
-          "type": "炼金材料",
-          "high_value": false,
-          "recommend": true,
-          "remain": "已结束",
-          "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c5/k8wzdzechd88qs9bxuvcnyg0pv4tzl4.png/100px-100681.png"
-        }
-      ]
-    },
-    "4": {
-      "label": "20:00-24:00",
-      "items": [
-        {
-          "name": "蓝晶碧玺",
-          "price": "1000",
-          "limit": "100",
-          "desc": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 某些晶石蜗会产出珍贵的粉蓝色碧玺，为此商人翻着花样研究晶石蜗的食谱喜好。",
-          "type": "炼金材料",
-          "high_value": false,
-          "recommend": true,
-          "remain": "3小时12分钟",
-          "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c5/k8wzdzechd88qs9bxuvcnyg0pv4tzl4.png/100px-100681.png"
+          "remain": "3小时32分钟",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/e/ec/mbugzr13ol6m9ay5focjw9kctt14g5h.png/100px-100125.png"
         },
         {
-          "name": "魔力果",
-          "price": "6000",
-          "limit": "20",
-          "desc": "不太常见的果实，精灵食用后获得能力提升。 “精灵食物营养科的研究总是不见进展，这么多年了精灵还在吃果子。”",
-          "type": "精灵喂养材料",
-          "high_value": false,
-          "recommend": false,
-          "remain": "3小时12分钟",
-          "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c6/5qe6rcdtfxe1gsrvgj3lrn033athx9p.png/100px-100668.png"
-        },
-        {
-          "name": "草系粉尘",
+          "name": "幻系粉尘",
           "price": "500",
           "limit": "100",
-          "desc": "常见的炼金材料，蕴含少量草系魔法，是合成技能石的主要触媒。",
+          "desc": "常见的炼金材料，蕴含少量幻系魔法，是合成技能石的主要触媒。",
           "type": "炼金材料",
           "high_value": false,
           "recommend": false,
-          "remain": "3小时12分钟",
-          "image": "https://patchwiki.biligame.com/images/rocom/thumb/3/32/2k88qbruf464xxyf02grnmkvun59h0c.png/100px-100121.png"
+          "remain": "3小时32分钟",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/24/sgt0lc5llwfvlcmjhr1awhwq6st35fj.png/100px-100139.png"
         }
       ]
     }
