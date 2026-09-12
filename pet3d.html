@@ -97,8 +97,14 @@
       <span class="meta" id="loadMeta">未载入模型</span>
     </div>
     <div class="row" style="margin-top:8px">
-      <input id="packBase" type="text" placeholder="模型源地址（默认=GitHub 远程仓库；可改本地 packs/ 或更快镜像，如 https://gh-proxy.com/https://raw.githubusercontent.com/...）" style="flex:1;min-width:220px">
+      <input id="packBase" type="text" placeholder="模型源地址（默认=GitHub 远程仓库；可改本地 packs/ 或更快镜像）" style="flex:1;min-width:220px">
       <button class="btn ghost" id="btnPackBase">应用模型源</button>
+    </div>
+    <div class="row" style="margin-top:6px;gap:6px;flex-wrap:wrap;align-items:center">
+      <span style="color:#8f96b3;font-size:12px">快速切换：</span>
+      <button class="btn ghost preset-source" data-url="https://raw.githubusercontent.com/asdfghjkl0828/pet3d-models/main/packs">GitHub raw</button>
+      <button class="btn ghost preset-source" data-url="https://cdn.jsdelivr.net/gh/asdfghjkl0828/pet3d-models@main/packs">jsDelivr 镜像</button>
+      <button class="btn ghost preset-source" data-url="packs">本地 packs</button>
     </div>
   </div>
 
@@ -451,16 +457,22 @@ let FILTER = 'all';
 let curCard = null;      // 正卡：普通色卡 id；隐藏色卡：-id
 let currentSpirit = null;
 
-// 模型源：默认远程 GitHub raw 仓库（全图鉴 1.3GB 模型库，开箱即用）；可改为本地 packs/ 或更快镜像
+// 模型源：默认 GitHub raw，失败时自动回退 jsDelivr 镜像 / 本地 packs
 const DEFAULT_PACK_BASE = 'https://raw.githubusercontent.com/asdfghjkl0828/pet3d-models/main/packs';
+const SOURCE_PRESETS = [
+  { name: 'GitHub raw', url: DEFAULT_PACK_BASE },
+  { name: 'jsDelivr 镜像', url: 'https://cdn.jsdelivr.net/gh/asdfghjkl0828/pet3d-models@main/packs' },
+  { name: '本地 packs', url: 'packs' }
+];
 let PACK_BASE = (localStorage.getItem('pet3d_pack_base') || DEFAULT_PACK_BASE).trim() || DEFAULT_PACK_BASE;
-function resolveGlb(glb){
+function resolveGlb(glb, base){
+  base = base || PACK_BASE;
   if (!glb) return glb;
   if (/^(https?|blob|data):/i.test(glb)) return glb;   // 绝对地址（远程/本机文件/blob）原样返回
   const rest = glb.replace(/^packs\//, '');   // 去掉 packs/ 前缀，保留子目录结构
-  return PACK_BASE.replace(/\/+$/, '') + '/' + rest;
+  return base.replace(/\/+$/, '') + '/' + rest;
 }
-function resolveIndexUrl(){ return PACK_BASE.replace(/\/+$/, '') + '/index.json'; }
+function resolveIndexUrl(base){ return (base || PACK_BASE).replace(/\/+$/, '') + '/index.json'; }
 function applyIndex(list){
   list.forEach(p => { if (p.sid != null) INDEX[Number(p.sid)] = p; });
   const sel = document.getElementById('packSel');
@@ -469,17 +481,32 @@ function applyIndex(list){
   sel.onchange = () => { if (sel.value) loadModel(sel.value, sel.options[sel.selectedIndex].text); };
   buildSpiritList();
 }
+async function tryLoadIndexFrom(base){
+  const r = await fetch(resolveIndexUrl(base), {cache: 'no-store'});
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  return await r.json();
+}
 function loadIndex(){
-  document.getElementById('spNote').textContent = '正在从 ' + PACK_BASE + ' 加载模型索引…';
-  fetch(resolveIndexUrl(), {cache: 'no-store'})
-    .then(r => r.ok ? r.json() : Promise.reject(new Error('HTTP ' + r.status)))
-    .then(applyIndex)
-    .catch(err => {
-      console.error('[pet3d] 模型索引加载失败:', err);
-      document.getElementById('spNote').innerHTML = '⚠ 模型索引加载失败（' + (err && err.message || err) +
-        '）。可在此粘贴本机/远程「模型源地址」后点「应用模型源」，或直接用上方「选 .glb」按钮。';
-      buildSpiritList();
-    });
+  document.getElementById('spNote').textContent = '正在加载模型索引…';
+  const candidates = [PACK_BASE, ...SOURCE_PRESETS.map(s => s.url).filter(u => u !== PACK_BASE)];
+  (async () => {
+    let lastErr = null;
+    for (const base of candidates) {
+      try {
+        const list = await tryLoadIndexFrom(base);
+        PACK_BASE = base;
+        localStorage.setItem('pet3d_pack_base', PACK_BASE);
+        document.getElementById('packBase').value = (PACK_BASE === 'packs') ? '' : PACK_BASE;
+        document.getElementById('spNote').textContent = '正在从 ' + PACK_BASE + ' 加载模型索引…';
+        applyIndex(list);
+        return;
+      } catch (e) { lastErr = e; console.log('[pet3d] source failed:', base, e.message); }
+    }
+    console.error('[pet3d] 模型索引加载失败:', lastErr);
+    document.getElementById('spNote').innerHTML = '⚠ 所有模型源均加载失败（' + (lastErr && lastErr.message || lastErr) +
+      '）。可在此粘贴本机/远程「模型源地址」后点「应用模型源」，或直接用上方「选 .glb」按钮。';
+    buildSpiritList();
+  })();
 }
 loadIndex();
 
@@ -697,6 +724,12 @@ document.getElementById('btnPackBase').onclick = () => {
   localStorage.setItem('pet3d_pack_base', PACK_BASE);
   loadIndex();
 };
+document.querySelectorAll('.preset-source').forEach(btn => {
+  btn.onclick = () => {
+    document.getElementById('packBase').value = (btn.dataset.url === 'packs') ? '' : btn.dataset.url;
+    document.getElementById('btnPackBase').click();
+  };
+});
 stage.addEventListener('dragover', e => { e.preventDefault(); stage.classList.add('dragover'); });
 stage.addEventListener('dragleave', () => stage.classList.remove('dragover'));
 stage.addEventListener('drop', e => {
