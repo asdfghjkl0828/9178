@@ -194,6 +194,8 @@ const stage = document.getElementById('stage');
 const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true, preserveDrawingBuffer:true });
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
 stage.appendChild(renderer.domElement);
 
 const scene = new THREE.Scene();
@@ -354,10 +356,11 @@ if (uGlassOn > 0.5) {
   float amt  = mix(0.35, 0.85, fres) * uGlassAmt;
   amt = clamp(amt, 0.0, 0.92);
   vec3 col   = mix(gl_FragColor.rgb, sheen, amt);
-  // 表面附着闪片（菲涅尔边缘更亮、偏白光）
-  float sc = 55.0 + uSparkle * 18.0;
-  float sp = hash13(floor(vWPos * sc) + floor(uTime * 1.2));
-  col += step(0.996, sp) * (irid * 0.35 + 0.45) * fres * 1.1 * uSparkScale;
+  // 表面附着闪片：柔和抗锯齿的虹彩微光（仅掠射边缘更亮），取代硬边白点，避免"贴纸亮片"感
+  float sc = 60.0 + uSparkle * 16.0;
+  float sp = hash13(floor(vWPos * sc) + floor(uTime * 0.9));
+  float fleck = smoothstep(0.978, 0.997, sp);
+  col += fleck * (irid * 0.6 + 0.4) * fres * 0.8 * uSparkScale;
   gl_FragColor.rgb = col;
 }`);
   };
@@ -735,6 +738,8 @@ function ensureThumbRenderer(){
   thumbRenderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
   thumbRenderer.setSize(120, 120, false);
   thumbRenderer.outputColorSpace = THREE.SRGBColorSpace;
+  thumbRenderer.toneMapping = THREE.ACESFilmicToneMapping;
+  thumbRenderer.toneMappingExposure = 1.05;
   thumbScene = new THREE.Scene();
   thumbScene.background = new THREE.Color(0x0b0d14);
   thumbCam = new THREE.PerspectiveCamera(38, 1, 0.01, 1000);
