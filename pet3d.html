@@ -263,26 +263,25 @@ for (const id of Object.keys(PARTICLE_TEX)) starTex[id] = loadTex(PARTICLE_TEX[i
 const state = { glass:false, card:null, particle:1, resolution:new THREE.Vector2(1,1), time:0, spirit:null };
 let mixer = null, clips = [], currentModel = null;
 
-// ---------- 炫彩可调参数（URL 查询驱动，便于对比预设 / 真机微调） ----------
-// 用法示例：pet3d.html?spirit=迪莫&irid=1.6&filmMin=280&filmMax=760&filmIOR=1.4&filmFreq=3&amt=0.8&metal=0.65&rough=0.28&spark=1.2&theme=0.2
-//   irid    虹彩亮度增益(0.6~2.2)   amt   整体虹彩混合强度(0.3~0.95)
-//   filmMin/filmMax 薄膜厚度 nm(200~900)   filmIOR 薄膜折射率(1.2~1.8)   filmFreq 彩虹条纹空间频率(1~6)
-//   metal 炫彩时金属度(0~1) rough 炫彩时粗糙度(0~1)  env 环境反射强度
-//   spark 闪片强度(0~3)     theme 主题色染色占比(0~0.6)     sat 虹彩饱和度(0.3~1.2，低=珠光去霓虹/高=鲜艳)
+// ---------- 炫彩可调参数（URL 查询驱动） ----------
+// ⚠️ 炫彩"配色"固定取自 data/chroma_cards.js 的指定色卡（mat_color_1/2，游戏真实配色，含 HDR 发光通道）
+//   选色卡即定色；下方滑块只调"强度/流动/饱和/闪片/材质"，不再自创彩虹。
+//   irid 炫彩亮度增益(0.6~2.2)  amt 混合强度(0.3~0.95)  filmFreq 流动频率(1~6)
+//   sat 饱和度(0.3~1.2，低=哑光珠光/高=鲜艳)  spark 闪片(0~3)  metal/rough/env 基础材质
 const _gp = new URLSearchParams(location.search);
 const _gnum = (k, d) => { const v = parseFloat(_gp.get(k)); return isNaN(v) ? d : v; };
 const GLASS = {
-  irid:    _gnum('irid', 1.4),
-  amt:     _gnum('amt', 0.72),
-  filmMin: _gnum('filmMin', 300.0),
+  irid:    _gnum('irid', 1.0),
+  amt:     _gnum('amt', 0.75),
+  filmMin: _gnum('filmMin', 300.0),   // 保留供 uniform plumbing（新版渐变已不用薄膜厚度）
   filmMax: _gnum('filmMax', 600.0),
   filmIOR: _gnum('filmIOR', 1.40),
-  filmFreq:_gnum('filmFreq', 2.3),
-  theme:   _gnum('theme', 0.20),
-  spark:   _gnum('spark', 0.5),
-  sat:     _gnum('sat', 0.80),
-  metal:   _gnum('metal', 0.64),
-  rough:   _gnum('rough', 0.28),
+  filmFreq:_gnum('filmFreq', 2.5),
+  theme:   _gnum('theme', 0.20),      // 保留供 uniform plumbing（新版渐变已不用主题染色）
+  spark:   _gnum('spark', 0.6),
+  sat:     _gnum('sat', 1.0),
+  metal:   _gnum('metal', 0.6),
+  rough:   _gnum('rough', 0.30),
   env:     _gnum('env', 1.50),
 };
 
@@ -299,15 +298,15 @@ function injectGlass(mat){
     shader.uniforms.uMatCol2  = { value: new THREE.Vector3(1,1,1) };
     shader.uniforms.uTime     = { value: 0 };
     shader.uniforms.uSparkle  = { value: 1 };
-    shader.uniforms.uIridAmt  = { value: 1.35 };
+    shader.uniforms.uIridAmt  = { value: 1.0 };
     shader.uniforms.uThemeMix = { value: 0.25 };
     shader.uniforms.uSparkScale = { value: 1.0 };
     shader.uniforms.uFilmMin  = { value: 280.0 };
     shader.uniforms.uFilmMax  = { value: 760.0 };
     shader.uniforms.uFilmIOR  = { value: 1.40 };
-    shader.uniforms.uFilmFreq = { value: 3.0 };
-    shader.uniforms.uGlassAmt = { value: 0.80 };
-    shader.uniforms.uSat = { value: 0.82 };
+    shader.uniforms.uFilmFreq = { value: 2.5 };
+    shader.uniforms.uGlassAmt = { value: 0.75 };
+    shader.uniforms.uSat = { value: 1.0 };
     mat.userData.shader = shader;
     // 首次编译即按当前状态初始化 uniform（解决“loadModel 时 onBeforeCompile 尚未触发、syncUniforms 跳过”的坑）
     const _cc = (state.glass && state.card) ? state.card : null;
@@ -336,7 +335,7 @@ varying vec3 vViewDir;`)
 vWPos = (modelMatrix * vec4(transformed, 1.0)).xyz;
 vViewDir = -mvPosition.xyz;`);
 
-    // 片元：薄膜干涉式虹彩（物理正确）+ 双主题色染色 + 表面附着闪片
+    // 片元：指定色卡双色 HDR 渐变（data/chroma_cards.js 的 mat_color_1/2）+ 清漆涂层 + 闪片
     shader.fragmentShader = shader.fragmentShader
       .replace('#include <common>', `#include <common>
 varying vec3 vWPos;
@@ -355,26 +354,11 @@ uniform float uFilmIOR;
 uniform float uFilmFreq;
 uniform float uGlassAmt;
 uniform float uSat;
-// 薄膜干涉：由光学程差 opd 驱动鲜艳彩虹条纹（视角 + 表面厚度决定相位）
+// 指定色卡双色 HDR 渐变（源自 data/chroma_cards.js 的 mat_color_1/2，即游戏真实炫彩配色）
 float hash13(vec3 p){
   p = fract(p * 0.3183099 + 0.1);
   p *= 17.0;
   return fract(p.x * p.y * p.z * (p.x + p.y + p.z));
-}
-// 可见光波长(nm)→RGB 近似（Bruton），用于真实光谱虹彩（油膜/珠光的高级感，非卡通三正弦）
-vec3 spectralColor(float wl){
-  wl = clamp(wl, 380.0, 750.0);
-  vec3 c;
-  if (wl < 440.0)      c = vec3(-(wl-440.0)/60.0, 0.0, 1.0);
-  else if (wl < 490.0) c = vec3(0.0, (wl-440.0)/50.0, 1.0);
-  else if (wl < 510.0) c = vec3(0.0, 1.0, -(wl-510.0)/20.0);
-  else if (wl < 580.0) c = vec3((wl-510.0)/70.0, 1.0, 0.0);
-  else if (wl < 645.0) c = vec3(1.0, -(wl-645.0)/65.0, 0.0);
-  else                 c = vec3(1.0, 0.0, 0.0);
-  float f = 1.0;
-  if (wl < 420.0)      f = 0.3 + 0.7 * (wl-380.0)/40.0;
-  else if (wl > 645.0) f = 0.3 + 0.7 * (750.0-wl)/105.0;
-  return clamp(c, 0.0, 1.0) * f;
 }`)
       .replace('#include <dithering_fragment>', `#include <dithering_fragment>
 if (uGlassOn > 0.5) {
@@ -382,33 +366,29 @@ if (uGlassOn > 0.5) {
   vec3 N = normalize(normal);
   float ndv  = clamp(dot(N, V), 0.0, 1.0);
   float fres = pow(1.0 - ndv, 3.0);
-  // 薄膜厚度随表面位置 + 时间缓慢流动 → 肥皂泡/油膜彩虹条纹
-  float band = sin(vWPos.y * uFilmFreq + vWPos.x * uFilmFreq * 0.5 + uTime * 0.30)
+  // 指定色卡双色 HDR 渐变（mat_color_1/2 含 >1 通道，制造发光炫彩）
+  vec3 cA = uMatCol1;
+  vec3 cB = uMatCol2;
+  // 渐变相位：表面位置 + 时间缓慢流动（保留"流动炫彩"高级感）
+  float flow = sin(vWPos.y * uFilmFreq + vWPos.x * uFilmFreq * 0.5 + uTime * 0.30)
              + 0.5 * sin(vWPos.z * uFilmFreq * 1.3 - uTime * 0.20);
-  float thickness = uFilmMin + (uFilmMax - uFilmMin) * clamp(0.5 + 0.5 * band * 0.6, 0.0, 1.0);
-  // 光学程差（nm）→ 真实肥皂泡式彩虹条纹（视角 + 厚度决定相位）
-  float opd = 2.0 * uFilmIOR * thickness * max(ndv, 0.2);
-  // 真实光谱虹彩：光程差→可见光波长（Bruton 近似），两阶混合更接近油膜/珠光，而非卡通三正弦
-  vec3 irid = spectralColor(mod(opd, 360.0) + 390.0);
-  irid = mix(irid, spectralColor(mod(opd * 1.37, 360.0) + 390.0), 0.35);
-  irid = pow(clamp(irid, 0.0, 1.0), vec3(0.85));   // 轻微提亮中间调，保留层次
-  // 饱和度控制：低=珠光(去霓虹廉价感)，高=鲜艳；默认 0.82 偏珠光
+  float t = clamp(0.5 + 0.5 * flow * 0.6, 0.0, 1.0);
+  t = mix(t, fres, 0.35);                        // 掠射偏 cB、正对偏 cA，形成炫彩涂层
+  vec3 irid = mix(cA, cB, t) * uIridAmt;         // 指定色卡渐变（HDR）
+  // 饱和度微调：低=更哑光珠光，高=鲜艳（默认 1.0 忠实指定色）
   float _lum = dot(irid, vec3(0.299, 0.587, 0.114));
   irid = mix(vec3(_lum), irid, uSat);
-  vec3 theme = mix(uMatCol1, uMatCol2, ndv);
-  vec3 tint  = mix(vec3(1.0), theme, uThemeMix);
-  vec3 iridT = irid * tint * uIridAmt;       // 染色后的虹彩
-  vec3 base  = gl_FragColor.rgb;
-  // (1) 表面染色：按 fresnel 加权——正面更中性(像真实物体)，掠射角才显彩虹，不像平涂玩具
-  float surfW = clamp(uGlassAmt * 0.6, 0.0, 0.95) * (0.25 + 0.75 * fres);
-  vec3 col = base * mix(vec3(1.0), 0.8 + 0.3 * iridT, surfW);
-  // (2) 薄膜"清漆"反光：掠射角(fresnel)叠加虹彩镜面，模拟真实油膜/珠光涂层高光（干涉作用于反射，而非漫反射）
-  float coat = fres * uGlassAmt * uIridAmt * 1.0;
-  col += iridT * coat;
-  // (2b) 清漆镜面高光（湿亮上光漆感）：锐利 fresnel 白点，叠加在虹彩之上有真实"打蜡"光泽
+  vec3 base = gl_FragColor.rgb;
+  // (1) 表面换色：原色 → 炫彩渐变，按 fresnel 加权（正对留原色轮廓，掠射显炫彩）
+  float surfW = clamp(uGlassAmt * 0.7, 0.0, 0.95) * (0.3 + 0.7 * fres);
+  vec3 col = mix(base, irid, surfW);
+  // (2) 炫彩清漆反光：掠射角叠加指定色镜面
+  float coat = fres * uGlassAmt * uIridAmt * 0.6;
+  col += irid * coat;
+  // (2b) 锐利镜面高光（打蜡光泽）
   float gloss = pow(1.0 - ndv, 8.0);
-  col += mix(vec3(1.0), iridT, 0.35) * gloss * uGlassAmt * 0.25;
-  // (3) 柔和闪片：抗锯齿虹彩微光，仅掠射更亮，取代硬边白点
+  col += mix(vec3(1.0), irid, 0.4) * gloss * uGlassAmt * 0.2;
+  // (3) 柔和闪片
   float sc = 60.0 + uSparkle * 16.0;
   float sp = hash13(floor(vWPos * sc) + floor(uTime * 0.9));
   float fleck = smoothstep(0.978, 0.997, sp);
@@ -930,19 +910,18 @@ document.querySelectorAll('.preset-source').forEach(btn => {
 
 // ---------- 炫彩材质实时微调（滑块 + A/B/C 预设） ----------
 const IRID_PRESETS = {
-  A: {irid:1.9, amt:0.92, filmMin:200, filmMax:820, filmIOR:1.42, filmFreq:2.5, metal:0.5, rough:0.16, spark:0.6, theme:0.12, sat:0.9},
-  B: {irid:1.35, amt:0.80, filmMin:280, filmMax:760, filmIOR:1.40, filmFreq:3.0, metal:0.62, rough:0.28, spark:1.0, theme:0.25, sat:0.82},
-  C: {irid:1.2, amt:0.70, filmMin:320, filmMax:700, filmIOR:1.45, filmFreq:4.0, metal:0.88, rough:0.34, spark:2.6, theme:0.42, sat:0.95},
+  A: {irid:1.2, amt:0.85, filmFreq:3.0, metal:0.6, rough:0.28, spark:0.8, sat:1.1},
+  B: {irid:1.0, amt:0.75, filmFreq:2.5, metal:0.6, rough:0.30, spark:0.6, sat:1.0},
+  C: {irid:0.85, amt:0.60, filmFreq:2.0, metal:0.45, rough:0.40, spark:0.4, sat:0.7},
 };
 const IRID_SLIDERS = [
-  {k:'irid',label:'虹彩亮度',min:0.6,max:2.2,step:0.05},
+  {k:'irid',label:'炫彩亮度',min:0.6,max:2.2,step:0.05},
   {k:'amt',label:'混合强度',min:0.3,max:0.95,step:0.01},
-  {k:'filmFreq',label:'彩虹频率',min:1,max:6,step:0.1},
-  {k:'sat',label:'虹彩饱和',min:0.3,max:1.2,step:0.02},
+  {k:'filmFreq',label:'流动频率',min:1,max:6,step:0.1},
+  {k:'sat',label:'饱和度',min:0.3,max:1.2,step:0.02},
   {k:'metal',label:'金属度',min:0,max:1,step:0.02},
   {k:'rough',label:'粗糙度',min:0,max:1,step:0.02},
   {k:'spark',label:'闪片强度',min:0,max:3,step:0.05},
-  {k:'theme',label:'主题染色',min:0,max:0.6,step:0.02},
 ];
 function buildIridSliders(){
   const box = document.getElementById('iridSliders'); box.innerHTML='';
@@ -970,17 +949,13 @@ document.getElementById('iridReset').onclick=()=>applyIridPreset('B');
 // 🎲 随机：在"好看区间"内随机一组炫彩参数，便于不想描述时直接试看
 function randomizeIrid(){
   const rnd = (a,b)=> a + Math.random()*(b-a);
-  GLASS.irid = +rnd(1.0,2.0).toFixed(2);
-  GLASS.amt  = +rnd(0.6,0.95).toFixed(2);
-  GLASS.filmMin = +rnd(200,400).toFixed(0);
-  GLASS.filmMax = +rnd(600,900).toFixed(0);
-  GLASS.filmIOR = +rnd(1.3,1.5).toFixed(2);
+  GLASS.irid = +rnd(0.8,1.6).toFixed(2);
+  GLASS.amt  = +rnd(0.55,0.9).toFixed(2);
   GLASS.filmFreq = +rnd(1.5,4.5).toFixed(1);
   GLASS.metal = +rnd(0.4,0.9).toFixed(2);
   GLASS.rough = +rnd(0.15,0.4).toFixed(2);
   GLASS.spark = +rnd(0.3,2.0).toFixed(2);
-  GLASS.theme = +rnd(0.1,0.45).toFixed(2);
-  GLASS.sat  = +rnd(0.6,1.0).toFixed(2);
+  GLASS.sat  = +rnd(0.7,1.1).toFixed(2);
   const rows=[...document.querySelectorAll('#iridSliders .row')];
   IRID_SLIDERS.forEach((s,i)=>{ if(rows[i]){ const inp=rows[i].querySelector('input'); const val=rows[i].querySelector('span:last-child'); inp.value=GLASS[s.k]; val.textContent=(+GLASS[s.k]).toFixed(2); } });
   document.querySelectorAll('.irid-pre').forEach(b=>b.classList.remove('on'));
@@ -990,7 +965,7 @@ document.getElementById('iridRand').onclick = randomizeIrid;
 // 把当前 GLASS 参数同步到地址栏（保留 spirit 等原有参数），便于复制链接精确复现
 function syncUrlFromGlass(){
   const p = new URLSearchParams(location.search);
-  for (const k of ['irid','amt','filmMin','filmMax','filmIOR','filmFreq','metal','rough','spark','theme','sat','env']) {
+  for (const k of ['irid','amt','filmFreq','metal','rough','spark','sat','env']) {
     if (GLASS[k] !== undefined) p.set(k, GLASS[k]);
   }
   const qs = p.toString();
