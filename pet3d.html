@@ -384,8 +384,9 @@ if (uGlassOn > 0.5) {
   vec3 tint  = mix(vec3(1.0), theme, uThemeMix);
   vec3 iridT = irid * tint * uIridAmt;       // 染色后的虹彩
   vec3 base  = gl_FragColor.rgb;
-  // (1) 表面染色：按比例把虹彩乘入受光色，保留模型自身体积明暗，不像贴纸平涂
-  vec3 col = base * mix(vec3(1.0), 0.55 + 0.75 * iridT, clamp(uGlassAmt * 0.6, 0.0, 0.95));
+  // (1) 表面染色：按 fresnel 加权——正面更中性(像真实物体)，掠射角才显彩虹，不像平涂玩具
+  float surfW = clamp(uGlassAmt * 0.6, 0.0, 0.95) * (0.25 + 0.75 * fres);
+  vec3 col = base * mix(vec3(1.0), 0.55 + 0.75 * iridT, surfW);
   // (2) 薄膜"清漆"反光：掠射角(fresnel)叠加虹彩镜面，模拟真实油膜/珠光涂层高光（干涉作用于反射，而非漫反射）
   float coat = fres * uGlassAmt * uIridAmt * 1.35;
   col += iridT * coat;
