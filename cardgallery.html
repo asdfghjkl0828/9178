@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>炫彩色卡 39 张 · 3D 校色画廊</title>
+<style>
+  :root{
+    --bg:#0a0d18; --card:#121624; --card2:#161b2c; --border:#222a40;
+    --text:#e8ecf6; --text2:#9aa3c0; --accent:#7c8cff;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; height:100%; background:var(--bg); color:var(--text);
+    font-family:-apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif; }
+  header{ display:flex; align-items:center; gap:12px; padding:12px 18px;
+    border-bottom:1px solid var(--border); background:linear-gradient(180deg,#10131f,#0a0d18); }
+  header h1{ font-size:17px; margin:0; }
+  header .tag{ font-size:12px; color:var(--text2); }
+  #toolbar{ position:sticky; top:0; z-index:20; display:flex; gap:14px; flex-wrap:wrap;
+    align-items:center; padding:10px 18px; background:rgba(12,15,24,.92);
+    border-bottom:1px solid var(--border); backdrop-filter:blur(6px); }
+  #toolbar .grp{ display:flex; align-items:center; gap:6px; font-size:12px; color:var(--text2); }
+  #toolbar input[type=range]{ width:96px; accent-color:var(--accent); }
+  #toolbar .val{ color:var(--text); min-width:34px; font-variant-numeric:tabular-nums; }
+  #toolbar button{ font-size:12px; padding:6px 11px; border-radius:8px; cursor:pointer;
+    border:1px solid var(--border); background:transparent; color:var(--text2); }
+  #toolbar button.on{ border-color:var(--accent); color:#fff; background:rgba(124,140,255,.16); }
+  #stage{ position:relative; width:100%; height:calc(100vh - 116px); overflow:hidden; }
+  #cv{ display:block; width:100%; height:100%; background:radial-gradient(120% 120% at 50% 0%,#141a2e 0%,#0a0d18 60%); }
+  #labels{ position:absolute; inset:0; pointer-events:none; }
+  .lbl{ position:absolute; transform:translate(-50%,-50%); pointer-events:auto; cursor:pointer;
+    text-align:center; font-size:10px; line-height:1.2; color:var(--text2);
+    text-shadow:0 1px 2px #000; white-space:nowrap; user-select:none;
+    background:rgba(10,13,24,.55); padding:2px 5px; border-radius:6px; border:1px solid rgba(255,255,255,.08); }
+  .lbl:hover{ background:rgba(20,25,40,.8); }
+  .lbl .no{ color:#fff; font-weight:600; }
+  .lbl.sel .no{ color:var(--accent); }
+  .lbl .sw{ display:inline-block; width:9px; height:9px; border-radius:2px; margin:0 1px;
+    border:1px solid rgba(255,255,255,.25); vertical-align:-1px; }
+  #help{ position:absolute; left:14px; bottom:12px; z-index:15; font-size:12px; color:var(--text2);
+    background:rgba(10,13,24,.6); padding:7px 11px; border-radius:8px; border:1px solid var(--border);
+    max-width:60%; line-height:1.6; }
+  #help b{ color:var(--text); }
+  #legend{ position:absolute; right:14px; top:12px; z-index:15; font-size:11px; color:var(--text2);
+    background:rgba(10,13,24,.6); padding:7px 11px; border-radius:8px; border:1px solid var(--border); }
+</style>
+<script src="data/chroma_cards.js?v=20260908a"></script>
+<script type="importmap">
+{ "imports": {
+    "three": "./vendor/three/three.module.js",
+    "three/addons/": "./vendor/three/",
+    "three/addons/postprocessing/": "https://gcore.jsdelivr.net/npm/three@0.160.0/examples/jsm/postprocessing/"
+} }
+</script>
+</head>
+<body>
+<header>
+  <h1>🎨 炫彩色卡 · 39 张 3D 校色画廊</h1>
+  <span class="tag">同款着色器逐张渲染 · 对比官方 UI 配色（色块）判断 3D 颜色是否一致</span>
+</header>
+
+<div id="toolbar">
+  <div class="grp">炫彩强度 <input id="s_irid" type="range" min="0" max="2" step="0.05" value="0.85"><span class="val" id="v_irid">0.85</span></div>
+  <div class="grp">涂层量 <input id="s_amt" type="range" min="0" max="1" step="0.05" value="0.75"><span class="val" id="v_amt">0.75</span></div>
+  <div class="grp">流动频率 <input id="s_filmFreq" type="range" min="0.5" max="6" step="0.1" value="2.5"><span class="val" id="v_filmFreq">2.5</span></div>
+  <div class="grp">饱和度 <input id="s_sat" type="range" min="0.3" max="1.5" step="0.05" value="1.0"><span class="val" id="v_sat">1.0</span></div>
+  <div class="grp">金属感 <input id="s_metal" type="range" min="0" max="1" step="0.05" value="0.6"><span class="val" id="v_metal">0.6</span></div>
+  <div class="grp">粗糙度 <input id="s_rough" type="range" min="0.05" max="0.9" step="0.05" value="0.30"><span class="val" id="v_rough">0.30</span></div>
+  <div class="grp">闪片 <input id="s_spark" type="range" min="0" max="1.5" step="0.05" value="0.6"><span class="val" id="v_spark">0.6</span></div>
+  <button id="bloomToggle" class="on">✨ 炫彩辉光</button>
+  <button id="resetView">↺ 全部视角</button>
+</div>
+
+<div id="stage">
+  <canvas id="cv"></canvas>
+  <div id="labels"></div>
+  <div id="legend">色块 = 官方 UI 配色（ui_color_1/2）<br>球体 = 同款 3D 着色器（mat_color_1/2）</div>
+  <div id="help"><b>拖动</b>旋转 · <b>滚轮</b>缩放 · <b>点击球</b>聚焦 · 右上面板调炫彩参数。</div>
+</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/OrbitControls.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+
+// ---------- 全局炫彩参数（与 pet3d GLASS 默认一致） ----------
+const GLASS = {
+  irid:0.85, amt:0.75, filmFreq:2.5, sat:1.0,
+  metal:0.6, rough:0.30, spark:0.6, env:1.50,
+  filmMin:280.0, filmMax:760.0, filmIOR:1.40, theme:0.20
+};
+
+const canvas = document.getElementById('cv');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias:true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.0;
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 200);
+camera.position.set(0, 0, 25);
+
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+
+// 打光（与 pet3d 一致）
+scene.add(new THREE.HemisphereLight(0xffffff, 0x334455, 1.5));
+const dir = new THREE.DirectionalLight(0xffffff, 1.4); dir.position.set(2, 4, 3); scene.add(dir);
+const rimL = new THREE.DirectionalLight(0x8fb4ff, 0.9); rimL.position.set(-3, 1.5, -4); scene.add(rimL);
+
+// 棚拍环境反射（与 pet3d 一致）
+function makeStudioEnv(){
+  const cvs = document.createElement('canvas'); cvs.width = 32; cvs.height = 128;
+  const ctx = cvs.getContext('2d');
+  const g = ctx.createLinearGradient(0, 0, 0, 128);
+  g.addColorStop(0.0, '#eef2ff');
+  g.addColorStop(0.18, '#ffffff');
+  g.addColorStop(0.30, '#9fb0e0');
+  g.addColorStop(0.55, '#46527a');
+  g.addColorStop(0.80, '#1e2742');
+  g.addColorStop(1.0, '#090d1b');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, 32, 128);
+  const tex = new THREE.CanvasTexture(cvs);
+  tex.mapping = THREE.EquirectangularReflectionMapping;
+  tex.colorSpace = THREE.SRGBColorSpace;
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  pmrem.compileEquirectangularShader();
+  const rt = pmrem.fromEquirectangular(tex);
+  tex.dispose(); pmrem.dispose();
+  return rt.texture;
+}
+scene.environment = makeStudioEnv();
+
+// ---------- 炫彩 shader 注入（与 pet3d 完全一致） ----------
+function injectGlass(mat){
+  if (mat.__glassInjected) return;
+  mat.__glassInjected = true;
+  mat.onBeforeCompile = (shader) => {
+    shader.uniforms.uGlassOn  = { value: 1 };
+    shader.uniforms.uMatCol1  = { value: new THREE.Vector3(1,1,1) };
+    shader.uniforms.uMatCol2  = { value: new THREE.Vector3(1,1,1) };
+    shader.uniforms.uTime     = { value: 0 };
+    shader.uniforms.uSparkle  = { value: 1 };
+    shader.uniforms.uIridAmt  = { value: GLASS.irid };
+    shader.uniforms.uThemeMix = { value: GLASS.theme };
+    shader.uniforms.uSparkScale = { value: GLASS.spark };
+    shader.uniforms.uFilmMin  = { value: GLASS.filmMin };
+    shader.uniforms.uFilmMax  = { value: GLASS.filmMax };
+    shader.uniforms.uFilmIOR  = { value: GLASS.filmIOR };
+    shader.uniforms.uFilmFreq = { value: GLASS.filmFreq };
+    shader.uniforms.uGlassAmt = { value: GLASS.amt };
+    shader.uniforms.uSat = { value: GLASS.sat };
+    mat.userData.shader = shader;
+    // 首次编译即按当前状态初始化 uniform（从 mat.userData.c1/c2 读取每张卡专属配色）
+    const _c1 = mat.userData.c1 ? [mat.userData.c1.x, mat.userData.c1.y, mat.userData.c1.z] : [1,1,1];
+    const _c2 = mat.userData.c2 ? [mat.userData.c2.x, mat.userData.c2.y, mat.userData.c2.z] : [1,1,1];
+    shader.uniforms.uGlassOn.value = 1;
+    shader.uniforms.uMatCol1.value.set(_c1[0], _c1[1], _c1[2]);
+    shader.uniforms.uMatCol2.value.set(_c2[0], _c2[1], _c2[2]);
+    shader.uniforms.uIridAmt.value = GLASS.irid;
+    shader.uniforms.uGlassAmt.value = GLASS.amt;
+    shader.uniforms.uFilmFreq.value = GLASS.filmFreq;
+    shader.uniforms.uSat.value = GLASS.sat;
+    shader.uniforms.uSparkScale.value = GLASS.spark;
+
+    shader.vertexShader = shader.vertexShader
+      .replace('#include <common>', `#include <common>
+varying vec3 vWPos;
+varying vec3 vViewDir;`)
+      .replace('#include <project_vertex>', `#include <project_vertex>
+vWPos = (modelMatrix * vec4(transformed, 1.0)).xyz;
+vViewDir = -mvPosition.xyz;`);
+
+    shader.fragmentShader = shader.fragmentShader
+      .replace('#include <common>', `#include <common>
+varying vec3 vWPos;
+varying vec3 vViewDir;
+uniform float uGlassOn;
+uniform vec3  uMatCol1;
+uniform vec3  uMatCol2;
+uniform float uTime;
+uniform float uSparkle;
+uniform float uIridAmt;
+uniform float uThemeMix;
+uniform float uSparkScale;
+uniform float uFilmMin;
+uniform float uFilmMax;
+uniform float uFilmIOR;
+uniform float uFilmFreq;
+uniform float uGlassAmt;
+uniform float uSat;
+float hash13(vec3 p){
+  p = fract(p * 0.3183099 + 0.1);
+  p *= 17.0;
+  return fract(p.x * p.y * p.z * (p.x + p.y + p.z));
+}`)
+      .replace('#include <dithering_fragment>', `#include <dithering_fragment>
+if (uGlassOn > 0.5) {
+  vec3 V = normalize(vViewDir);
+  vec3 N = normalize(normal);
+  float ndv  = clamp(dot(N, V), 0.0, 1.0);
+  float fres = pow(1.0 - ndv, 3.0);
+  vec3 cA = uMatCol1;
+  vec3 cB = uMatCol2;
+  float flow = sin(vWPos.y * uFilmFreq + vWPos.x * uFilmFreq * 0.5 + uTime * 0.30)
+             + 0.5 * sin(vWPos.z * uFilmFreq * 1.3 - uTime * 0.20);
+  float t = clamp(0.5 + 0.5 * flow * 0.85, 0.0, 1.0);
+  t = mix(t, fres, 0.22);
+  vec3 irid = mix(cA, cB, t) * uIridAmt;
+  float _lum = dot(irid, vec3(0.299, 0.587, 0.114));
+  irid = mix(vec3(_lum), irid, uSat);
+  vec3 base = gl_FragColor.rgb;
+  float surfW = clamp(uGlassAmt * 0.75, 0.0, 0.95) * (0.35 + 0.65 * fres);
+  vec3 col = mix(base, irid, surfW);
+  float coat = fres * uGlassAmt * uIridAmt * 0.6;
+  col += irid * coat;
+  float gloss = pow(1.0 - ndv, 8.0);
+  col += mix(vec3(1.0), irid, 0.4) * gloss * uGlassAmt * 0.2;
+  float sc = 60.0 + uSparkle * 16.0;
+  float sp = hash13(floor(vWPos * sc) + floor(uTime * 0.9));
+  float fleck = smoothstep(0.978, 0.997, sp);
+  col += fleck * (irid * 0.6 + 0.4) * fres * 0.8 * uSparkScale;
+  gl_FragColor.rgb = clamp(col, 0.0, 1.0);
+}`);
+  };
+  mat.needsUpdate = true;
+}
+
+// ---------- 构建 39 张球 ----------
+const cards = (typeof CHROMA_CARDS !== 'undefined') ? CHROMA_CARDS : [];
+const items = [];
+const COLS = 10, SP = 2.4, R = 0.92;
+const totalW = (COLS - 1) * SP;
+const totalH = (Math.ceil(cards.length / COLS) - 1) * SP;
+const geo = new THREE.SphereGeometry(R, 64, 48);
+const labelsBox = document.getElementById('labels');
+
+cards.forEach((c, i) => {
+  // 中灰球体做底，避免纯白金属把炫彩色冲成银色
+  const mat = new THREE.MeshStandardMaterial({ color:0x2a2a2a, metalness:0.35, roughness:0.42 });
+  mat.envMapIntensity = GLASS.env;
+  mat.userData.c1 = new THREE.Vector3(c.mat_color_1[0], c.mat_color_1[1], c.mat_color_1[2]);
+  mat.userData.c2 = new THREE.Vector3(c.mat_color_2[0], c.mat_color_2[1], c.mat_color_2[2]);
+  injectGlass(mat);
+  const mesh = new THREE.Mesh(geo, mat);
+  const col = i % COLS, row = Math.floor(i / COLS);
+  mesh.position.set(col * SP - totalW / 2, -(row * SP) + totalH / 2, 0);
+  scene.add(mesh);
+
+  const lbl = document.createElement('div');
+  lbl.className = 'lbl';
+  lbl.title = c.name;
+  lbl.innerHTML = `<span class="no">#${c.id}</span> ` +
+    `<span class="sw" style="background:${c.ui_color_1}"></span>` +
+    `<span class="sw" style="background:${c.ui_color_2}"></span>`;
+  lbl.addEventListener('click', (e) => { e.stopPropagation(); focusItem(i); });
+  labelsBox.appendChild(lbl);
+
+  items.push({ mesh, mat, card:c, lbl });
+});
+window.__galleryItems = items;
+
+// ---------- 后期：Bloom 辉光 ----------
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, camera));
+const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.45, 0.5, 0.85);
+composer.addPass(bloom);
+composer.addPass(new OutputPass());
+let BLOOM_ENABLED = true;
+
+function resize(){
+  const w = canvas.clientWidth, h = canvas.clientHeight;
+  if (canvas.width !== w || canvas.height !== h){
+    renderer.setSize(w, h, false);
+    composer.setSize(w, h);
+    camera.aspect = w / h; camera.updateProjectionMatrix();
+  }
+}
+window.addEventListener('resize', resize);
+function fitCamera(){
+  resize();
+  const rect = canvas.getBoundingClientRect();
+  const w = rect.width || canvas.clientWidth || window.innerWidth;
+  const h = Math.max(rect.height || canvas.clientHeight || (window.innerHeight - 120), 200);
+  const halfW = totalW/2 + R + 0.5;
+  const halfH = totalH/2 + R + 3.0; // 大余量，兼容 headless 窄视口也能放下全部标签
+  const fov = THREE.MathUtils.degToRad(camera.fov);
+  const tanV = Math.tan(fov/2);
+  const aspect = w / h;
+  const tanH = tanV * aspect;
+  const d = Math.max(halfH/tanV, halfW/tanH) * 1.05;
+  camera.position.z = Math.max(d, 10);
+  camera.aspect = aspect; camera.updateProjectionMatrix();
+}
+
+// ---------- 交互：滑块 / 辉光 / 视角 ----------
+function syncUniforms(){
+  for (const it of items){
+    const s = it.mat.userData.shader;
+    it.mat.metalness = GLASS.metal;
+    it.mat.roughness = GLASS.rough;
+    it.mat.envMapIntensity = GLASS.env;
+    if (!s) continue;
+    s.uniforms.uIridAmt.value = GLASS.irid;
+    s.uniforms.uGlassAmt.value = GLASS.amt;
+    s.uniforms.uFilmFreq.value = GLASS.filmFreq;
+    s.uniforms.uSat.value = GLASS.sat;
+    s.uniforms.uSparkScale.value = GLASS.spark;
+  }
+}
+const sliders = [
+  ['s_irid','v_irid','irid'], ['s_amt','v_amt','amt'], ['s_filmFreq','v_filmFreq','filmFreq'],
+  ['s_sat','v_sat','sat'], ['s_metal','v_metal','metal'], ['s_rough','v_rough','rough'],
+  ['s_spark','v_spark','spark']
+];
+for (const [sid, vid, key] of sliders){
+  const el = document.getElementById(sid);
+  el.addEventListener('input', () => {
+    GLASS[key] = parseFloat(el.value);
+    document.getElementById(vid).textContent = el.value;
+    syncUniforms();
+  });
+}
+document.getElementById('bloomToggle').addEventListener('click', (e) => {
+  BLOOM_ENABLED = !BLOOM_ENABLED;
+  e.target.classList.toggle('on', BLOOM_ENABLED);
+});
+document.getElementById('resetView').addEventListener('click', () => {
+  focusTarget = null;
+  controls.target.set(0, 0, 0);
+  fitCamera();
+});
+
+// 点击球聚焦
+const ray = new THREE.Raycaster();
+const ndc = new THREE.Vector2();
+let focusTarget = null;
+canvas.addEventListener('click', (ev) => {
+  const r = canvas.getBoundingClientRect();
+  ndc.x = ((ev.clientX - r.left) / r.width) * 2 - 1;
+  ndc.y = -((ev.clientY - r.top) / r.height) * 2 + 1;
+  ray.setFromCamera(ndc, camera);
+  const hit = ray.intersectObjects(items.map(i => i.mesh))[0];
+  if (hit){
+    const idx = items.findIndex(i => i.mesh === hit.object);
+    if (idx >= 0) focusItem(idx);
+  }
+});
+function focusItem(idx){
+  focusTarget = items[idx].mesh.position.clone();
+  for (const it of items) it.lbl.classList.remove('sel');
+  items[idx].lbl.classList.add('sel');
+}
+
+// ---------- 标签投影 ----------
+const _v = new THREE.Vector3();
+function updateLabels(){
+  const w = canvas.clientWidth, h = canvas.clientHeight;
+  for (const it of items){
+    _v.copy(it.mesh.position).project(camera);
+    const behind = _v.z > 1;
+    const x = (_v.x * 0.5 + 0.5) * w;
+    const y = (-_v.y * 0.5 + 0.5) * h;
+    it.lbl.style.display = behind ? 'none' : 'block';
+    it.lbl.style.left = x + 'px';
+    it.lbl.style.top = (y + R * 34 + 10) + 'px';
+  }
+}
+
+// ---------- 渲染循环 ----------
+const clock = new THREE.Clock();
+function animate(){
+  requestAnimationFrame(animate);
+  const t = clock.getElapsedTime();
+  for (const it of items){
+    const s = it.mat.userData.shader;
+    if (s) s.uniforms.uTime.value = t;
+  }
+  if (focusTarget){
+    controls.target.lerp(focusTarget, 0.12);
+    const want = focusTarget.clone().add(new THREE.Vector3(0, 0, 6));
+    camera.position.lerp(want, 0.12);
+  }
+  controls.update();
+  resize();
+  if (BLOOM_ENABLED) composer.render(); else renderer.render(scene, camera);
+  updateLabels();
+}
+animate();
+window.__gallery = { ok:true, count: items.length };
+// DOM 尺寸稳定后再按真实视口自动框选全部 39 张（headless 下 clientHeight 可能延迟）
+function ensureFit(attempts=0){
+  if ((canvas.clientHeight > 100 && canvas.clientWidth > 100) || attempts > 30){ fitCamera(); window.__fit = { z:camera.position.z, attempts, h:canvas.clientHeight||window.innerHeight-120, wh:window.innerHeight }; return; }
+  requestAnimationFrame(() => ensureFit(attempts + 1));
+}
+ensureFit();
+window.__cam = camera;
+console.log('[gallery] ready, cards =', items.length);
+</script>
+</body>
+</html>
