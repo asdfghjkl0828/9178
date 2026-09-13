@@ -1,6 +1,6 @@
 {
  "uid": "5678116",
- "fetched_at": "2026-09-13T00:53:32Z",
+ "fetched_at": "2026-09-13T06:00:17Z",
  "source": "rocodex.org (免费)",
  "quota_remaining": 2,
  "from_cache": false,
@@ -9,7 +9,7 @@
   "homeName": "牢大",
   "roomLevel": 5,
   "homeLevel": 25,
-  "homeExperience": 1208909,
+  "homeExperience": 1226909,
   "comfortLevel": 75855,
   "residentPetCount": 11,
   "guardianPetName": "",
@@ -31,7 +31,7 @@
     "energy": 10,
     "mutationName": "异色炫彩",
     "haveEgg": false,
-    "feedRound": 1,
+    "feedRound": 2,
     "status": 1701,
     "statusText": "状态 1701",
     "icon": "/images/spirits/3122/image.png"
@@ -47,7 +47,7 @@
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 2,
+    "feedRound": 3,
     "status": 1701,
     "statusText": "状态 1701",
     "icon": "/images/spirits/3032/image.png"
@@ -64,8 +64,8 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 3,
-    "status": 1701,
-    "statusText": "状态 1701",
+    "status": 1702,
+    "statusText": "已驻守",
     "icon": "/images/spirits/3070/image.png"
    },
    {
@@ -79,7 +79,7 @@
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 2,
+    "feedRound": 3,
     "status": 1701,
     "statusText": "状态 1701",
     "icon": "/images/spirits/3070/image.png"
@@ -96,8 +96,8 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 3,
-    "status": 1701,
-    "statusText": "状态 1701",
+    "status": 1702,
+    "statusText": "已驻守",
     "icon": "/images/spirits/3070/image.png"
    },
    {
@@ -111,7 +111,7 @@
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 2,
+    "feedRound": 3,
     "status": 1701,
     "statusText": "状态 1701",
     "icon": "/images/spirits/3071/image.png"
@@ -127,7 +127,7 @@
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 2,
+    "feedRound": 3,
     "status": 1701,
     "statusText": "状态 1701",
     "icon": "/images/spirits/3071/image.png"
@@ -143,7 +143,7 @@
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 2,
+    "feedRound": 3,
     "status": 1701,
     "statusText": "状态 1701",
     "icon": "/images/spirits/3071/image.png"
@@ -159,7 +159,7 @@
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 2,
+    "feedRound": 3,
     "status": 1701,
     "statusText": "状态 1701",
     "icon": "/images/spirits/3071/image.png"
@@ -175,7 +175,7 @@
     "energy": 10,
     "mutationName": "异色炫彩",
     "haveEgg": false,
-    "feedRound": 1,
+    "feedRound": 2,
     "status": 1701,
     "statusText": "状态 1701",
     "icon": "/images/spirits/3121/image.png"
@@ -191,7 +191,7 @@
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 2,
+    "feedRound": 3,
     "status": 1701,
     "statusText": "状态 1701",
     "icon": "/images/spirits/3007/image.png"
@@ -199,9 +199,9 @@
   ],
   "plants": [],
   "meta": {
-   "taskId": "tsk_dlds0szyt92u_11ll",
-   "createdAt": "2026-09-13T00:53:30.829Z",
-   "finishedAt": "2026-09-13T00:53:31.886Z"
+   "taskId": "tsk_dldyjo85km8x_184g",
+   "createdAt": "2026-09-13T06:00:16.019Z",
+   "finishedAt": "2026-09-13T06:00:17.078Z"
   }
  }
 }
