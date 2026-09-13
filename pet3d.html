@@ -206,6 +206,8 @@ controls.enableDamping = true; controls.target.set(0, 0.8, 0);
 
 scene.add(new THREE.HemisphereLight(0xffffff, 0x334455, 1.5));
 const dir = new THREE.DirectionalLight(0xffffff, 1.4); dir.position.set(2, 4, 3); scene.add(dir);
+// 冷色背光勾边：让虹彩清漆在模型轮廓产生高光，凸显体积（产品级打光）
+const rimL = new THREE.DirectionalLight(0x8fb4ff, 0.9); rimL.position.set(-3, 1.5, -4); scene.add(rimL);
 const grid = new THREE.GridHelper(6, 12, 0x2a3050, 0x1a1f33); scene.add(grid);
 
 // ---------- 环境反射（暗色棚拍渐变，让模型有玻璃/金属底） ----------
@@ -352,11 +354,15 @@ if (uGlassOn > 0.5) {
   irid.b = 0.5 + 0.5 * sin(opd / 450.0 * 6.2831853 + 4.1888);
   irid = irid * irid;                       // 加深条纹对比，更"炫"
   vec3 theme = mix(uMatCol1, uMatCol2, ndv);
-  vec3 sheen = irid * mix(vec3(1.0), theme, uThemeMix) * uIridAmt;
-  float amt  = mix(0.35, 0.85, fres) * uGlassAmt;
-  amt = clamp(amt, 0.0, 0.92);
-  vec3 col   = mix(gl_FragColor.rgb, sheen, amt);
-  // 表面附着闪片：柔和抗锯齿的虹彩微光（仅掠射边缘更亮），取代硬边白点，避免"贴纸亮片"感
+  vec3 tint  = mix(vec3(1.0), theme, uThemeMix);
+  vec3 iridT = irid * tint * uIridAmt;       // 染色后的虹彩
+  vec3 base  = gl_FragColor.rgb;
+  // (1) 表面染色：按比例把虹彩乘入受光色，保留模型自身体积明暗，不像贴纸平涂
+  vec3 col = base * mix(vec3(1.0), 0.55 + 0.75 * iridT, clamp(uGlassAmt * 0.6, 0.0, 0.95));
+  // (2) 薄膜"清漆"反光：掠射角(fresnel)叠加虹彩镜面，模拟真实油膜/珠光涂层高光（干涉作用于反射，而非漫反射）
+  float coat = fres * uGlassAmt * uIridAmt * 1.35;
+  col += iridT * coat;
+  // (3) 柔和闪片：抗锯齿虹彩微光，仅掠射更亮，取代硬边白点
   float sc = 60.0 + uSparkle * 16.0;
   float sp = hash13(floor(vWPos * sc) + floor(uTime * 0.9));
   float fleck = smoothstep(0.978, 0.997, sp);
