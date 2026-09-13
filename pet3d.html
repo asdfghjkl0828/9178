@@ -264,11 +264,12 @@ if (uGlassOn > 0.5) {
   float ndv  = clamp(dot(N, V), 0.0, 1.0);
   float fres = pow(1.0 - ndv, 3.0);
   // 视角 + 表面位置 + 缓慢漂移 → 有机虹彩（仿肥皂泡/钛氧化膜）
-  float hue = fract(ndv * 1.25 + sin(vWPos.y * 3.0 + uTime * 0.3) * 0.15 - uTime * 0.02);
+  float hue = fract(ndv * 2.0 + sin(vWPos.y * 4.0 + uTime * 0.4) * 0.2 - uTime * 0.03);
   vec3 irid  = hue2rgb(hue);
   vec3 theme = mix(uMatCol1, uMatCol2, ndv);
-  vec3 sheen = irid * mix(vec3(1.0), theme, 0.55);
-  float amt  = mix(0.32, 0.82, fres);          // 基础虹彩 + 边缘高光
+  // 主题色仅轻染，整体提亮，基础虹彩较强、边缘更亮
+  vec3 sheen = irid * mix(vec3(1.0), theme, 0.30) * 1.25;
+  float amt  = mix(0.55, 0.90, fres);
   vec3 col   = mix(gl_FragColor.rgb, sheen, amt);
   // 表面附着的程序化金属箔闪片：边缘更亮、数量更少、偏白光
   float sc = 55.0 + uSparkle * 18.0;
