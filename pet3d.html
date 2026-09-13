@@ -271,7 +271,7 @@ let mixer = null, clips = [], currentModel = null;
 const _gp = new URLSearchParams(location.search);
 const _gnum = (k, d) => { const v = parseFloat(_gp.get(k)); return isNaN(v) ? d : v; };
 const GLASS = {
-  irid:    _gnum('irid', 1.0),
+  irid:    _gnum('irid', 0.85),
   amt:     _gnum('amt', 0.75),
   filmMin: _gnum('filmMin', 300.0),   // 保留供 uniform plumbing（新版渐变已不用薄膜厚度）
   filmMax: _gnum('filmMax', 600.0),
@@ -298,7 +298,7 @@ function injectGlass(mat){
     shader.uniforms.uMatCol2  = { value: new THREE.Vector3(1,1,1) };
     shader.uniforms.uTime     = { value: 0 };
     shader.uniforms.uSparkle  = { value: 1 };
-    shader.uniforms.uIridAmt  = { value: 1.0 };
+    shader.uniforms.uIridAmt  = { value: 0.85 };
     shader.uniforms.uThemeMix = { value: 0.25 };
     shader.uniforms.uSparkScale = { value: 1.0 };
     shader.uniforms.uFilmMin  = { value: 280.0 };
@@ -372,15 +372,15 @@ if (uGlassOn > 0.5) {
   // 渐变相位：表面位置 + 时间缓慢流动（保留"流动炫彩"高级感）
   float flow = sin(vWPos.y * uFilmFreq + vWPos.x * uFilmFreq * 0.5 + uTime * 0.30)
              + 0.5 * sin(vWPos.z * uFilmFreq * 1.3 - uTime * 0.20);
-  float t = clamp(0.5 + 0.5 * flow * 0.6, 0.0, 1.0);
-  t = mix(t, fres, 0.35);                        // 掠射偏 cB、正对偏 cA，形成炫彩涂层
+  float t = clamp(0.5 + 0.5 * flow * 0.85, 0.0, 1.0);
+  t = mix(t, fres, 0.22);                        // 掠射轻偏 cB，双色split主要铺在身体上，形成炫彩涂层
   vec3 irid = mix(cA, cB, t) * uIridAmt;         // 指定色卡渐变（HDR）
   // 饱和度微调：低=更哑光珠光，高=鲜艳（默认 1.0 忠实指定色）
   float _lum = dot(irid, vec3(0.299, 0.587, 0.114));
   irid = mix(vec3(_lum), irid, uSat);
   vec3 base = gl_FragColor.rgb;
-  // (1) 表面换色：原色 → 炫彩渐变，按 fresnel 加权（正对留原色轮廓，掠射显炫彩）
-  float surfW = clamp(uGlassAmt * 0.7, 0.0, 0.95) * (0.3 + 0.7 * fres);
+  // (1) 表面换色：原色 → 炫彩渐变，按 fresnel 加权（正对留轮廓，掠射显炫彩涂层）
+  float surfW = clamp(uGlassAmt * 0.75, 0.0, 0.95) * (0.35 + 0.65 * fres);
   vec3 col = mix(base, irid, surfW);
   // (2) 炫彩清漆反光：掠射角叠加指定色镜面
   float coat = fres * uGlassAmt * uIridAmt * 0.6;
