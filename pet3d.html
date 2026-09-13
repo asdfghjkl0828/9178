@@ -275,14 +275,75 @@ const texLoader = new THREE.TextureLoader();
 function loadTex(p){ const t = texLoader.load(p); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.colorSpace = THREE.NoColorSpace; return t; }
 const mainTex = loadTex(MAIN_TEX);
 const starTex = {};
-for (const id of Object.keys(PARTICLE_TEX)) starTex[id] = loadTex(PARTICLE_TEX[id]);
+const whiteStarTex = {};   // 漂成白形(保留alpha)，便于用色卡色染色
+for (const id of Object.keys(PARTICLE_TEX)) {
+  const t = texLoader.load(PARTICLE_TEX[id], (loaded) => {
+    try {
+      const img = loaded.image; if (!img || !img.width) return;
+      const cv = document.createElement('canvas'); cv.width = img.width; cv.height = img.height;
+      const ctx = cv.getContext('2d'); ctx.drawImage(img, 0, 0);
+      const d = ctx.getImageData(0, 0, cv.width, cv.height);
+      for (let i = 0; i < d.data.length; i += 4) { d.data[i] = 255; d.data[i + 1] = 255; d.data[i + 2] = 255; }
+      ctx.putImageData(d, 0, 0);
+      const wt = new THREE.CanvasTexture(cv); wt.colorSpace = THREE.NoColorSpace; wt.needsUpdate = true;
+      whiteStarTex[id] = wt;
+      if (particleSystem) { particleSystem.material.map = wt; particleSystem.material.needsUpdate = true; }
+    } catch (e) { whiteStarTex[id] = loaded; }
+  });
+  t.wrapS = t.wrapT = THREE.RepeatWrapping; t.colorSpace = THREE.NoColorSpace;
+  starTex[id] = t;
+}
+
+// ---------- 炫彩粒子层：用官方 Tex_PetGlassyStar_xxx 贴图做成悬浮星点（aismile 的 glass_type） ----------
+let particleSystem = null;
+let modelSphere = new THREE.Sphere(new THREE.Vector3(0, 0, 0), 1.2);
+const PARTICLE_COUNT = 150;
+function buildParticleSystem() {
+  const geo = new THREE.BufferGeometry();
+  const pos = new Float32Array(PARTICLE_COUNT * 3);
+  for (let i = 0; i < PARTICLE_COUNT; i++) {
+    const r = 0.75 + Math.random() * 0.55;            // 单位球壳
+    const th = Math.random() * Math.PI * 2;
+    const ph = Math.acos(2 * Math.random() - 1);
+    pos[i * 3]     = r * Math.sin(ph) * Math.cos(th);
+    pos[i * 3 + 1] = r * Math.cos(ph);
+    pos[i * 3 + 2] = r * Math.sin(ph) * Math.sin(th);
+  }
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  const mat = new THREE.PointsMaterial({
+    size: 0.16, map: whiteStarTex[1] || starTex[1],
+    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+    color: new THREE.Color(1, 1, 1), sizeAttenuation: true, opacity: 0.95
+  });
+  particleSystem = new THREE.Points(geo, mat);
+  particleSystem.visible = false;
+  particleSystem.frustumCulled = false;
+  scene.add(particleSystem);
+}
+
+function updateParticleStyle() {
+  if (!particleSystem) return;
+  const show = !!(state.glass && state.card);
+  particleSystem.visible = show;
+  if (show && state.card && state.card.ui_color_1) particleSystem.material.color.set(state.card.ui_color_1);
+  else if (show) particleSystem.material.color.setRGB(0.8, 0.8, 0.9);
+  const wt = whiteStarTex[state.particle] || starTex[state.particle] || starTex[1];
+  if (particleSystem.material.map !== wt) { particleSystem.material.map = wt; particleSystem.material.needsUpdate = true; }
+}
+function fitParticleToModel() {
+  if (!particleSystem) return;
+  particleSystem.position.copy(modelSphere.center);
+  particleSystem.scale.setScalar(modelSphere.radius * 1.05);
+  particleSystem.material.size = modelSphere.radius * 0.13;
+}
 
 // ---------- 状态 ----------
 const state = { glass:false, card:null, particle:1, resolution:new THREE.Vector2(1,1), time:0, spirit:null };
 let mixer = null, clips = [], currentModel = null;
+buildParticleSystem();   // 在 state 定义后再初始化粒子层，避免 TDZ
 
 // ---------- 炫彩可调参数（URL 查询驱动） ----------
-// ⚠️ 炫彩"配色"固定取自 data/chroma_cards.js 的指定色卡（mat_color_1/2，游戏真实配色，含 HDR 发光通道）
+// ⚠️ 炫彩"配色"固定取自 data/chroma_cards.js 的指定色卡：球体主渐变用 ui_color_1/2（官方真实显示色，已与 aismile.dev 权威 RocoDataRows 对齐）；mat_color_1/2 为 HDR 发光材质色，仅作发光增益参考
 //   选色卡即定色；下方滑块只调"强度/流动/饱和/闪片/材质"，不再自创彩虹。
 //   irid 炫彩亮度增益(0.6~2.2)  amt 混合强度(0.3~0.95)  filmFreq 流动频率(1~6)
 //   sat 饱和度(0.3~1.2，低=哑光珠光/高=鲜艳)  spark 闪片(0~3)  metal/rough/env 基础材质
@@ -328,8 +389,11 @@ function injectGlass(mat){
     mat.userData.shader = shader;
     // 首次编译即按当前状态初始化 uniform（解决“loadModel 时 onBeforeCompile 尚未触发、syncUniforms 跳过”的坑）
     const _cc = (state.glass && state.card) ? state.card : null;
-    const _c1 = _cc ? _cc.mat_color_1 : [1,1,1];
-    const _c2 = _cc ? _cc.mat_color_2 : [1,1,1];
+    let _c1 = [1,1,1], _c2 = [1,1,1];
+    if (_cc){
+      if (_cc.ui_color_1){ const a = hx2lin(_cc.ui_color_1), b = hx2lin(_cc.ui_color_2); _c1 = a; _c2 = b; }
+      else { _c1 = _cc.mat_color_1; _c2 = _cc.mat_color_2; } // 隐藏卡无 ui_color，用灰阶
+    }
     shader.uniforms.uGlassOn.value = _cc ? 1 : 0;
     shader.uniforms.uMatCol1.value.set(_c1[0], _c1[1], _c1[2]);
     shader.uniforms.uMatCol2.value.set(_c2[0], _c2[1], _c2[2]);
@@ -421,8 +485,11 @@ function syncUniformsOf(model, resVec){
   if (!model) return;
   const c = state.card;
   const on = state.glass && c ? 1 : 0;
-  const c1 = (state.glass && c) ? c.mat_color_1 : [1,1,1];
-  const c2 = (state.glass && c) ? c.mat_color_2 : [1,1,1];
+  let c1 = [1,1,1], c2 = [1,1,1];
+  if (state.glass && c){
+    if (c.ui_color_1){ const a = hx2lin(c.ui_color_1), b = hx2lin(c.ui_color_2); c1 = a; c2 = b; }
+    else { c1 = c.mat_color_1; c2 = c.mat_color_2; } // 隐藏卡无 ui_color，用灰阶
+  }
   model.traverse(o => {
     if (!o.isMesh || !o.material) return;
     const mats = Array.isArray(o.material) ? o.material : [o.material];
@@ -481,6 +548,11 @@ function loadModel(url, label){
     currentModel.position.sub(center.multiplyScalar(scale));
     currentModel.position.y += (size.y * scale) / 2;
     scene.add(currentModel);
+
+    // 计算模型世界包围球，供炫彩粒子层包覆
+    const wbox = new THREE.Box3().setFromObject(currentModel);
+    wbox.getBoundingSphere(modelSphere);
+    fitParticleToModel();
 
     clips = gltf.animations || [];
     const sel = document.getElementById('clipSel');
@@ -563,6 +635,12 @@ function buildParts(){
   selectParticle(1);
 }
 // 隐藏炫彩无公开配色，用灰阶示意
+function hx2lin(hex){
+  const h = hex.replace('#','');
+  const c = [0,1,2].map(i => parseInt(h.substr(i*2,2),16)/255);
+  const f = x => x <= 0.04045 ? x/12.92 : Math.pow((x+0.055)/1.055, 2.4);
+  return c.map(f);
+}
 const HIDDEN_COLORS = { 1:[0.55,0.55,0.6], 2:[0.6,0.4,0.7], 3:[0.4,0.6,0.7], 1000:[0.6,0.6,0.6] };
 function selectCard(id, isHidden){
   curCard = isHidden ? -id : id;
@@ -580,7 +658,7 @@ function selectCard(id, isHidden){
     }
   }
   if (state.card && !state.glass) setGlass(true);
-  syncUniforms(); updateSummary();
+  syncUniforms(); updateParticleStyle(); updateSummary();
   if (FILTER === 'card') buildSpiritList(); // 色卡切换后刷新「我的该色」筛选结果
   if (WALL_MODE) buildWall(); // 色卡切换后刷新缩略图墙颜色
 }
@@ -589,7 +667,7 @@ function selectParticle(id){
   document.querySelectorAll('.part').forEach(el => el.classList.toggle('on', +el.dataset.id === id));
   const p = CHROMA_PARTICLES.find(x => x.id === id);
   document.getElementById('partMeta').innerHTML = p ? `<b>粒子 ${p.id}</b> · ${p.name}` : '';
-  syncUniforms(); updateSummary();
+  syncUniforms(); updateParticleStyle(); updateSummary();
   if (WALL_MODE) buildWall(); // 粒子切换后刷新缩略图墙
 }
 window.setGlass = function(on){
@@ -1026,6 +1104,13 @@ renderer.setAnimationLoop(() => {
   state.time += dt;
   if (mixer) mixer.update(dt);
   if (document.getElementById('autoRot').checked && currentModel) currentModel.rotation.y += dt * 0.35;
+  // 炫彩粒子：随模型缓慢漂浮 + 轻微脉动
+  if (particleSystem && particleSystem.visible) {
+    particleSystem.rotation.y += dt * 0.28;
+    particleSystem.rotation.x += dt * 0.09;
+    const base = modelSphere.radius * 0.13;
+    particleSystem.material.size = base * (1 + 0.12 * Math.sin(state.time * 2.0));
+  }
   controls.update();
   if (BLOOM_ENABLED) composer.render();
   else renderer.render(scene, camera);
