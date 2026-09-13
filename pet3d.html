@@ -103,6 +103,7 @@
     <div class="row" style="margin-top:6px;gap:6px;flex-wrap:wrap;align-items:center">
       <span style="color:#8f96b3;font-size:12px">快速切换：</span>
       <button class="btn ghost preset-source" data-url="https://cdn.jsdelivr.net/gh/asdfghjkl0828/pet3d-models@main/packs">jsDelivr 镜像</button>
+      <button class="btn ghost preset-source" data-url="https://gcore.jsdelivr.net/gh/asdfghjkl0828/pet3d-models@main/packs">jsDelivr(Gcore)</button>
       <button class="btn ghost preset-source" data-url="https://raw.githubusercontent.com/asdfghjkl0828/pet3d-models/main/packs">GitHub raw</button>
       <button class="btn ghost preset-source" data-url="https://gh-proxy.com/https://raw.githubusercontent.com/asdfghjkl0828/pet3d-models/main/packs">gh-proxy 镜像</button>
       <button class="btn ghost preset-source" data-url="packs">本地 packs</button>
@@ -458,10 +459,14 @@ let FILTER = 'all';
 let curCard = null;      // 正卡：普通色卡 id；隐藏色卡：-id
 let currentSpirit = null;
 
-// 模型源：默认 jsDelivr 镜像（CDN 稳、CORS 全），失败时回退 GitHub raw / gh-proxy / 本地 packs
-const DEFAULT_PACK_BASE = 'https://cdn.jsdelivr.net/gh/asdfghjkl0828/pet3d-models@main/packs';
+// 模型源优先级：七牛(国内,需配 QINIU_BASE) > jsDelivr(Gcore 国内边缘) > jsDelivr 主 > GitHub raw > gh-proxy > 本地 packs
+// 真·国内：把 QINIU_BASE 填成 'https://<七牛CDN域名>/packs' 即变默认源（配合 upload_qiniu.py 上传）。
+const QINIU_BASE = '';
+const DEFAULT_PACK_BASE = QINIU_BASE || 'https://gcore.jsdelivr.net/gh/asdfghjkl0828/pet3d-models@main/packs';
 const SOURCE_PRESETS = [
-  { name: 'jsDelivr 镜像', url: DEFAULT_PACK_BASE },
+  ...(QINIU_BASE ? [{ name: '七牛云（国内）', url: QINIU_BASE }] : []),
+  { name: 'jsDelivr 镜像', url: 'https://cdn.jsdelivr.net/gh/asdfghjkl0828/pet3d-models@main/packs' },
+  { name: 'jsDelivr(Gcore) 国内边缘', url: 'https://gcore.jsdelivr.net/gh/asdfghjkl0828/pet3d-models@main/packs' },
   { name: 'GitHub raw', url: 'https://raw.githubusercontent.com/asdfghjkl0828/pet3d-models/main/packs' },
   { name: 'gh-proxy 镜像', url: 'https://gh-proxy.com/https://raw.githubusercontent.com/asdfghjkl0828/pet3d-models/main/packs' },
   { name: '本地 packs', url: 'packs' }
@@ -768,7 +773,7 @@ renderer.setAnimationLoop(() => {
 buildSwatches();
 buildHidden();
 buildParts();
-window.__pet3d = { state, loadModel, scene };
+window.__pet3d = { state, loadModel, scene, renderer, camera };
 </script>
 </body>
 </html>
