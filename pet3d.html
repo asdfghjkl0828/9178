@@ -174,7 +174,11 @@
           <button class="btn ghost" id="iridReset">重置</button>
         </div>
         <div id="iridSliders" style="margin-top:10px;display:flex;flex-direction:column;gap:8px"></div>
-        <div class="meta" style="margin-top:8px">拖动滑块实时调；选 A/B/C 一键对比。满意后把当前 URL 参数发给助理即可复现。</div>
+        <div class="row" style="margin-top:8px;gap:6px">
+          <input id="iridParamStr" type="text" readonly style="flex:1;font-size:11px;color:#8ff0a8;background:#0e1222;border:1px solid var(--border);border-radius:6px;padding:4px 8px">
+          <button class="btn ghost" id="iridCopy">📋 复制</button>
+        </div>
+        <div class="meta" id="iridShareNote" style="margin-top:6px">拖动滑块实时调；选 A/B/C 一键对比。参数已同步到地址栏，点「复制」发助理即可精确复现。</div>
       </div>
 
       <div class="box">
@@ -932,7 +936,7 @@ function buildIridSliders(){
     const lab=document.createElement('span'); lab.textContent=s.label; lab.style.cssText='flex:0 0 60px;color:#aeb4d0';
     const inp=document.createElement('input'); inp.type='range'; inp.min=s.min; inp.max=s.max; inp.step=s.step; inp.value=GLASS[s.k]; inp.style.cssText='flex:1';
     const val=document.createElement('span'); val.textContent=(+GLASS[s.k]).toFixed(2); val.style.cssText='flex:0 0 42px;text-align:right;color:#8ff0a8';
-    inp.oninput=()=>{ GLASS[s.k]=parseFloat(inp.value); val.textContent=(+inp.value).toFixed(2); syncUniforms(); };
+    inp.oninput=()=>{ GLASS[s.k]=parseFloat(inp.value); val.textContent=(+inp.value).toFixed(2); syncUniforms(); syncUrlFromGlass(); };
     row.append(lab,inp,val); box.appendChild(row);
   });
 }
@@ -942,10 +946,27 @@ function applyIridPreset(p){
   const rows=[...document.querySelectorAll('#iridSliders .row')];
   IRID_SLIDERS.forEach((s,i)=>{ if(rows[i]){ const inp=rows[i].querySelector('input'); const val=rows[i].querySelector('span:last-child'); inp.value=GLASS[s.k]; val.textContent=(+GLASS[s.k]).toFixed(2); } });
   syncUniforms();
+  syncUrlFromGlass();
   document.querySelectorAll('.irid-pre').forEach(b=>b.classList.toggle('on', b.dataset.p===p));
 }
 document.querySelectorAll('.irid-pre').forEach(b=> b.onclick=()=>applyIridPreset(b.dataset.p));
 document.getElementById('iridReset').onclick=()=>applyIridPreset('B');
+// 把当前 GLASS 参数同步到地址栏（保留 spirit 等原有参数），便于复制链接精确复现
+function syncUrlFromGlass(){
+  const p = new URLSearchParams(location.search);
+  for (const k of ['irid','amt','filmMin','filmMax','filmIOR','filmFreq','metal','rough','spark','theme','sat','env']) {
+    if (GLASS[k] !== undefined) p.set(k, GLASS[k]);
+  }
+  const qs = p.toString();
+  history.replaceState(null, '', (qs ? '?'+qs : location.pathname));
+  const el = document.getElementById('iridParamStr'); if (el) el.value = location.search;
+}
+document.getElementById('iridCopy').onclick = () => {
+  const txt = location.href;
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).catch(()=>{});
+  const n = document.getElementById('iridShareNote'); if (n) n.textContent = '已复制链接：' + txt;
+};
+syncUrlFromGlass();
 buildIridSliders();
 
 stage.addEventListener('dragover', e => { e.preventDefault(); stage.classList.add('dragover'); });
