@@ -293,8 +293,8 @@ function syncUniformsOf(model, resVec){
       const sh = m.userData.shader;
       if (!sh) continue;
       sh.uniforms.uGlassOn.value = on;
-      sh.uniforms.uMatCol1.value.set(c1[0]||1, c1[1]||1, c1[2]||1);
-      sh.uniforms.uMatCol2.value.set(c2[0]||1, c2[1]||1, c2[2]||1);
+      sh.uniforms.uMatCol1.value.set(c1[0], c1[1], c1[2]);
+      sh.uniforms.uMatCol2.value.set(c2[0], c2[1], c2[2]);
       sh.uniforms.uSparkle.value = state.particle || 1;
       sh.uniforms.uTime.value = state.time;
       m.wireframe = document.getElementById('wire').checked;
