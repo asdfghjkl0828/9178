@@ -217,41 +217,65 @@ for (const id of Object.keys(PARTICLE_TEX)) starTex[id] = loadTex(PARTICLE_TEX[i
 const state = { glass:false, card:null, particle:1, resolution:new THREE.Vector2(1,1), time:0, spirit:null };
 let mixer = null, clips = [], currentModel = null;
 
-// ---------- 炫彩 shader 注入 ----------
+// ---------- 炫彩 shader 注入（角度相关虹彩，贴合表面） ----------
 function injectGlass(mat){
   if (mat.__glassInjected) return;
   mat.__glassInjected = true;
   mat.onBeforeCompile = (shader) => {
-    shader.uniforms.uGlassOn   = { value: 0 };
-    shader.uniforms.uMatCol1   = { value: new THREE.Vector3(1,1,1) };
-    shader.uniforms.uMatCol2   = { value: new THREE.Vector3(1,1,1) };
-    shader.uniforms.uMainTex   = { value: mainTex };
-    shader.uniforms.uStarTex   = { value: starTex[1] };
-    shader.uniforms.uRes       = { value: state.resolution };
-    shader.uniforms.uTime      = { value: 0 };
+    shader.uniforms.uGlassOn  = { value: 0 };
+    shader.uniforms.uMatCol1  = { value: new THREE.Vector3(1,1,1) };
+    shader.uniforms.uMatCol2  = { value: new THREE.Vector3(1,1,1) };
+    shader.uniforms.uTime     = { value: 0 };
+    shader.uniforms.uSparkle  = { value: 1 };
     mat.userData.shader = shader;
+
+    // 顶点：传出世界坐标与视线方向（供片元算菲涅尔/虹彩）
+    shader.vertexShader = shader.vertexShader
+      .replace('#include <common>', `#include <common>
+varying vec3 vWPos;
+varying vec3 vViewDir;`)
+      .replace('#include <project_vertex>', `#include <project_vertex>
+vWPos = (modelMatrix * vec4(transformed, 1.0)).xyz;
+vViewDir = -mvPosition.xyz;`);
+
+    // 片元：薄膜干涉式虹彩 + 双主题色染色 + 表面附着闪片
     shader.fragmentShader = shader.fragmentShader
       .replace('#include <common>', `#include <common>
+varying vec3 vWPos;
+varying vec3 vViewDir;
 uniform float uGlassOn;
 uniform vec3  uMatCol1;
 uniform vec3  uMatCol2;
-uniform sampler2D uMainTex;
-uniform sampler2D uStarTex;
-uniform vec2  uRes;
 uniform float uTime;
-`)
+uniform float uSparkle;
+vec3 hue2rgb(float h){
+  h = fract(h);
+  return clamp(abs(mod(h*6.0 + vec3(0.0,4.0,2.0), 6.0) - 3.0) - 1.0, 0.0, 1.0);
+}
+float hash13(vec3 p){
+  p = fract(p * 0.3183099 + 0.1);
+  p *= 17.0;
+  return fract(p.x * p.y * p.z * (p.x + p.y + p.z));
+}`)
       .replace('#include <dithering_fragment>', `#include <dithering_fragment>
 if (uGlassOn > 0.5) {
-  vec2 suv = gl_FragCoord.xy / uRes;
-  vec4 mtex = texture2D(uMainTex, suv * 1.4 + vec2(uTime * 0.008, uTime * 0.004));
-  vec3 glass = uMatCol1 * mtex.r + uMatCol2 * mtex.g;
-  float lum = dot(gl_FragColor.rgb, vec3(0.299, 0.587, 0.114));
-  glass *= (0.55 + lum * 1.1);
-  vec4 star = texture2D(uStarTex, suv * 1.8 - vec2(0.0, uTime * 0.015));
-  gl_FragColor.rgb = mix(gl_FragColor.rgb, glass, 0.62);
-  gl_FragColor.rgb += star.rgb * star.a * 1.1;
-}
-`);
+  vec3 V = normalize(vViewDir);
+  vec3 N = normalize(normal);
+  float ndv  = clamp(dot(N, V), 0.0, 1.0);
+  float fres = pow(1.0 - ndv, 3.0);
+  // 视角 + 表面位置 + 缓慢漂移 → 有机虹彩（仿肥皂泡/钛氧化膜）
+  float hue = fract(ndv * 1.25 + sin(vWPos.y * 3.0 + uTime * 0.3) * 0.15 - uTime * 0.02);
+  vec3 irid  = hue2rgb(hue);
+  vec3 theme = mix(uMatCol1, uMatCol2, ndv);
+  vec3 sheen = irid * mix(vec3(1.0), theme, 0.55);
+  float amt  = mix(0.32, 0.82, fres);          // 基础虹彩 + 边缘高光
+  vec3 col   = mix(gl_FragColor.rgb, sheen, amt);
+  // 表面附着的程序化金属箔闪片：边缘更亮、数量更少、偏白光
+  float sc = 55.0 + uSparkle * 18.0;
+  float sp = hash13(floor(vWPos * sc) + floor(uTime * 1.2));
+  col += step(0.996, sp) * (irid * 0.35 + 0.45) * fres * 1.1;
+  gl_FragColor.rgb = col;
+}`);
   };
   mat.needsUpdate = true;
 }
@@ -269,11 +293,10 @@ function syncUniformsOf(model, resVec){
       const sh = m.userData.shader;
       if (!sh) continue;
       sh.uniforms.uGlassOn.value = on;
-      sh.uniforms.uMatCol1.value.set(c1[0], c1[1], c1[2]);
-      sh.uniforms.uMatCol2.value.set(c2[0], c2[1], c2[2]);
-      sh.uniforms.uStarTex.value = starTex[state.particle] || starTex[1];
+      sh.uniforms.uMatCol1.value.set(c1[0]||1, c1[1]||1, c1[2]||1);
+      sh.uniforms.uMatCol2.value.set(c2[0]||1, c2[1]||1, c2[2]||1);
+      sh.uniforms.uSparkle.value = state.particle || 1;
       sh.uniforms.uTime.value = state.time;
-      sh.uniforms.uRes.value = resVec;
       m.wireframe = document.getElementById('wire').checked;
     }
   });
