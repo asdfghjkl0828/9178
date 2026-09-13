@@ -974,12 +974,14 @@ function syncUrlFromGlass(){
   }
   const qs = p.toString();
   history.replaceState(null, '', (qs ? '?'+qs : location.pathname));
-  const el = document.getElementById('iridParamStr'); if (el) el.value = location.search;
+  const el = document.getElementById('iridParamStr'); if (el) el.value = location.href;
 }
 document.getElementById('iridCopy').onclick = () => {
   const txt = location.href;
-  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).catch(()=>{});
-  const n = document.getElementById('iridShareNote'); if (n) n.textContent = '已复制链接：' + txt;
+  let ok = false;
+  if (navigator.clipboard && navigator.clipboard.writeText) { try { navigator.clipboard.writeText(txt); ok = true; } catch(e){} }
+  if (!ok) { const ta = document.createElement('textarea'); ta.value = txt; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); try { ok = document.execCommand('copy'); } catch(e){} document.body.removeChild(ta); }
+  const n = document.getElementById('iridShareNote'); if (n) n.textContent = ok ? ('已复制链接：' + txt) : ('请手动复制此链接：' + txt);
 };
 syncUrlFromGlass();
 buildIridSliders();
