@@ -238,6 +238,23 @@ for (const id of Object.keys(PARTICLE_TEX)) starTex[id] = loadTex(PARTICLE_TEX[i
 const state = { glass:false, card:null, particle:1, resolution:new THREE.Vector2(1,1), time:0, spirit:null };
 let mixer = null, clips = [], currentModel = null;
 
+// ---------- 炫彩可调参数（URL 查询驱动，便于对比预设 / 真机微调） ----------
+// 用法示例：pet3d.html?spirit=迪莫&irid=1.6&freq=3&metal=0.7&rough=0.25&spark=1.5&theme=0.2
+//   irid  虹彩强度(0.3~2)   freq  色相随视角变化频率(0.5~4)
+//   metal 炫彩时金属度(0~1) rough 炫彩时粗糙度(0~1)  env 环境反射强度
+//   spark 闪片强度(0~3)     theme 主题色染色占比(0~0.6)
+const _gp = new URLSearchParams(location.search);
+const _gnum = (k, d) => { const v = parseFloat(_gp.get(k)); return isNaN(v) ? d : v; };
+const GLASS = {
+  irid:  _gnum('irid', 1.0),
+  freq:  _gnum('freq', 2.0),
+  theme: _gnum('theme', 0.30),
+  spark: _gnum('spark', 1.0),
+  metal: _gnum('metal', 0.60),
+  rough: _gnum('rough', 0.30),
+  env:   _gnum('env', 1.25),
+};
+
 // ---------- 炫彩 shader 注入（角度相关虹彩，贴合表面） ----------
 function injectGlass(mat){
   if (mat.__glassInjected) return;
@@ -251,7 +268,23 @@ function injectGlass(mat){
     shader.uniforms.uMatCol2  = { value: new THREE.Vector3(1,1,1) };
     shader.uniforms.uTime     = { value: 0 };
     shader.uniforms.uSparkle  = { value: 1 };
+    shader.uniforms.uIridAmt  = { value: 1.0 };
+    shader.uniforms.uIridFreq = { value: 2.0 };
+    shader.uniforms.uThemeMix = { value: 0.30 };
+    shader.uniforms.uSparkScale = { value: 1.0 };
     mat.userData.shader = shader;
+    // 首次编译即按当前状态初始化 uniform（解决“loadModel 时 onBeforeCompile 尚未触发、syncUniforms 跳过”的坑）
+    const _cc = (state.glass && state.card) ? state.card : null;
+    const _c1 = _cc ? _cc.mat_color_1 : [1,1,1];
+    const _c2 = _cc ? _cc.mat_color_2 : [1,1,1];
+    shader.uniforms.uGlassOn.value = _cc ? 1 : 0;
+    shader.uniforms.uMatCol1.value.set(_c1[0], _c1[1], _c1[2]);
+    shader.uniforms.uMatCol2.value.set(_c2[0], _c2[1], _c2[2]);
+    shader.uniforms.uIridAmt.value = GLASS.irid;
+    shader.uniforms.uIridFreq.value = GLASS.freq;
+    shader.uniforms.uThemeMix.value = GLASS.theme;
+    shader.uniforms.uSparkScale.value = GLASS.spark;
+    shader.uniforms.uTime.value = state.time;
 
     // 顶点：传出世界坐标与视线方向（供片元算菲涅尔/虹彩）
     shader.vertexShader = shader.vertexShader
@@ -272,6 +305,10 @@ uniform vec3  uMatCol1;
 uniform vec3  uMatCol2;
 uniform float uTime;
 uniform float uSparkle;
+uniform float uIridAmt;
+uniform float uIridFreq;
+uniform float uThemeMix;
+uniform float uSparkScale;
 vec3 hue2rgb(float h){
   h = fract(h);
   return clamp(abs(mod(h*6.0 + vec3(0.0,4.0,2.0), 6.0) - 3.0) - 1.0, 0.0, 1.0);
@@ -288,17 +325,18 @@ if (uGlassOn > 0.5) {
   float ndv  = clamp(dot(N, V), 0.0, 1.0);
   float fres = pow(1.0 - ndv, 3.0);
   // 视角 + 表面位置 + 缓慢漂移 → 有机虹彩（仿肥皂泡/钛氧化膜）
-  float hue = fract(ndv * 2.0 + sin(vWPos.y * 4.0 + uTime * 0.4) * 0.2 - uTime * 0.03);
+  float hue = fract(ndv * uIridFreq + sin(vWPos.y * 4.0 + uTime * 0.4) * 0.2 - uTime * 0.03);
   vec3 irid  = hue2rgb(hue);
   vec3 theme = mix(uMatCol1, uMatCol2, ndv);
   // 主题色仅轻染，整体提亮；保留更多原模型反射细节
-  vec3 sheen = irid * mix(vec3(1.0), theme, 0.30) * 1.25;
-  float amt  = mix(0.45, 0.85, fres);
+  vec3 sheen = irid * mix(vec3(1.0), theme, uThemeMix) * (1.0 + 0.5 * (uIridAmt - 1.0));
+  float amt  = mix(0.45, 0.85, fres) * clamp(uIridAmt, 0.3, 1.6);
+  amt = clamp(amt, 0.0, 0.95);
   vec3 col   = mix(gl_FragColor.rgb, sheen, amt);
   // 表面附着的程序化金属箔闪片：边缘更亮、数量更少、偏白光
   float sc = 55.0 + uSparkle * 18.0;
   float sp = hash13(floor(vWPos * sc) + floor(uTime * 1.2));
-  col += step(0.996, sp) * (irid * 0.35 + 0.45) * fres * 1.1;
+  col += step(0.996, sp) * (irid * 0.35 + 0.45) * fres * 1.1 * uSparkScale;
   gl_FragColor.rgb = col;
 }`);
   };
@@ -315,24 +353,28 @@ function syncUniformsOf(model, resVec){
     if (!o.isMesh || !o.material) return;
     const mats = Array.isArray(o.material) ? o.material : [o.material];
     for (const m of mats){
+      m.wireframe = document.getElementById('wire').checked;
+      // 材质底：无需 shader 编译即可生效，故不依赖 userData.shader
+      if (on > 0.5) {
+        m.metalness = GLASS.metal;
+        m.roughness = GLASS.rough;
+        m.envMapIntensity = GLASS.env;
+      } else {
+        m.metalness = (m.__origMetalness !== undefined) ? m.__origMetalness : m.metalness;
+        m.roughness = (m.__origRoughness !== undefined) ? m.__origRoughness : m.roughness;
+        m.envMapIntensity = (m.__origEnvIntensity !== undefined) ? m.__origEnvIntensity : 1;
+      }
       const sh = m.userData.shader;
       if (!sh) continue;
       sh.uniforms.uGlassOn.value = on;
       sh.uniforms.uMatCol1.value.set(c1[0], c1[1], c1[2]);
       sh.uniforms.uMatCol2.value.set(c2[0], c2[1], c2[2]);
       sh.uniforms.uSparkle.value = state.particle || 1;
+      sh.uniforms.uIridAmt.value = GLASS.irid;
+      sh.uniforms.uIridFreq.value = GLASS.freq;
+      sh.uniforms.uThemeMix.value = GLASS.theme;
+      sh.uniforms.uSparkScale.value = GLASS.spark;
       sh.uniforms.uTime.value = state.time;
-      m.wireframe = document.getElementById('wire').checked;
-      // 仅在炫彩开启时给材质上玻璃/金属底，关闭时还原
-      if (on > 0.5) {
-        m.metalness = 0.60;
-        m.roughness = 0.30;
-        m.envMapIntensity = 1.25;
-      } else {
-        m.metalness = (m.__origMetalness !== undefined) ? m.__origMetalness : m.metalness;
-        m.roughness = (m.__origRoughness !== undefined) ? m.__origRoughness : m.roughness;
-        m.envMapIntensity = (m.__origEnvIntensity !== undefined) ? m.__origEnvIntensity : 1;
-      }
     }
   });
 }
@@ -372,6 +414,7 @@ function loadModel(url, label){
     syncUniforms();
     document.getElementById('loadMeta').textContent = '已载入：' + (label || '模型') +
       (clips.length ? ' · ' + clips.length + ' 个动作' : '');
+    window.__modelReady = true;
     updateSummary();
   }, undefined, (err) => {
     document.getElementById('loadMeta').textContent = '✗ 载入失败：' + err.message;
@@ -545,6 +588,7 @@ function applyIndex(list){
     list.map(p => `<option value="${resolveGlb(p.glb)}">${p.name}</option>`).join('');
   sel.onchange = () => { if (sel.value) loadModel(sel.value, sel.options[sel.selectedIndex].text); };
   buildSpiritList();
+  autoSelectFromUrl();
 }
 function fetchWithTimeout(url, ms = 8000) {
   const c = new AbortController();
@@ -832,6 +876,19 @@ buildSwatches();
 buildHidden();
 buildParts();
 window.__pet3d = { state, loadModel, scene, renderer, camera };
+
+// ---------- 调试/对比用：?spirit=名称 自动载入指定精灵（无则取首只可预览） ----------
+function autoSelectFromUrl(){
+  if (window.__autoSelected) return;
+  const name = _gp.get('spirit');
+  if (name){
+    const s = SPIRITS.find(x => x.name === name || String(x.id) === name);
+    if (s){ window.__autoSelected = true; selectSpirit(s); return; }
+  }
+  const first = SPIRITS.find(x => INDEX[x.id] != null);
+  if (first){ window.__autoSelected = true; selectSpirit(first); }
+}
+
 </script>
 </body>
 </html>
