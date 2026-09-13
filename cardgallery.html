@@ -74,7 +74,7 @@
 <div id="stage">
   <canvas id="cv"></canvas>
   <div id="labels"></div>
-  <div id="legend">色块 = 官方 UI 配色（ui_color_1/2）<br>球体 = 同款 3D 着色器（mat_color_1/2）</div>
+  <div id="legend">球体和下方色块均为官方真实配色 ui_color_1/2（已对齐 gptvip 指定色卡）</div>
   <div id="help"><b>拖动</b>旋转 · <b>滚轮</b>缩放 · <b>点击球</b>聚焦 · 右上面板调炫彩参数。</div>
 </div>
 
@@ -233,6 +233,14 @@ if (uGlassOn > 0.5) {
 
 // ---------- 构建 39 张球 ----------
 const cards = (typeof CHROMA_CARDS !== 'undefined') ? CHROMA_CARDS : [];
+
+// sRGB 十六进制 → 线性 RGB（着色器在线性空间工作，ui_color 是官方真实显示色）
+function hx2lin(hex){
+  const h = hex.replace('#','');
+  const c = [0,1,2].map(i => parseInt(h.substr(i*2,2),16)/255);
+  const f = x => x <= 0.04045 ? x/12.92 : Math.pow((x+0.055)/1.055, 2.4);
+  return c.map(f);
+}
 const items = [];
 const COLS = 10, SP = 2.4, R = 0.92;
 const totalW = (COLS - 1) * SP;
@@ -244,8 +252,10 @@ cards.forEach((c, i) => {
   // 中灰球体做底，避免纯白金属把炫彩色冲成银色
   const mat = new THREE.MeshStandardMaterial({ color:0x2a2a2a, metalness:0.35, roughness:0.42 });
   mat.envMapIntensity = GLASS.env;
-  mat.userData.c1 = new THREE.Vector3(c.mat_color_1[0], c.mat_color_1[1], c.mat_color_1[2]);
-  mat.userData.c2 = new THREE.Vector3(c.mat_color_2[0], c.mat_color_2[1], c.mat_color_2[2]);
+  // 球体主渐变 = 官方真实色 ui_color（与下方色块一致）；mat_color 仅用于 HDR 发光增益参考
+  const _lc1 = hx2lin(c.ui_color_1), _lc2 = hx2lin(c.ui_color_2);
+  mat.userData.c1 = new THREE.Vector3(_lc1[0], _lc1[1], _lc1[2]);
+  mat.userData.c2 = new THREE.Vector3(_lc2[0], _lc2[1], _lc2[2]);
   injectGlass(mat);
   const mesh = new THREE.Mesh(geo, mat);
   const col = i % COLS, row = Math.floor(i / COLS);
