@@ -272,16 +272,16 @@ let mixer = null, clips = [], currentModel = null;
 const _gp = new URLSearchParams(location.search);
 const _gnum = (k, d) => { const v = parseFloat(_gp.get(k)); return isNaN(v) ? d : v; };
 const GLASS = {
-  irid:    _gnum('irid', 1.35),
-  amt:     _gnum('amt', 0.80),
-  filmMin: _gnum('filmMin', 280.0),
-  filmMax: _gnum('filmMax', 760.0),
+  irid:    _gnum('irid', 1.4),
+  amt:     _gnum('amt', 0.72),
+  filmMin: _gnum('filmMin', 300.0),
+  filmMax: _gnum('filmMax', 600.0),
   filmIOR: _gnum('filmIOR', 1.40),
-  filmFreq:_gnum('filmFreq', 3.0),
-  theme:   _gnum('theme', 0.25),
-  spark:   _gnum('spark', 1.0),
-  sat:     _gnum('sat', 0.82),
-  metal:   _gnum('metal', 0.62),
+  filmFreq:_gnum('filmFreq', 2.3),
+  theme:   _gnum('theme', 0.20),
+  spark:   _gnum('spark', 0.5),
+  sat:     _gnum('sat', 0.80),
+  metal:   _gnum('metal', 0.64),
   rough:   _gnum('rough', 0.28),
   env:     _gnum('env', 1.50),
 };
@@ -401,19 +401,19 @@ if (uGlassOn > 0.5) {
   vec3 base  = gl_FragColor.rgb;
   // (1) 表面染色：按 fresnel 加权——正面更中性(像真实物体)，掠射角才显彩虹，不像平涂玩具
   float surfW = clamp(uGlassAmt * 0.6, 0.0, 0.95) * (0.25 + 0.75 * fres);
-  vec3 col = base * mix(vec3(1.0), 0.55 + 0.75 * iridT, surfW);
+  vec3 col = base * mix(vec3(1.0), 0.8 + 0.3 * iridT, surfW);
   // (2) 薄膜"清漆"反光：掠射角(fresnel)叠加虹彩镜面，模拟真实油膜/珠光涂层高光（干涉作用于反射，而非漫反射）
-  float coat = fres * uGlassAmt * uIridAmt * 1.35;
+  float coat = fres * uGlassAmt * uIridAmt * 1.0;
   col += iridT * coat;
   // (2b) 清漆镜面高光（湿亮上光漆感）：锐利 fresnel 白点，叠加在虹彩之上有真实"打蜡"光泽
   float gloss = pow(1.0 - ndv, 8.0);
-  col += mix(vec3(1.0), iridT, 0.35) * gloss * uGlassAmt * 0.30;
+  col += mix(vec3(1.0), iridT, 0.35) * gloss * uGlassAmt * 0.25;
   // (3) 柔和闪片：抗锯齿虹彩微光，仅掠射更亮，取代硬边白点
   float sc = 60.0 + uSparkle * 16.0;
   float sp = hash13(floor(vWPos * sc) + floor(uTime * 0.9));
   float fleck = smoothstep(0.978, 0.997, sp);
   col += fleck * (irid * 0.6 + 0.4) * fres * 0.8 * uSparkScale;
-  gl_FragColor.rgb = col;
+  gl_FragColor.rgb = clamp(col, 0.0, 1.0);
 }`);
   };
   mat.needsUpdate = true;
