@@ -359,6 +359,21 @@ float hash13(vec3 p){
   p = fract(p * 0.3183099 + 0.1);
   p *= 17.0;
   return fract(p.x * p.y * p.z * (p.x + p.y + p.z));
+}
+// 可见光波长(nm)→RGB 近似（Bruton），用于真实光谱虹彩（油膜/珠光的高级感，非卡通三正弦）
+vec3 spectralColor(float wl){
+  wl = clamp(wl, 380.0, 750.0);
+  vec3 c;
+  if (wl < 440.0)      c = vec3(-(wl-440.0)/60.0, 0.0, 1.0);
+  else if (wl < 490.0) c = vec3(0.0, (wl-440.0)/50.0, 1.0);
+  else if (wl < 510.0) c = vec3(0.0, 1.0, -(wl-510.0)/20.0);
+  else if (wl < 580.0) c = vec3((wl-510.0)/70.0, 1.0, 0.0);
+  else if (wl < 645.0) c = vec3(1.0, -(wl-645.0)/65.0, 0.0);
+  else                 c = vec3(1.0, 0.0, 0.0);
+  float f = 1.0;
+  if (wl < 420.0)      f = 0.3 + 0.7 * (wl-380.0)/40.0;
+  else if (wl > 645.0) f = 0.3 + 0.7 * (750.0-wl)/105.0;
+  return clamp(c, 0.0, 1.0) * f;
 }`)
       .replace('#include <dithering_fragment>', `#include <dithering_fragment>
 if (uGlassOn > 0.5) {
@@ -372,11 +387,10 @@ if (uGlassOn > 0.5) {
   float thickness = uFilmMin + (uFilmMax - uFilmMin) * clamp(0.5 + 0.5 * band * 0.6, 0.0, 1.0);
   // 光学程差（nm）→ 真实肥皂泡式彩虹条纹（视角 + 厚度决定相位）
   float opd = 2.0 * uFilmIOR * thickness * max(ndv, 0.2);
-  vec3 irid;
-  irid.r = 0.5 + 0.5 * sin(opd / 650.0 * 6.2831853 + 0.0);
-  irid.g = 0.5 + 0.5 * sin(opd / 550.0 * 6.2831853 + 2.0944);
-  irid.b = 0.5 + 0.5 * sin(opd / 450.0 * 6.2831853 + 4.1888);
-  irid = irid * irid;                       // 加深条纹对比，更"炫"
+  // 真实光谱虹彩：光程差→可见光波长（Bruton 近似），两阶混合更接近油膜/珠光，而非卡通三正弦
+  vec3 irid = spectralColor(mod(opd, 360.0) + 390.0);
+  irid = mix(irid, spectralColor(mod(opd * 1.37, 360.0) + 390.0), 0.35);
+  irid = pow(clamp(irid, 0.0, 1.0), vec3(0.85));   // 轻微提亮中间调，保留层次
   // 饱和度控制：低=珠光(去霓虹廉价感)，高=鲜艳；默认 0.82 偏珠光
   float _lum = dot(irid, vec3(0.299, 0.587, 0.114));
   irid = mix(vec3(_lum), irid, uSat);
