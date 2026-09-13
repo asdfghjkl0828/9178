@@ -461,7 +461,7 @@ let currentSpirit = null;
 
 // 模型源优先级：七牛(国内,需配 QINIU_BASE) > jsDelivr(Gcore 国内边缘) > jsDelivr 主 > GitHub raw > gh-proxy > 本地 packs
 // 真·国内：把 QINIU_BASE 填成 'https://<七牛CDN域名>/packs' 即变默认源（配合 upload_qiniu.py 上传）。
-const QINIU_BASE = '';
+const QINIU_BASE = 'https://pet3d-models.qiniucdn.com/packs';
 const DEFAULT_PACK_BASE = QINIU_BASE || 'https://gcore.jsdelivr.net/gh/asdfghjkl0828/pet3d-models@main/packs';
 const SOURCE_PRESETS = [
   ...(QINIU_BASE ? [{ name: '七牛云（国内）', url: QINIU_BASE }] : []),
