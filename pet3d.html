@@ -55,6 +55,8 @@
   .thumb.owned span { color:#ffd700; }
   .thumb.owned span::before { content:'★ '; }
   @media (max-width:900px){ .panel{ flex:1 1 100%; } }
+  .irid-pre.on { border-color:var(--accent); color:#fff; background:rgba(120,140,255,.18); }
+  #iridSliders input[type=range]{ accent-color:var(--accent); }
 </style>
 <script src="data/all_species.js?v=20260911"></script>
 <script src="data/chroma_cards.js?v=20260908a"></script>
@@ -161,6 +163,18 @@
           <label class="meta"><input type="checkbox" id="autoRot" checked> 自动旋转</label>
           <label class="meta"><input type="checkbox" id="wire"> 线框</label>
         </div>
+      </div>
+
+      <div class="box" id="iridBox">
+        <h3>炫彩材质微调 <span class="badge">实时</span></h3>
+        <div class="row" style="gap:6px;flex-wrap:wrap">
+          <button class="btn ghost irid-pre" data-p="A">A 强虹彩玻璃</button>
+          <button class="btn ghost irid-pre" data-p="B">B 均衡</button>
+          <button class="btn ghost irid-pre" data-p="C">C 金属箔闪片</button>
+          <button class="btn ghost" id="iridReset">重置</button>
+        </div>
+        <div id="iridSliders" style="margin-top:10px;display:flex;flex-direction:column;gap:8px"></div>
+        <div class="meta" style="margin-top:8px">拖动滑块实时调；选 A/B/C 一键对比。满意后把当前 URL 参数发给助理即可复现。</div>
       </div>
 
       <div class="box">
@@ -885,6 +899,46 @@ document.querySelectorAll('.preset-source').forEach(btn => {
     document.getElementById('btnPackBase').click();
   };
 });
+
+// ---------- 炫彩材质实时微调（滑块 + A/B/C 预设） ----------
+const IRID_PRESETS = {
+  A: {irid:1.9, amt:0.92, filmMin:200, filmMax:820, filmIOR:1.42, filmFreq:2.5, metal:0.5, rough:0.16, spark:0.6, theme:0.12},
+  B: {irid:1.35, amt:0.80, filmMin:280, filmMax:760, filmIOR:1.40, filmFreq:3.0, metal:0.62, rough:0.28, spark:1.0, theme:0.25},
+  C: {irid:1.2, amt:0.70, filmMin:320, filmMax:700, filmIOR:1.45, filmFreq:4.0, metal:0.88, rough:0.34, spark:2.6, theme:0.42},
+};
+const IRID_SLIDERS = [
+  {k:'irid',label:'虹彩亮度',min:0.6,max:2.2,step:0.05},
+  {k:'amt',label:'混合强度',min:0.3,max:0.95,step:0.01},
+  {k:'filmFreq',label:'彩虹频率',min:1,max:6,step:0.1},
+  {k:'metal',label:'金属度',min:0,max:1,step:0.02},
+  {k:'rough',label:'粗糙度',min:0,max:1,step:0.02},
+  {k:'spark',label:'闪片强度',min:0,max:3,step:0.05},
+  {k:'theme',label:'主题染色',min:0,max:0.6,step:0.02},
+];
+function buildIridSliders(){
+  const box = document.getElementById('iridSliders'); box.innerHTML='';
+  IRID_SLIDERS.forEach(s=>{
+    const row = document.createElement('div'); row.className='row';
+    row.style.cssText='display:flex;align-items:center;gap:8px;font-size:12px';
+    const lab=document.createElement('span'); lab.textContent=s.label; lab.style.cssText='flex:0 0 60px;color:#aeb4d0';
+    const inp=document.createElement('input'); inp.type='range'; inp.min=s.min; inp.max=s.max; inp.step=s.step; inp.value=GLASS[s.k]; inp.style.cssText='flex:1';
+    const val=document.createElement('span'); val.textContent=(+GLASS[s.k]).toFixed(2); val.style.cssText='flex:0 0 42px;text-align:right;color:#8ff0a8';
+    inp.oninput=()=>{ GLASS[s.k]=parseFloat(inp.value); val.textContent=(+inp.value).toFixed(2); syncUniforms(); };
+    row.append(lab,inp,val); box.appendChild(row);
+  });
+}
+function applyIridPreset(p){
+  const v=IRID_PRESETS[p]; if(!v) return;
+  Object.assign(GLASS, v);
+  const rows=[...document.querySelectorAll('#iridSliders .row')];
+  IRID_SLIDERS.forEach((s,i)=>{ if(rows[i]){ const inp=rows[i].querySelector('input'); const val=rows[i].querySelector('span:last-child'); inp.value=GLASS[s.k]; val.textContent=(+GLASS[s.k]).toFixed(2); } });
+  syncUniforms();
+  document.querySelectorAll('.irid-pre').forEach(b=>b.classList.toggle('on', b.dataset.p===p));
+}
+document.querySelectorAll('.irid-pre').forEach(b=> b.onclick=()=>applyIridPreset(b.dataset.p));
+document.getElementById('iridReset').onclick=()=>applyIridPreset('B');
+buildIridSliders();
+
 stage.addEventListener('dragover', e => { e.preventDefault(); stage.classList.add('dragover'); });
 stage.addEventListener('dragleave', () => stage.classList.remove('dragover'));
 stage.addEventListener('drop', e => {
