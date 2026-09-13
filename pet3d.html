@@ -211,10 +211,10 @@ function makeStudioEnv(){
   const cvs = document.createElement('canvas'); cvs.width = 32; cvs.height = 128;
   const ctx = cvs.getContext('2d');
   const g = ctx.createLinearGradient(0, 0, 0, 128);
-  g.addColorStop(0.0, '#c8d4ff');
-  g.addColorStop(0.35, '#6c7ab8');
-  g.addColorStop(0.65, '#2a3050');
-  g.addColorStop(1.0, '#0d0f18');
+  g.addColorStop(0.0, '#ffffff');
+  g.addColorStop(0.30, '#aebbe8');
+  g.addColorStop(0.62, '#5b6488');
+  g.addColorStop(1.0, '#1a1f30');
   ctx.fillStyle = g; ctx.fillRect(0, 0, 32, 128);
   const tex = new THREE.CanvasTexture(cvs);
   tex.mapping = THREE.EquirectangularReflectionMapping;
@@ -239,20 +239,25 @@ const state = { glass:false, card:null, particle:1, resolution:new THREE.Vector2
 let mixer = null, clips = [], currentModel = null;
 
 // ---------- 炫彩可调参数（URL 查询驱动，便于对比预设 / 真机微调） ----------
-// 用法示例：pet3d.html?spirit=迪莫&irid=1.6&freq=3&metal=0.7&rough=0.25&spark=1.5&theme=0.2
-//   irid  虹彩强度(0.3~2)   freq  色相随视角变化频率(0.5~4)
+// 用法示例：pet3d.html?spirit=迪莫&irid=1.6&filmMin=280&filmMax=760&filmIOR=1.4&filmFreq=3&amt=0.8&metal=0.65&rough=0.28&spark=1.2&theme=0.2
+//   irid    虹彩亮度增益(0.6~2.2)   amt   整体虹彩混合强度(0.3~0.95)
+//   filmMin/filmMax 薄膜厚度 nm(200~900)   filmIOR 薄膜折射率(1.2~1.8)   filmFreq 彩虹条纹空间频率(1~6)
 //   metal 炫彩时金属度(0~1) rough 炫彩时粗糙度(0~1)  env 环境反射强度
 //   spark 闪片强度(0~3)     theme 主题色染色占比(0~0.6)
 const _gp = new URLSearchParams(location.search);
 const _gnum = (k, d) => { const v = parseFloat(_gp.get(k)); return isNaN(v) ? d : v; };
 const GLASS = {
-  irid:  _gnum('irid', 1.0),
-  freq:  _gnum('freq', 2.0),
-  theme: _gnum('theme', 0.30),
-  spark: _gnum('spark', 1.0),
-  metal: _gnum('metal', 0.60),
-  rough: _gnum('rough', 0.30),
-  env:   _gnum('env', 1.25),
+  irid:    _gnum('irid', 1.35),
+  amt:     _gnum('amt', 0.80),
+  filmMin: _gnum('filmMin', 280.0),
+  filmMax: _gnum('filmMax', 760.0),
+  filmIOR: _gnum('filmIOR', 1.40),
+  filmFreq:_gnum('filmFreq', 3.0),
+  theme:   _gnum('theme', 0.25),
+  spark:   _gnum('spark', 1.0),
+  metal:   _gnum('metal', 0.62),
+  rough:   _gnum('rough', 0.28),
+  env:     _gnum('env', 1.50),
 };
 
 // ---------- 炫彩 shader 注入（角度相关虹彩，贴合表面） ----------
@@ -268,10 +273,14 @@ function injectGlass(mat){
     shader.uniforms.uMatCol2  = { value: new THREE.Vector3(1,1,1) };
     shader.uniforms.uTime     = { value: 0 };
     shader.uniforms.uSparkle  = { value: 1 };
-    shader.uniforms.uIridAmt  = { value: 1.0 };
-    shader.uniforms.uIridFreq = { value: 2.0 };
-    shader.uniforms.uThemeMix = { value: 0.30 };
+    shader.uniforms.uIridAmt  = { value: 1.35 };
+    shader.uniforms.uThemeMix = { value: 0.25 };
     shader.uniforms.uSparkScale = { value: 1.0 };
+    shader.uniforms.uFilmMin  = { value: 280.0 };
+    shader.uniforms.uFilmMax  = { value: 760.0 };
+    shader.uniforms.uFilmIOR  = { value: 1.40 };
+    shader.uniforms.uFilmFreq = { value: 3.0 };
+    shader.uniforms.uGlassAmt = { value: 0.80 };
     mat.userData.shader = shader;
     // 首次编译即按当前状态初始化 uniform（解决“loadModel 时 onBeforeCompile 尚未触发、syncUniforms 跳过”的坑）
     const _cc = (state.glass && state.card) ? state.card : null;
@@ -281,9 +290,13 @@ function injectGlass(mat){
     shader.uniforms.uMatCol1.value.set(_c1[0], _c1[1], _c1[2]);
     shader.uniforms.uMatCol2.value.set(_c2[0], _c2[1], _c2[2]);
     shader.uniforms.uIridAmt.value = GLASS.irid;
-    shader.uniforms.uIridFreq.value = GLASS.freq;
     shader.uniforms.uThemeMix.value = GLASS.theme;
     shader.uniforms.uSparkScale.value = GLASS.spark;
+    shader.uniforms.uFilmMin.value = GLASS.filmMin;
+    shader.uniforms.uFilmMax.value = GLASS.filmMax;
+    shader.uniforms.uFilmIOR.value = GLASS.filmIOR;
+    shader.uniforms.uFilmFreq.value = GLASS.filmFreq;
+    shader.uniforms.uGlassAmt.value = GLASS.amt;
     shader.uniforms.uTime.value = state.time;
 
     // 顶点：传出世界坐标与视线方向（供片元算菲涅尔/虹彩）
@@ -295,7 +308,7 @@ varying vec3 vViewDir;`)
 vWPos = (modelMatrix * vec4(transformed, 1.0)).xyz;
 vViewDir = -mvPosition.xyz;`);
 
-    // 片元：薄膜干涉式虹彩 + 双主题色染色 + 表面附着闪片
+    // 片元：薄膜干涉式虹彩（物理正确）+ 双主题色染色 + 表面附着闪片
     shader.fragmentShader = shader.fragmentShader
       .replace('#include <common>', `#include <common>
 varying vec3 vWPos;
@@ -306,13 +319,14 @@ uniform vec3  uMatCol2;
 uniform float uTime;
 uniform float uSparkle;
 uniform float uIridAmt;
-uniform float uIridFreq;
 uniform float uThemeMix;
 uniform float uSparkScale;
-vec3 hue2rgb(float h){
-  h = fract(h);
-  return clamp(abs(mod(h*6.0 + vec3(0.0,4.0,2.0), 6.0) - 3.0) - 1.0, 0.0, 1.0);
-}
+uniform float uFilmMin;
+uniform float uFilmMax;
+uniform float uFilmIOR;
+uniform float uFilmFreq;
+uniform float uGlassAmt;
+// 薄膜干涉：由光学程差 opd 驱动鲜艳彩虹条纹（视角 + 表面厚度决定相位）
 float hash13(vec3 p){
   p = fract(p * 0.3183099 + 0.1);
   p *= 17.0;
@@ -324,16 +338,23 @@ if (uGlassOn > 0.5) {
   vec3 N = normalize(normal);
   float ndv  = clamp(dot(N, V), 0.0, 1.0);
   float fres = pow(1.0 - ndv, 3.0);
-  // 视角 + 表面位置 + 缓慢漂移 → 有机虹彩（仿肥皂泡/钛氧化膜）
-  float hue = fract(ndv * uIridFreq + sin(vWPos.y * 4.0 + uTime * 0.4) * 0.2 - uTime * 0.03);
-  vec3 irid  = hue2rgb(hue);
+  // 薄膜厚度随表面位置 + 时间缓慢流动 → 肥皂泡/油膜彩虹条纹
+  float band = sin(vWPos.y * uFilmFreq + vWPos.x * uFilmFreq * 0.5 + uTime * 0.30)
+             + 0.5 * sin(vWPos.z * uFilmFreq * 1.3 - uTime * 0.20);
+  float thickness = uFilmMin + (uFilmMax - uFilmMin) * clamp(0.5 + 0.5 * band * 0.6, 0.0, 1.0);
+  // 光学程差（nm）→ 真实肥皂泡式彩虹条纹（视角 + 厚度决定相位）
+  float opd = 2.0 * uFilmIOR * thickness * max(ndv, 0.2);
+  vec3 irid;
+  irid.r = 0.5 + 0.5 * sin(opd / 650.0 * 6.2831853 + 0.0);
+  irid.g = 0.5 + 0.5 * sin(opd / 550.0 * 6.2831853 + 2.0944);
+  irid.b = 0.5 + 0.5 * sin(opd / 450.0 * 6.2831853 + 4.1888);
+  irid = irid * irid;                       // 加深条纹对比，更"炫"
   vec3 theme = mix(uMatCol1, uMatCol2, ndv);
-  // 主题色仅轻染，整体提亮；保留更多原模型反射细节
-  vec3 sheen = irid * mix(vec3(1.0), theme, uThemeMix) * (1.0 + 0.5 * (uIridAmt - 1.0));
-  float amt  = mix(0.45, 0.85, fres) * clamp(uIridAmt, 0.3, 1.6);
-  amt = clamp(amt, 0.0, 0.95);
+  vec3 sheen = irid * mix(vec3(1.0), theme, uThemeMix) * uIridAmt;
+  float amt  = mix(0.35, 0.85, fres) * uGlassAmt;
+  amt = clamp(amt, 0.0, 0.92);
   vec3 col   = mix(gl_FragColor.rgb, sheen, amt);
-  // 表面附着的程序化金属箔闪片：边缘更亮、数量更少、偏白光
+  // 表面附着闪片（菲涅尔边缘更亮、偏白光）
   float sc = 55.0 + uSparkle * 18.0;
   float sp = hash13(floor(vWPos * sc) + floor(uTime * 1.2));
   col += step(0.996, sp) * (irid * 0.35 + 0.45) * fres * 1.1 * uSparkScale;
@@ -371,9 +392,13 @@ function syncUniformsOf(model, resVec){
       sh.uniforms.uMatCol2.value.set(c2[0], c2[1], c2[2]);
       sh.uniforms.uSparkle.value = state.particle || 1;
       sh.uniforms.uIridAmt.value = GLASS.irid;
-      sh.uniforms.uIridFreq.value = GLASS.freq;
       sh.uniforms.uThemeMix.value = GLASS.theme;
       sh.uniforms.uSparkScale.value = GLASS.spark;
+      sh.uniforms.uFilmMin.value = GLASS.filmMin;
+      sh.uniforms.uFilmMax.value = GLASS.filmMax;
+      sh.uniforms.uFilmIOR.value = GLASS.filmIOR;
+      sh.uniforms.uFilmFreq.value = GLASS.filmFreq;
+      sh.uniforms.uGlassAmt.value = GLASS.amt;
       sh.uniforms.uTime.value = state.time;
     }
   });
