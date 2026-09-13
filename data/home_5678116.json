@@ -1,6 +1,6 @@
 {
  "uid": "5678116",
- "fetched_at": "2026-09-13T06:00:17Z",
+ "fetched_at": "2026-09-13T11:41:57Z",
  "source": "rocodex.org (免费)",
  "quota_remaining": 2,
  "from_cache": false,
@@ -9,8 +9,8 @@
   "homeName": "牢大",
   "roomLevel": 5,
   "homeLevel": 25,
-  "homeExperience": 1226909,
-  "comfortLevel": 75855,
+  "homeExperience": 1230909,
+  "comfortLevel": 79205,
   "residentPetCount": 11,
   "guardianPetName": "",
   "plantCount": 15,
@@ -63,9 +63,9 @@
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 3,
-    "status": 1702,
-    "statusText": "已驻守",
+    "feedRound": 4,
+    "status": 1701,
+    "statusText": "状态 1701",
     "icon": "/images/spirits/3070/image.png"
    },
    {
@@ -95,9 +95,9 @@
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 3,
-    "status": 1702,
-    "statusText": "已驻守",
+    "feedRound": 4,
+    "status": 1701,
+    "statusText": "状态 1701",
     "icon": "/images/spirits/3070/image.png"
    },
    {
@@ -199,9 +199,9 @@
   ],
   "plants": [],
   "meta": {
-   "taskId": "tsk_dldyjo85km8x_184g",
-   "createdAt": "2026-09-13T06:00:16.019Z",
-   "finishedAt": "2026-09-13T06:00:17.078Z"
+   "taskId": "tsk_dle5t9rxidg9_1fi3",
+   "createdAt": "2026-09-13T11:41:55.974Z",
+   "finishedAt": "2026-09-13T11:41:57.000Z"
   }
  }
 }
