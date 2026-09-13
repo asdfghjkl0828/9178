@@ -206,6 +206,27 @@ scene.add(new THREE.HemisphereLight(0xffffff, 0x334455, 1.5));
 const dir = new THREE.DirectionalLight(0xffffff, 1.4); dir.position.set(2, 4, 3); scene.add(dir);
 const grid = new THREE.GridHelper(6, 12, 0x2a3050, 0x1a1f33); scene.add(grid);
 
+// ---------- 环境反射（暗色棚拍渐变，让模型有玻璃/金属底） ----------
+function makeStudioEnv(){
+  const cvs = document.createElement('canvas'); cvs.width = 32; cvs.height = 128;
+  const ctx = cvs.getContext('2d');
+  const g = ctx.createLinearGradient(0, 0, 0, 128);
+  g.addColorStop(0.0, '#c8d4ff');
+  g.addColorStop(0.35, '#6c7ab8');
+  g.addColorStop(0.65, '#2a3050');
+  g.addColorStop(1.0, '#0d0f18');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, 32, 128);
+  const tex = new THREE.CanvasTexture(cvs);
+  tex.mapping = THREE.EquirectangularReflectionMapping;
+  tex.colorSpace = THREE.SRGBColorSpace;
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  pmrem.compileEquirectangularShader();
+  const rt = pmrem.fromEquirectangular(tex);
+  tex.dispose(); pmrem.dispose();
+  return rt.texture;
+}
+scene.environment = makeStudioEnv();
+
 // ---------- 贴图 ----------
 const texLoader = new THREE.TextureLoader();
 function loadTex(p){ const t = texLoader.load(p); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.colorSpace = THREE.NoColorSpace; return t; }
@@ -221,6 +242,9 @@ let mixer = null, clips = [], currentModel = null;
 function injectGlass(mat){
   if (mat.__glassInjected) return;
   mat.__glassInjected = true;
+  mat.__origMetalness = mat.metalness;
+  mat.__origRoughness = mat.roughness;
+  mat.__origEnvIntensity = mat.envMapIntensity;
   mat.onBeforeCompile = (shader) => {
     shader.uniforms.uGlassOn  = { value: 0 };
     shader.uniforms.uMatCol1  = { value: new THREE.Vector3(1,1,1) };
@@ -267,9 +291,9 @@ if (uGlassOn > 0.5) {
   float hue = fract(ndv * 2.0 + sin(vWPos.y * 4.0 + uTime * 0.4) * 0.2 - uTime * 0.03);
   vec3 irid  = hue2rgb(hue);
   vec3 theme = mix(uMatCol1, uMatCol2, ndv);
-  // 主题色仅轻染，整体提亮，基础虹彩较强、边缘更亮
+  // 主题色仅轻染，整体提亮；保留更多原模型反射细节
   vec3 sheen = irid * mix(vec3(1.0), theme, 0.30) * 1.25;
-  float amt  = mix(0.55, 0.90, fres);
+  float amt  = mix(0.45, 0.85, fres);
   vec3 col   = mix(gl_FragColor.rgb, sheen, amt);
   // 表面附着的程序化金属箔闪片：边缘更亮、数量更少、偏白光
   float sc = 55.0 + uSparkle * 18.0;
@@ -299,6 +323,16 @@ function syncUniformsOf(model, resVec){
       sh.uniforms.uSparkle.value = state.particle || 1;
       sh.uniforms.uTime.value = state.time;
       m.wireframe = document.getElementById('wire').checked;
+      // 仅在炫彩开启时给材质上玻璃/金属底，关闭时还原
+      if (on > 0.5) {
+        m.metalness = 0.60;
+        m.roughness = 0.30;
+        m.envMapIntensity = 1.25;
+      } else {
+        m.metalness = (m.__origMetalness !== undefined) ? m.__origMetalness : m.metalness;
+        m.roughness = (m.__origRoughness !== undefined) ? m.__origRoughness : m.roughness;
+        m.envMapIntensity = (m.__origEnvIntensity !== undefined) ? m.__origEnvIntensity : 1;
+      }
     }
   });
 }
