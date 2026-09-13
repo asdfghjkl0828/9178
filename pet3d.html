@@ -64,7 +64,8 @@
 <script type="importmap">
 { "imports": {
     "three": "./vendor/three/three.module.js",
-    "three/addons/": "./vendor/three/"
+    "three/addons/": "./vendor/three/",
+    "three/addons/postprocessing/": "https://gcore.jsdelivr.net/npm/three@0.160.0/examples/jsm/postprocessing/"
 } }
 </script>
 </head>
@@ -174,6 +175,9 @@
           <button class="btn ghost" id="iridReset">重置</button>
           <button class="btn ghost" id="iridRand">🎲 随机</button>
         </div>
+        <div class="row" style="margin-top:8px;gap:10px">
+          <label class="meta"><input type="checkbox" id="bloomToggle" checked> 炫彩辉光（Bloom）</label>
+        </div>
         <div id="iridSliders" style="margin-top:10px;display:flex;flex-direction:column;gap:8px"></div>
         <div class="row" style="margin-top:8px;gap:6px">
           <input id="iridParamStr" type="text" readonly style="flex:1;font-size:11px;color:#8ff0a8;background:#0e1222;border:1px solid var(--border);border-radius:6px;padding:4px 8px">
@@ -199,6 +203,10 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/OrbitControls.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
 // ---------- 贴图映射（依据 data/chroma_cards.js 的 res 字段） ----------
 const MAIN_TEX = 'assets/glassy/Tex_PetGlassy_007_D.png';
@@ -222,6 +230,16 @@ const camera = new THREE.PerspectiveCamera(38, 1, 0.01, 1000);
 camera.position.set(0, 1.1, 3.2);
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true; controls.target.set(0, 0.8, 0);
+
+// 后处理：UnrealBloom 让 mat_color 中 >1 的 HDR 通道真正"发光"（炫彩辉光）
+const composer = new EffectComposer(renderer);
+const renderPass = new RenderPass(scene, camera);
+const bloomPass = new UnrealBloomPass(new THREE.Vector2(1,1), 0.45, 0.5, 0.85);
+const outputPass = new OutputPass();
+composer.addPass(renderPass);
+composer.addPass(bloomPass);
+composer.addPass(outputPass);
+let BLOOM_ENABLED = true;
 
 scene.add(new THREE.HemisphereLight(0xffffff, 0x334455, 1.5));
 const dir = new THREE.DirectionalLight(0xffffff, 1.4); dir.position.set(2, 4, 3); scene.add(dir);
@@ -502,7 +520,7 @@ function playClip(i){
 function downloadShot(){
   const prev = scene.background;
   scene.background = new THREE.Color(0x0d0f18);
-  renderer.render(scene, camera);
+  composer.render();
   let url = '';
   try { url = renderer.domElement.toDataURL('image/png'); }
   catch (e) { scene.background = prev; alert('截图失败：' + e.message); return; }
@@ -979,6 +997,7 @@ document.getElementById('iridCopy').onclick = () => {
   if (!ok) { const ta = document.createElement('textarea'); ta.value = txt; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); try { ok = document.execCommand('copy'); } catch(e){} document.body.removeChild(ta); }
   const n = document.getElementById('iridShareNote'); if (n) n.textContent = ok ? ('已复制链接：' + txt) : ('请手动复制此链接：' + txt);
 };
+document.getElementById('bloomToggle').onchange = (e) => { BLOOM_ENABLED = e.target.checked; };
 syncUrlFromGlass();
 buildIridSliders();
 
@@ -994,6 +1013,7 @@ stage.addEventListener('drop', e => {
 function resize(){
   const w = stage.clientWidth, h = stage.clientHeight || 540;
   renderer.setSize(w, h, false);
+  composer.setSize(w, h);
   camera.aspect = w / h; camera.updateProjectionMatrix();
   state.resolution.set(w * renderer.getPixelRatio(), h * renderer.getPixelRatio());
 }
@@ -1007,7 +1027,8 @@ renderer.setAnimationLoop(() => {
   if (mixer) mixer.update(dt);
   if (document.getElementById('autoRot').checked && currentModel) currentModel.rotation.y += dt * 0.35;
   controls.update();
-  renderer.render(scene, camera);
+  if (BLOOM_ENABLED) composer.render();
+  else renderer.render(scene, camera);
 });
 
 buildSwatches();
