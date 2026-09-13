@@ -172,6 +172,7 @@
           <button class="btn ghost irid-pre" data-p="B">B 均衡</button>
           <button class="btn ghost irid-pre" data-p="C">C 金属箔闪片</button>
           <button class="btn ghost" id="iridReset">重置</button>
+          <button class="btn ghost" id="iridRand">🎲 随机</button>
         </div>
         <div id="iridSliders" style="margin-top:10px;display:flex;flex-direction:column;gap:8px"></div>
         <div class="row" style="margin-top:8px;gap:6px">
@@ -966,6 +967,26 @@ function applyIridPreset(p){
 }
 document.querySelectorAll('.irid-pre').forEach(b=> b.onclick=()=>applyIridPreset(b.dataset.p));
 document.getElementById('iridReset').onclick=()=>applyIridPreset('B');
+// 🎲 随机：在"好看区间"内随机一组炫彩参数，便于不想描述时直接试看
+function randomizeIrid(){
+  const rnd = (a,b)=> a + Math.random()*(b-a);
+  GLASS.irid = +rnd(1.0,2.0).toFixed(2);
+  GLASS.amt  = +rnd(0.6,0.95).toFixed(2);
+  GLASS.filmMin = +rnd(200,400).toFixed(0);
+  GLASS.filmMax = +rnd(600,900).toFixed(0);
+  GLASS.filmIOR = +rnd(1.3,1.5).toFixed(2);
+  GLASS.filmFreq = +rnd(1.5,4.5).toFixed(1);
+  GLASS.metal = +rnd(0.4,0.9).toFixed(2);
+  GLASS.rough = +rnd(0.15,0.4).toFixed(2);
+  GLASS.spark = +rnd(0.3,2.0).toFixed(2);
+  GLASS.theme = +rnd(0.1,0.45).toFixed(2);
+  GLASS.sat  = +rnd(0.6,1.0).toFixed(2);
+  const rows=[...document.querySelectorAll('#iridSliders .row')];
+  IRID_SLIDERS.forEach((s,i)=>{ if(rows[i]){ const inp=rows[i].querySelector('input'); const val=rows[i].querySelector('span:last-child'); inp.value=GLASS[s.k]; val.textContent=(+GLASS[s.k]).toFixed(2); } });
+  document.querySelectorAll('.irid-pre').forEach(b=>b.classList.remove('on'));
+  syncUniforms(); syncUrlFromGlass();
+}
+document.getElementById('iridRand').onclick = randomizeIrid;
 // 把当前 GLASS 参数同步到地址栏（保留 spirit 等原有参数），便于复制链接精确复现
 function syncUrlFromGlass(){
   const p = new URLSearchParams(location.search);
