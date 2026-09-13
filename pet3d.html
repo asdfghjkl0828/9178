@@ -263,7 +263,7 @@ let mixer = null, clips = [], currentModel = null;
 //   irid    虹彩亮度增益(0.6~2.2)   amt   整体虹彩混合强度(0.3~0.95)
 //   filmMin/filmMax 薄膜厚度 nm(200~900)   filmIOR 薄膜折射率(1.2~1.8)   filmFreq 彩虹条纹空间频率(1~6)
 //   metal 炫彩时金属度(0~1) rough 炫彩时粗糙度(0~1)  env 环境反射强度
-//   spark 闪片强度(0~3)     theme 主题色染色占比(0~0.6)
+//   spark 闪片强度(0~3)     theme 主题色染色占比(0~0.6)     sat 虹彩饱和度(0.3~1.2，低=珠光去霓虹/高=鲜艳)
 const _gp = new URLSearchParams(location.search);
 const _gnum = (k, d) => { const v = parseFloat(_gp.get(k)); return isNaN(v) ? d : v; };
 const GLASS = {
@@ -275,6 +275,7 @@ const GLASS = {
   filmFreq:_gnum('filmFreq', 3.0),
   theme:   _gnum('theme', 0.25),
   spark:   _gnum('spark', 1.0),
+  sat:     _gnum('sat', 0.82),
   metal:   _gnum('metal', 0.62),
   rough:   _gnum('rough', 0.28),
   env:     _gnum('env', 1.50),
@@ -301,6 +302,7 @@ function injectGlass(mat){
     shader.uniforms.uFilmIOR  = { value: 1.40 };
     shader.uniforms.uFilmFreq = { value: 3.0 };
     shader.uniforms.uGlassAmt = { value: 0.80 };
+    shader.uniforms.uSat = { value: 0.82 };
     mat.userData.shader = shader;
     // 首次编译即按当前状态初始化 uniform（解决“loadModel 时 onBeforeCompile 尚未触发、syncUniforms 跳过”的坑）
     const _cc = (state.glass && state.card) ? state.card : null;
@@ -317,6 +319,7 @@ function injectGlass(mat){
     shader.uniforms.uFilmIOR.value = GLASS.filmIOR;
     shader.uniforms.uFilmFreq.value = GLASS.filmFreq;
     shader.uniforms.uGlassAmt.value = GLASS.amt;
+    shader.uniforms.uSat.value = GLASS.sat;
     shader.uniforms.uTime.value = state.time;
 
     // 顶点：传出世界坐标与视线方向（供片元算菲涅尔/虹彩）
@@ -346,6 +349,7 @@ uniform float uFilmMax;
 uniform float uFilmIOR;
 uniform float uFilmFreq;
 uniform float uGlassAmt;
+uniform float uSat;
 // 薄膜干涉：由光学程差 opd 驱动鲜艳彩虹条纹（视角 + 表面厚度决定相位）
 float hash13(vec3 p){
   p = fract(p * 0.3183099 + 0.1);
@@ -369,6 +373,9 @@ if (uGlassOn > 0.5) {
   irid.g = 0.5 + 0.5 * sin(opd / 550.0 * 6.2831853 + 2.0944);
   irid.b = 0.5 + 0.5 * sin(opd / 450.0 * 6.2831853 + 4.1888);
   irid = irid * irid;                       // 加深条纹对比，更"炫"
+  // 饱和度控制：低=珠光(去霓虹廉价感)，高=鲜艳；默认 0.82 偏珠光
+  float _lum = dot(irid, vec3(0.299, 0.587, 0.114));
+  irid = mix(vec3(_lum), irid, uSat);
   vec3 theme = mix(uMatCol1, uMatCol2, ndv);
   vec3 tint  = mix(vec3(1.0), theme, uThemeMix);
   vec3 iridT = irid * tint * uIridAmt;       // 染色后的虹彩
@@ -427,6 +434,7 @@ function syncUniformsOf(model, resVec){
       sh.uniforms.uFilmIOR.value = GLASS.filmIOR;
       sh.uniforms.uFilmFreq.value = GLASS.filmFreq;
       sh.uniforms.uGlassAmt.value = GLASS.amt;
+      sh.uniforms.uSat.value = GLASS.sat;
       sh.uniforms.uTime.value = state.time;
     }
   });
@@ -902,14 +910,15 @@ document.querySelectorAll('.preset-source').forEach(btn => {
 
 // ---------- 炫彩材质实时微调（滑块 + A/B/C 预设） ----------
 const IRID_PRESETS = {
-  A: {irid:1.9, amt:0.92, filmMin:200, filmMax:820, filmIOR:1.42, filmFreq:2.5, metal:0.5, rough:0.16, spark:0.6, theme:0.12},
-  B: {irid:1.35, amt:0.80, filmMin:280, filmMax:760, filmIOR:1.40, filmFreq:3.0, metal:0.62, rough:0.28, spark:1.0, theme:0.25},
-  C: {irid:1.2, amt:0.70, filmMin:320, filmMax:700, filmIOR:1.45, filmFreq:4.0, metal:0.88, rough:0.34, spark:2.6, theme:0.42},
+  A: {irid:1.9, amt:0.92, filmMin:200, filmMax:820, filmIOR:1.42, filmFreq:2.5, metal:0.5, rough:0.16, spark:0.6, theme:0.12, sat:0.9},
+  B: {irid:1.35, amt:0.80, filmMin:280, filmMax:760, filmIOR:1.40, filmFreq:3.0, metal:0.62, rough:0.28, spark:1.0, theme:0.25, sat:0.82},
+  C: {irid:1.2, amt:0.70, filmMin:320, filmMax:700, filmIOR:1.45, filmFreq:4.0, metal:0.88, rough:0.34, spark:2.6, theme:0.42, sat:0.95},
 };
 const IRID_SLIDERS = [
   {k:'irid',label:'虹彩亮度',min:0.6,max:2.2,step:0.05},
   {k:'amt',label:'混合强度',min:0.3,max:0.95,step:0.01},
   {k:'filmFreq',label:'彩虹频率',min:1,max:6,step:0.1},
+  {k:'sat',label:'虹彩饱和',min:0.3,max:1.2,step:0.02},
   {k:'metal',label:'金属度',min:0,max:1,step:0.02},
   {k:'rough',label:'粗糙度',min:0,max:1,step:0.02},
   {k:'spark',label:'闪片强度',min:0,max:3,step:0.05},
