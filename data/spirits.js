@@ -9504,4 +9504,275 @@ const SPIRITS =
         "img": "https://patchwiki.biligame.com/images/rocom/thumb/3/35/b0vodz0btqjvumlf48gflbfdzdo15h0.png/180px-JL_hulianchacha.png",
         "tr_desc": "在场时，识破精灵的变化效果，解除其伪装。"
     }
+,
+    {
+        "no": "361",
+        "n": "加油蟹（两只海葵的样子）",
+        "hp": 116, "pa": 92, "ma": 92, "pd": 128, "md": 128, "sp": 100,
+        "a1": "水", "a2": "萌",
+        "tr": "拉拉队长", "st": "二阶",
+        "img": "https://patchwiki.biligame.com/images/nrc/7/7b/24w15lhnz2m24vmc34sxuwevoe4f4lu.png",
+        "tr_desc": "若自己在萌化状态下再获得萌化会解除萌化。"
+    },
+    {
+        "no": "236",
+        "n": "圣代甜甜（樱桃巧克力口味）",
+        "hp": 119, "pa": 112, "ma": 119, "pd": 70, "md": 92, "sp": 100,
+        "a1": "冰", "a2": "",
+        "tr": "加个雪球", "st": "三阶",
+        "img": "https://patchwiki.biligame.com/images/nrc/f/fb/6avdpfot7q88tsex89cjow7xpmceemc.png",
+        "tr_desc": "使敌方获得冻结时，也会使其获得2层冻结。"
+    },
+    {
+        "no": "451",
+        "n": "圣凯布米龙",
+        "hp": 79, "pa": 116, "ma": 29, "pd": 120, "md": 120, "sp": 105,
+        "a1": "火", "a2": "虫",
+        "tr": "热成像", "st": "三阶",
+        "img": "https://patchwiki.biligame.com/images/nrc/c/c6/b69ajc8qg48yh2025i5fyypz4ldeypp.png",
+        "tr_desc": "若上回合双方有精灵使用火系技能，本回合自己携带的虫系技能威力+100%。"
+    },
+    {
+        "no": "459",
+        "n": "小浣蛋",
+        "hp": 78, "pa": 93, "ma": 88, "pd": 99, "md": 92, "sp": 96,
+        "a1": "恶", "a2": "",
+        "tr": "翻垃圾桶", "st": "一阶",
+        "img": "https://patchwiki.biligame.com/images/nrc/0/04/3g9j2y632cma214cvoo7oi14om5uenc.png",
+        "tr_desc": "入场时自己未携带的技能位置会变为敌方最近使用过的技能，且能耗-2。"
+    },
+    {
+        "no": "464",
+        "n": "布灵",
+        "hp": 66, "pa": 92, "ma": 32, "pd": 98, "md": 77, "sp": 100,
+        "a1": "幻", "a2": "光",
+        "tr": "旧玩具", "st": "一阶",
+        "img": "https://patchwiki.biligame.com/images/nrc/9/9f/hlprd2ju2pdr7cfu8mrz28pn18lne33.png",
+        "tr_desc": "己方精灵每使用过1个不同系别的技能，自己入场时获得双攻+10%。"
+    },
+    {
+        "no": "465",
+        "n": "布灵布灵",
+        "hp": 83, "pa": 115, "ma": 40, "pd": 123, "md": 96, "sp": 125,
+        "a1": "幻", "a2": "光",
+        "tr": "旧玩具", "st": "二阶",
+        "img": "https://patchwiki.biligame.com/images/nrc/7/75/rwynpcesfl169vd61q7lavj3hzocamn.png",
+        "tr_desc": "己方精灵每使用过1个不同系别的技能，自己入场时获得双攻+10%。"
+    },
+    {
+        "no": "461",
+        "n": "幽铃",
+        "hp": 99, "pa": 37, "ma": 93, "pd": 80, "md": 105, "sp": 76,
+        "a1": "幽", "a2": "",
+        "tr": "盗魂铃", "st": "一阶",
+        "img": "https://patchwiki.biligame.com/images/nrc/7/77/ncacswlwj812v1f9xguukt51uljy2dg.png",
+        "tr_desc": "初始能量为0，首次入场前敌方每聚能1次，回复5能量（可突破上限），在场时自己回复的能量-4。"
+    },
+    {
+        "no": "462",
+        "n": "摇铃魔偶",
+        "hp": 123, "pa": 46, "ma": 117, "pd": 99, "md": 131, "sp": 95,
+        "a1": "幽", "a2": "",
+        "tr": "盗魂铃", "st": "二阶",
+        "img": "https://patchwiki.biligame.com/images/nrc/6/66/dn2la7idby1er0q89t3ssnkwhhfv3rz.png",
+        "tr_desc": "初始能量为0，首次入场前敌方每聚能1次，回复5能量（可突破上限），在场时自己回复的能量-4。"
+    },
+    {
+        "no": "444",
+        "n": "新月狼灵",
+        "hp": 92, "pa": 103, "ma": 41, "pd": 102, "md": 78, "sp": 104,
+        "a1": "幽", "a2": "幻",
+        "tr": "铭记于月亮", "st": "二阶",
+        "img": "https://patchwiki.biligame.com/images/nrc/1/1b/rqr3i0zz67u3pqxs1rjj1znchtceefh.png",
+        "tr_desc": "获得自己击败的精灵的特性，每次攻击后自己失去5%生命。"
+    },
+    {
+        "no": "446",
+        "n": "新月鹭",
+        "hp": 50, "pa": 59, "ma": 60, "pd": 62, "md": 68, "sp": 69,
+        "a1": "翼", "a2": "冰",
+        "tr": "冷光源", "st": "一阶",
+        "img": "https://patchwiki.biligame.com/images/nrc/f/ff/q2ji8cl28zae1nl13apyzcxiaqqm6w3.png",
+        "tr_desc": "若上回合双方有精灵使用翼系技能，本回合自己携带的冰系技能威力+100%。"
+    },
+    {
+        "no": "463",
+        "n": "星星眼",
+        "hp": 116, "pa": 97, "ma": 120, "pd": 116, "md": 71, "sp": 85,
+        "a1": "幻", "a2": "",
+        "tr": "宇宙之眼", "st": "一阶",
+        "img": "https://patchwiki.biligame.com/images/nrc/e/e3/ktkc0ce1phjhv93f8u6cs0eunmdelnm.png",
+        "tr_desc": "敌方每有1层星陨印记，自己获得物防+10%。"
+    },
+    {
+        "no": "453",
+        "n": "智辉章脑",
+        "hp": 112, "pa": 53, "ma": 123, "pd": 87, "md": 124, "sp": 100,
+        "a1": "光", "a2": "水",
+        "tr": "基因编辑", "st": "二阶",
+        "img": "https://patchwiki.biligame.com/images/nrc/d/d3/to882782tk5lnp0v0cd8zf9xdea1ems.png",
+        "tr_desc": "自己携带技能的基础能耗，变为上回合双方使用的技能能耗之和。"
+    },
+    {
+        "no": "448",
+        "n": "月使鹭纳",
+        "hp": 83, "pa": 99, "ma": 100, "pd": 104, "md": 113, "sp": 115,
+        "a1": "翼", "a2": "冰",
+        "tr": "冷光源", "st": "三阶",
+        "img": "https://patchwiki.biligame.com/images/nrc/4/47/lpluahkosttmya24cb0bun6b4jjfmpn.png",
+        "tr_desc": "若上回合双方有精灵使用翼系技能，本回合自己携带的冰系技能威力+100%。"
+    },
+    {
+        "no": "447",
+        "n": "月辉鹭",
+        "hp": 66, "pa": 79, "ma": 80, "pd": 83, "md": 90, "sp": 92,
+        "a1": "翼", "a2": "冰",
+        "tr": "冷光源", "st": "二阶",
+        "img": "https://patchwiki.biligame.com/images/nrc/8/83/2x13n2474fdfwqtbprh8g3rx66766r7.png",
+        "tr_desc": "若上回合双方有精灵使用翼系技能，本回合自己携带的冰系技能威力+100%。"
+    },
+    {
+        "no": "454",
+        "n": "未完虫",
+        "hp": 86, "pa": 102, "ma": 111, "pd": 68, "md": 100, "sp": 100,
+        "a1": "幽", "a2": "虫",
+        "tr": "正模标本", "st": "一阶",
+        "img": "https://patchwiki.biligame.com/images/nrc/1/19/suzpim4e1b9rys05yh1w8u97xz8js2o.png",
+        "tr_desc": "自己队伍中的其他精灵，在力竭1回合后会变为未完虫。"
+    },
+    {
+        "no": "466",
+        "n": "果实立方人",
+        "hp": 105, "pa": 132, "ma": 50, "pd": 120, "md": 98, "sp": 95,
+        "a1": "机械", "a2": "草",
+        "tr": "秋收", "st": "一阶",
+        "img": "https://patchwiki.biligame.com/images/nrc/d/d1/dl65qh8nz5t0geu66tkveepbylm4qf8.png",
+        "tr_desc": "处于草系环境中时，机械系技能威力+50%。"
+    },
+    {
+        "no": "458",
+        "n": "测风蝉",
+        "hp": 98, "pa": 98, "ma": 97, "pd": 116, "md": 84, "sp": 120,
+        "a1": "翼", "a2": "机械",
+        "tr": "风速仪", "st": "二阶",
+        "img": "https://patchwiki.biligame.com/images/nrc/7/74/a25357mcp4dupdq8fpf2ky1udqpdfg2.png",
+        "tr_desc": "携带的技能每累计传动8，自己获得1层风起印记。"
+    },
+    {
+        "no": "238",
+        "n": "满月砣（上弦的样子）",
+        "hp": 140, "pa": 111, "ma": 108, "pd": 100, "md": 81, "sp": 105,
+        "a1": "毒", "a2": "萌",
+        "tr": "月相", "st": "首领",
+        "img": "https://patchwiki.biligame.com/images/nrc/1/11/q9zx13fo5nr7x6y6c66v3z2ntvfvqgt.png",
+        "tr_desc": "敌方受到中毒效果伤害时，自己回复等量生命。每过量回复10%生命敌方获得1层中毒。"
+    },
+    {
+        "no": "238",
+        "n": "满月砣（下弦的样子）",
+        "hp": 140, "pa": 108, "ma": 111, "pd": 81, "md": 100, "sp": 105,
+        "a1": "毒", "a2": "萌",
+        "tr": "月相", "st": "首领",
+        "img": "https://patchwiki.biligame.com/images/nrc/1/11/q9zx13fo5nr7x6y6c66v3z2ntvfvqgt.png",
+        "tr_desc": "敌方受到中毒效果伤害时，自己回复等量生命。每过量回复10%生命敌方获得1层中毒。"
+    },
+    {
+        "no": "218",
+        "n": "烈焰狂战士",
+        "hp": 105, "pa": 79, "ma": 13, "pd": 110, "md": 93, "sp": 65,
+        "a1": "火", "a2": "",
+        "tr": "蒸汽革命", "st": "首领",
+        "img": "https://patchwiki.biligame.com/images/nrc/c/c6/l9bzcm5m0ugx7z2ccl5a4yslpykjd1q.png",
+        "tr_desc": "己方精灵每使用1次火系技能，自己入场时获得全技能威力+10和物防+5%"
+    },
+    {
+        "no": "449",
+        "n": "热团团",
+        "hp": 48, "pa": 69, "ma": 18, "pd": 72, "md": 72, "sp": 63,
+        "a1": "火", "a2": "虫",
+        "tr": "热成像", "st": "一阶",
+        "img": "https://patchwiki.biligame.com/images/nrc/3/3a/9mc96nw28hvumoec30fpyqgtxp996at.png",
+        "tr_desc": "若上回合双方有精灵使用火系技能，本回合自己携带的虫系技能威力+100%。"
+    },
+    {
+        "no": "450",
+        "n": "焰米龙",
+        "hp": 63, "pa": 92, "ma": 23, "pd": 96, "md": 96, "sp": 84,
+        "a1": "火", "a2": "虫",
+        "tr": "热成像", "st": "二阶",
+        "img": "https://patchwiki.biligame.com/images/nrc/9/95/8a08pch32fc3j1rx04c4ni7360g6euv.png",
+        "tr_desc": "若上回合双方有精灵使用火系技能，本回合自己携带的虫系技能威力+100%。"
+    },
+    {
+        "no": "456",
+        "n": "玳塔",
+        "hp": 127, "pa": 47, "ma": 107, "pd": 72, "md": 116, "sp": 50,
+        "a1": "幻", "a2": "",
+        "tr": "乌龟塔理论", "st": "二阶",
+        "img": "https://patchwiki.biligame.com/images/nrc/5/51/hauk884m5wqumkmsh1u7s2o1fh01vuh.png",
+        "tr_desc": "每受到1次攻击伤害，敌方获得3层星陨印记。"
+    },
+    {
+        "no": "455",
+        "n": "玳龟",
+        "hp": 101, "pa": 37, "ma": 85, "pd": 58, "md": 93, "sp": 40,
+        "a1": "幻", "a2": "",
+        "tr": "乌龟塔理论", "st": "一阶",
+        "img": "https://patchwiki.biligame.com/images/nrc/e/e9/44e2djw05cuxg7pgbv8rt1jg2b5s5gu.png",
+        "tr_desc": "每受到1次攻击伤害，敌方获得3层星陨印记。"
+    },
+    {
+        "no": "452",
+        "n": "章脑丸",
+        "hp": 89, "pa": 42, "ma": 99, "pd": 69, "md": 99, "sp": 80,
+        "a1": "光", "a2": "水",
+        "tr": "基因编辑", "st": "一阶",
+        "img": "https://patchwiki.biligame.com/images/nrc/8/86/h7jfxdksi66wi5hxd0t1pyofg6gc5kw.png",
+        "tr_desc": "自己携带技能的基础能耗，变为上回合双方使用的技能能耗之和。"
+    },
+    {
+        "no": "443",
+        "n": "诅咒狼灵",
+        "hp": 69, "pa": 77, "ma": 31, "pd": 77, "md": 59, "sp": 78,
+        "a1": "幽", "a2": "幻",
+        "tr": "铭记于月亮", "st": "一阶",
+        "img": "https://patchwiki.biligame.com/images/nrc/a/aa/0ujfvmq4wlubavv5a04fxbjcnfkax2h.png",
+        "tr_desc": "获得自己击败的精灵的特性，每次攻击后自己失去5%生命。"
+    },
+    {
+        "no": "457",
+        "n": "量风碗",
+        "hp": 78, "pa": 79, "ma": 77, "pd": 93, "md": 67, "sp": 96,
+        "a1": "翼", "a2": "机械",
+        "tr": "风速仪", "st": "一阶",
+        "img": "https://patchwiki.biligame.com/images/nrc/8/83/5pgb7ze1ijipoe5mqmlwcmqgodvyxin.png",
+        "tr_desc": "携带的技能每累计传动8，自己获得1层风起印记。"
+    },
+    {
+        "no": "445",
+        "n": "银月狼王",
+        "hp": 115, "pa": 128, "ma": 51, "pd": 128, "md": 98, "sp": 130,
+        "a1": "幽", "a2": "幻",
+        "tr": "铭记于月亮", "st": "三阶",
+        "img": "https://patchwiki.biligame.com/images/nrc/c/c4/nm7s4j5tjkrnxj0txd03y6f1x8yz0n8.png",
+        "tr_desc": "获得自己击败的精灵的特性，每次攻击后自己失去5%生命。"
+    },
+    {
+        "no": "235",
+        "n": "香草甜甜（樱桃饰品）",
+        "hp": 96, "pa": 90, "ma": 95, "pd": 56, "md": 74, "sp": 80,
+        "a1": "冰", "a2": "",
+        "tr": "加个雪球", "st": "二阶",
+        "img": "https://patchwiki.biligame.com/images/nrc/0/01/ix3idupb3r158o1qpgmga5nikisw404.png",
+        "tr_desc": "使敌方获得冻结时，也会使其获得2层冻结。"
+    },
+    {
+        "no": "460",
+        "n": "黑手浣熊",
+        "hp": 97, "pa": 116, "ma": 110, "pd": 124, "md": 115, "sp": 120,
+        "a1": "恶", "a2": "",
+        "tr": "翻垃圾桶", "st": "二阶",
+        "img": "https://patchwiki.biligame.com/images/nrc/a/af/b9oulolxim62tj08up2ube61e6fxro9.png",
+        "tr_desc": "入场时自己未携带的技能位置会变为敌方最近使用过的技能，且能耗-2。"
+    },
 ]
