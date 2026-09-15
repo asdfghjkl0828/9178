@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>特性图鉴 - 洛克王国 PVP 计算器</title>
+<link rel="stylesheet" href="css/head.css">
+<style>
+  .dex-nav { display:flex; gap:6px; margin-left:16px; align-items:center; flex-wrap:wrap; }
+  .dex-nav a { color:rgba(255,255,255,.82); text-decoration:none; font-size:13px; padding:5px 11px; border-radius:18px; border:1px solid rgba(255,255,255,.18); white-space:nowrap; }
+  .dex-nav a:hover { background:rgba(255,255,255,.15); }
+  .dex-nav a.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .toolbar { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:12px; }
+  .toolbar .search-wrap { margin-bottom:0; flex:1; min-width:200px; }
+  .toolbar .search-input { cursor:text; }
+  .filter-label { font-size:12px; color:var(--text2); }
+  .chip-row { display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
+  .fchip { cursor:pointer; font-size:12px; padding:3px 10px; border-radius:14px; border:1px solid var(--border); background:var(--card2); color:var(--text); user-select:none; }
+  .fchip:hover { border-color:var(--accent); }
+  .fchip.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .count { font-size:12px; color:var(--text2); margin-bottom:10px; }
+  .sub { color:var(--text2); font-size:13px; margin-bottom:12px; }
+  .dex-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:14px; }
+  .dex-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px; display:flex; flex-direction:column; cursor:pointer; transition:transform .12s, box-shadow .12s, border-color .12s; }
+  .dex-card:hover { transform:translateY(-2px); border-color:var(--accent); box-shadow:0 6px 22px rgba(0,0,0,.22); }
+  .dex-card .name { font-size:17px; font-weight:700; line-height:1.2; }
+  .dex-card .types { display:flex; gap:6px; margin-top:7px; flex-wrap:wrap; align-items:center; }
+  .trait-desc { margin-top:9px; font-size:12.5px; color:var(--text2); line-height:1.55; }
+  .card-hint { margin-top:auto; padding-top:11px; font-size:11px; color:var(--accent); }
+  .modal-overlay { position:fixed; inset:0; background:rgba(8,8,16,.62); display:none; align-items:flex-start; justify-content:center; padding:48px 16px; z-index:1000; overflow:auto; }
+  .modal-overlay.open { display:flex; }
+  .modal-box { background:var(--card); border:1px solid var(--border); border-radius:16px; max-width:820px; width:100%; margin:auto; padding:22px 24px 26px; position:relative; box-shadow:0 24px 70px rgba(0,0,0,.45); }
+  .modal-close { position:absolute; top:14px; right:14px; width:30px; height:30px; border:none; border-radius:50%; background:var(--card2); color:var(--text); font-size:15px; cursor:pointer; line-height:1; }
+  .modal-close:hover { background:var(--accent); color:#fff; }
+  .detail-head { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+  .detail-head .name { font-size:22px; font-weight:800; }
+  .detail-head .types { display:flex; gap:6px; margin-top:7px; flex-wrap:wrap; align-items:center; }
+  .detail-sec-title { margin-top:20px; font-size:15px; font-weight:700; color:var(--text); display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .detail-sec-title .hint { font-size:11px; color:var(--text2); font-weight:400; }
+  .badge-count { background:var(--accent); color:#fff; padding:1px 9px; border-radius:10px; font-size:12px; }
+  .trait-detail-desc { margin-top:10px; font-size:13px; color:var(--text2); line-height:1.6; }
+  .spirit-link-grid { margin-top:11px; display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:10px; }
+  .spirit-link { cursor:pointer; background:var(--card2); border:1px solid var(--border); border-radius:10px; padding:10px 8px; display:flex; flex-direction:column; align-items:center; gap:6px; text-align:center; transition:border-color .12s; }
+  .spirit-link:hover { border-color:var(--accent); }
+  .mini-avatar { width:48px; height:48px; border-radius:9px; background:var(--bg); display:flex; align-items:center; justify-content:center; font-size:20px; overflow:hidden; position:relative; flex-shrink:0; }
+  .mini-avatar img { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; }
+  .spirit-link .sl-name { font-weight:700; font-size:14px; }
+  .spirit-link .types { display:flex; gap:4px; }
+  .spirit-link .no { font-size:11px; color:var(--text2); }
+  .detail-empty { margin-top:12px; color:var(--text2); font-size:13px; }
+</style>
+</head>
+<body>
+<header>
+  <div style="font-size:24px">📘</div>
+  <div style="display:flex;flex-direction:column;gap:2px">
+    <h1>特性图鉴</h1>
+  </div>
+  <nav class="dex-nav">
+    <a href="index.html" class="home-link">工具箱</a>
+    <a href="calc.html">伤害计算器</a>
+    <a href="pokedex.html">精灵图鉴</a>
+    <a href="skilldex.html">技能图鉴</a>
+    <a href="traits.html" class="active">特性图鉴</a>
+    <a href="restraint.html">克制计算器</a>
+    <a href="speed.html">速度榜单</a>
+    <a href="eggs.html">孵蛋查询</a><a href="merchant.html">远行商人</a><a href="color.html">炫彩精灵</a><a href="home.html">家园查询</a>
+  </nav>
+  <div class="header-actions">
+    <div class="theme-toggle" onclick="toggleTheme()">
+      <span class="tt-icon" id="theme-icon">🌙</span>
+      <span id="theme-label">夜间</span>
+    </div>
+  </div>
+</header>
+
+<div class="main">
+  <div class="toolbar">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="search-input" id="search" placeholder="搜索特性名称 / 拼音…">
+    </div>
+    <span class="filter-label">属性:</span>
+    <div class="chip-row" id="attrFilter"></div>
+  </div>
+  <div class="count" id="count"></div>
+  <div class="sub">点击任意特性卡片 → 查看拥有该特性的精灵 ✦</div>
+  <div class="dex-grid" id="grid"></div>
+</div>
+
+<div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<script src="data/traits.js"></script>
+<script src="data/type.js"></script>
+<script src="data/pinyin.js"></script>
+<script src="data/spirits.js"></script>
+<script>
+  // ---------- theme ----------
+  function toggleTheme() {
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    if (isLight) {
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem('theme', 'dark');
+      document.getElementById('theme-icon').textContent = '🌙';
+      document.getElementById('theme-label').textContent = '夜间';
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+      localStorage.setItem('theme', 'light');
+      document.getElementById('theme-icon').textContent = '☀️';
+      document.getElementById('theme-label').textContent = '日间';
+    }
+  }
+  (function () {
+    const t = localStorage.getItem('theme');
+    if (t === 'light') {
+      document.documentElement.setAttribute('data-theme', 'light');
+      document.getElementById('theme-icon').textContent = '☀️';
+      document.getElementById('theme-label').textContent = '日间';
+    }
+  })();
+
+  // ---------- helpers ----------
+  function typeChip(t) {
+    const bg = (typeof TYPE_COLORS !== 'undefined' && TYPE_COLORS[t]) || '#888';
+    const tc = (typeof TYPE_TEXT_DARK !== 'undefined' && TYPE_TEXT_DARK.has(t)) ? '#333' : '#fff';
+    return '<span class="type-tag" style="background:' + bg + ';color:' + tc + '">' + t + '</span>';
+  }
+  function pinyinOf(n) {
+    if (typeof PINYIN_MAP === 'undefined') return n;
+    return n.split('').map(ch => PINYIN_MAP[ch] || ch).join('');
+  }
+  const SPIRIT_BY_NAME = (typeof SPIRITS !== 'undefined') ? Object.fromEntries(SPIRITS.map(s => [s.n, s])) : {};
+  // reverse: trait name -> [spirit objects that own it]
+  const TRAIT_SPIRITS = {};
+  if (typeof SPIRITS !== 'undefined') {
+    for (const s of SPIRITS) {
+      if (s.tr) (TRAIT_SPIRITS[s.tr] = TRAIT_SPIRITS[s.tr] || []).push(s);
+    }
+  }
+
+  function miniAvatar(s) {
+    const ch = (s.n || '?').charAt(0);
+    const img = s.img
+      ? '<img src="' + s.img + '" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain" onerror="this.style.display=\'none\'" onload="this.previousElementSibling.style.display=\'none\'">'
+      : '';
+    return '<div class="mini-avatar" style="position:relative"><span class="mini-fallback">' + ch + '</span>' + img + '</div>';
+  }
+
+  function attrChipsOf(t) {
+    let str = typeChip(t.a);
+    if (t.a2) str += typeChip(t.a2);
+    return str;
+  }
+
+  function cardHTML(t) {
+    const owners = (TRAIT_SPIRITS[t.n] || []).length;
+    return '<div class="dex-card" data-name="' + t.n + '">' +
+             '<div class="name">' + t.n + '</div>' +
+             '<div class="types">' + attrChipsOf(t) + '</div>' +
+             '<div class="trait-desc">' + (t.desc || '—') + '</div>' +
+             '<div class="card-hint">拥有者 ' + owners + ' 只精灵 →</div>' +
+           '</div>';
+  }
+
+  // ---------- modal ----------
+  function showModal(html) {
+    document.getElementById('modal-body').innerHTML = html;
+    document.getElementById('modal').classList.add('open');
+  }
+  function closeModal() {
+    document.getElementById('modal').classList.remove('open');
+    document.getElementById('modal-body').innerHTML = '';
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  function goSpirit(name) {
+    location.href = 'pokedex.html?spirit=' + encodeURIComponent(name);
+  }
+
+  function openTraitDetail(name) {
+    const tr = TRAITS.find(x => x.n === name);
+    if (!tr) return;
+    let body = '<div class="detail-head">' +
+                 '<div class="name">' + tr.n + '</div>' +
+                 '<div class="types">' + attrChipsOf(tr) + '</div>' +
+               '</div>';
+    body += '<div class="trait-detail-desc">' + (tr.desc || '') + '</div>';
+
+    const spirits = (TRAIT_SPIRITS[name] || []).slice();
+    spirits.sort((a, b) => (a.no || '').localeCompare(b.no || '', 'zh') || a.n.localeCompare(b.n, 'zh'));
+
+    if (spirits.length) {
+      body += '<div class="detail-sec-title">拥有者精灵 <span class="badge-count">' + spirits.length + '</span>' +
+              '<span class="hint">（点击精灵查看它的图鉴 →）</span></div>';
+      body += '<div class="spirit-link-grid">' + spirits.map(s => {
+        const types = (s.a1 ? typeChip(s.a1) : '') + (s.a2 ? typeChip(s.a2) : '');
+        return '<div class="spirit-link" data-spirit="' + s.n + '">' +
+                 miniAvatar(s) +
+                 '<div class="sl-name">' + s.n + '</div>' +
+                 '<div class="types">' + types + '</div>' +
+               '</div>';
+      }).join('') + '</div>';
+    } else {
+      body += '<div class="detail-empty">暂无精灵数据（该特性可能尚未收录到本地精灵库）。</div>';
+    }
+
+    showModal(body);
+    document.querySelectorAll('#modal-body .spirit-link').forEach(el => {
+      el.addEventListener('click', () => goSpirit(el.dataset.spirit));
+    });
+  }
+
+  document.getElementById('grid').addEventListener('click', e => {
+    const card = e.target.closest('.dex-card');
+    if (card) openTraitDetail(card.dataset.name);
+  });
+
+  // ---------- state + render ----------
+  let activeAttr = '';
+  let q = '';
+  const grid = document.getElementById('grid');
+  const attrs = [...new Set(TRAITS.flatMap(t => [t.a, t.a2].filter(Boolean)))].sort();
+
+  const af = document.getElementById('attrFilter');
+  const chips = [];
+  function mkChip(parent, label, onClick) {
+    const el = document.createElement('span');
+    el.className = 'fchip';
+    el.textContent = label;
+    el.onclick = onClick;
+    parent.appendChild(el);
+    chips.push(el);
+    return el;
+  }
+  const attrChips = [];
+  mkChip(af, '全部', () => { activeAttr = ''; attrChips.forEach(c => c.classList.remove('active')); attrAll.classList.add('active'); render(); });
+  const attrAll = chips[chips.length - 1]; attrAll.classList.add('active'); attrChips.push(attrAll);
+  attrs.forEach(a => {
+    const el = mkChip(af, a, () => {
+      activeAttr = (activeAttr === a) ? '' : a;
+      attrChips.forEach(c => c.classList.remove('active'));
+      if (activeAttr) { attrChips[attrs.indexOf(a) + 1].classList.add('active'); }
+      else { attrAll.classList.add('active'); }
+      render();
+    });
+    attrChips.push(el);
+  });
+
+  document.getElementById('search').addEventListener('input', e => { q = e.target.value; render(); });
+
+  function render() {
+    const ql = q.trim().toLowerCase();
+    const list = TRAITS.filter(t => {
+      if (activeAttr && t.a !== activeAttr && t.a2 !== activeAttr) return false;
+      if (ql) {
+        const hit = t.n.toLowerCase().includes(ql) || pinyinOf(t.n).toLowerCase().includes(ql);
+        if (!hit) return false;
+      }
+      return true;
+    });
+    document.getElementById('count').textContent = '共 ' + list.length + ' 个';
+    grid.innerHTML = list.map(cardHTML).join('');
+  }
+  render();
+
+  // ---------- deep link: ?trait= ----------
+  (function () {
+    const tn = new URLSearchParams(location.search).get('trait');
+    if (tn && TRAITS.some(x => x.n === tn)) openTraitDetail(tn);
+  })();
+</script>
+</body>
+</html>
