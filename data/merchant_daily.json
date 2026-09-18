@@ -1,8 +1,8 @@
 {
   "date": "2026-09-18",
-  "updated_at": "2026-09-18T12:35:23.225481+08:00",
-  "server_now": 1789706123,
-  "active_round": "12:00-16:00",
+  "updated_at": "2026-09-18T20:55:57.183680+08:00",
+  "server_now": 1789736156,
+  "active_round": "20:00-24:00",
   "rounds": {
     "1": {
       "label": "08:00-12:00",
@@ -15,7 +15,7 @@
           "type": "特制咕噜球",
           "high_value": false,
           "recommend": true,
-          "remain": "11小时24分钟",
+          "remain": "3小时4分钟",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/9/97/t58zrpfzxopvj3ke3oi3v57mf6k05s0.png/100px-Img_miwuqiu.png"
         },
         {
@@ -53,7 +53,7 @@
           "type": "炼金材料",
           "high_value": false,
           "recommend": true,
-          "remain": "3小时24分钟",
+          "remain": "已结束",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/f/f3/c5x5f0lgk33ly801m8w1n9aod8ny4sh.png/100px-100683.png"
         },
         {
@@ -64,7 +64,7 @@
           "type": "精灵喂养材料",
           "high_value": false,
           "recommend": false,
-          "remain": "3小时24分钟",
+          "remain": "已结束",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c6/5qe6rcdtfxe1gsrvgj3lrn033athx9p.png/100px-100668.png"
         },
         {
@@ -75,8 +75,62 @@
           "type": "炼金材料",
           "high_value": false,
           "recommend": false,
-          "remain": "3小时24分钟",
+          "remain": "已结束",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/3/35/5mp1ohcm72pgsxax5kq3x1aophw3lh0.png/100px-100136.png"
+        }
+      ]
+    },
+    "3": {
+      "label": "16:00-20:00",
+      "items": [
+        {
+          "name": "翼系血脉秘药",
+          "price": "16w",
+          "limit": "3",
+          "desc": "能唤醒血脉力量的远古秘药，使精灵获得翼系血脉。 “一段失落的秘密将被重拾。”",
+          "type": "血脉修改道具",
+          "high_value": false,
+          "recommend": false,
+          "remain": "已结束",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/1/15/t49aceulmmb7q8ohahmkyqvrdl2qdkz.png/100px-Xuemai_yi.png"
+        },
+        {
+          "name": "武系粉尘",
+          "price": "500",
+          "limit": "100",
+          "desc": "常见的炼金材料，蕴含少量武系魔法，是合成技能石的主要触媒。",
+          "type": "炼金材料",
+          "high_value": false,
+          "recommend": false,
+          "remain": "已结束",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/23/su3uy9wfjwvx3ifjaia3l88j2kjr5mg.png/100px-100135.png"
+        }
+      ]
+    },
+    "4": {
+      "label": "20:00-24:00",
+      "items": [
+        {
+          "name": "火系血脉秘药",
+          "price": "16w",
+          "limit": "3",
+          "desc": "能唤醒血脉力量的远古秘药，使精灵获得火系血脉。 “一段失落的秘密将被重拾。”",
+          "type": "血脉修改道具",
+          "high_value": false,
+          "recommend": false,
+          "remain": "3小时4分钟",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/5/58/qcen9i07u68symzdrga5qcli2wq6ws3.png/100px-Xuemai_huo.png"
+        },
+        {
+          "name": "魔力果",
+          "price": "6000",
+          "limit": "20",
+          "desc": "不太常见的果实，精灵食用后获得能力提升。 “精灵食物营养科的研究总是不见进展，这么多年了精灵还在吃果子。”",
+          "type": "精灵喂养材料",
+          "high_value": false,
+          "recommend": false,
+          "remain": "3小时4分钟",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c6/5qe6rcdtfxe1gsrvgj3lrn033athx9p.png/100px-100668.png"
         }
       ]
     }
