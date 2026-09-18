@@ -1,22 +1,33 @@
 {
-  "date": "2026-09-17",
-  "updated_at": "2026-09-17T21:23:17.294798+08:00",
-  "server_now": 1789651397,
-  "active_round": "20:00-24:00",
+  "date": "2026-09-18",
+  "updated_at": "2026-09-18T12:35:23.225481+08:00",
+  "server_now": 1789706123,
+  "active_round": "12:00-16:00",
   "rounds": {
     "1": {
       "label": "08:00-12:00",
       "items": [
         {
-          "name": "紫莲刚玉",
-          "price": "1000",
-          "limit": "100",
-          "desc": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 紫雀花王朝的贵族相信这是复活与不朽的象征，常常将紫莲刚玉制作成护身符随身携带。",
-          "type": "炼金材料",
+          "name": "变幻球",
+          "price": "3000",
+          "limit": "200",
+          "desc": "更适合用来捕捉幻系、机械系的精灵。 难以揣测的球。",
+          "type": "特制咕噜球",
           "high_value": false,
           "recommend": true,
+          "remain": "11小时24分钟",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/9/97/t58zrpfzxopvj3ke3oi3v57mf6k05s0.png/100px-Img_miwuqiu.png"
+        },
+        {
+          "name": "奇异血脉秘药",
+          "price": "16w",
+          "limit": "3",
+          "desc": "修改血脉的秘药，使精灵获得“奇异血脉”。",
+          "type": "血脉修改道具",
+          "high_value": false,
+          "recommend": false,
           "remain": "已结束",
-          "image": "https://patchwiki.biligame.com/images/rocom/thumb/9/9c/s7ej54xr4magmv0h0zag15jah6avwlc.png/100px-100682.png"
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/a/ab/eg7zj03u487p1l3f91z499w1nxdzac1.png/100px-Xuemai_qiyixuemai.png"
         },
         {
           "name": "魔力果",
@@ -42,24 +53,8 @@
           "type": "炼金材料",
           "high_value": false,
           "recommend": true,
-          "remain": "已结束",
+          "remain": "3小时24分钟",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/f/f3/c5x5f0lgk33ly801m8w1n9aod8ny4sh.png/100px-100683.png"
-        }
-      ]
-    },
-    "4": {
-      "label": "20:00-24:00",
-      "items": [
-        {
-          "name": "紫莲刚玉",
-          "price": "1000",
-          "limit": "100",
-          "desc": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 紫雀花王朝的贵族相信这是复活与不朽的象征，常常将紫莲刚玉制作成护身符随身携带。",
-          "type": "炼金材料",
-          "high_value": false,
-          "recommend": true,
-          "remain": "2小时36分钟",
-          "image": "https://patchwiki.biligame.com/images/rocom/thumb/9/9c/s7ej54xr4magmv0h0zag15jah6avwlc.png/100px-100682.png"
         },
         {
           "name": "魔力果",
@@ -69,35 +64,19 @@
           "type": "精灵喂养材料",
           "high_value": false,
           "recommend": false,
-          "remain": "2小时36分钟",
+          "remain": "3小时24分钟",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c6/5qe6rcdtfxe1gsrvgj3lrn033athx9p.png/100px-100668.png"
         },
         {
-          "name": "神奇的蛋",
-          "price": "36000",
-          "limit": "5",
-          "desc": "蕴含着难以捉摸的魔力，不知道可以孵化出哪种精灵。",
-          "type": "精灵蛋",
+          "name": "翼系粉尘",
+          "price": "500",
+          "limit": "100",
+          "desc": "常见的炼金材料，蕴含少量翼系魔法，是合成技能石的主要触媒。",
+          "type": "炼金材料",
           "high_value": false,
           "recommend": false,
-          "remain": "2小时36分钟",
-          "image": "//img.71acg.net/whd~hykb/comm/hd_admin_upload_2982_5390e1a946446e64d929ad89a3ad3eed.png"
-        }
-      ]
-    },
-    "3": {
-      "label": "16:00-20:00",
-      "items": [
-        {
-          "name": "神奇的蛋",
-          "price": "36000",
-          "limit": "5",
-          "desc": "蕴含着难以捉摸的魔力，不知道可以孵化出哪种精灵。",
-          "type": "精灵蛋",
-          "high_value": false,
-          "recommend": false,
-          "remain": "已结束",
-          "image": "//img.71acg.net/whd~hykb/comm/hd_admin_upload_2982_5390e1a946446e64d929ad89a3ad3eed.png"
+          "remain": "3小时24分钟",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/3/35/5mp1ohcm72pgsxax5kq3x1aophw3lh0.png/100px-100136.png"
         }
       ]
     }
