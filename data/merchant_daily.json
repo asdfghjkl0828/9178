@@ -1,8 +1,8 @@
 {
   "date": "2026-09-20",
-  "updated_at": "2026-09-20T12:48:06.162382+08:00",
-  "server_now": 1789879685,
-  "active_round": "12:00-16:00",
+  "updated_at": "2026-09-20T21:01:13.241832+08:00",
+  "server_now": 1789909273,
+  "active_round": "20:00-24:00",
   "rounds": {
     "1": {
       "label": "08:00-12:00",
@@ -37,7 +37,7 @@
           "type": "特制咕噜球",
           "high_value": false,
           "recommend": true,
-          "remain": "11小时11分钟",
+          "remain": "2小时58分钟",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/9/97/t58zrpfzxopvj3ke3oi3v57mf6k05s0.png/100px-Img_miwuqiu.png"
         },
         {
@@ -64,7 +64,7 @@
           "type": "咕噜球",
           "high_value": false,
           "recommend": true,
-          "remain": "3小时11分钟",
+          "remain": "已结束",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/2e/jygbfxpdbup5weqy4zaqnyaw2fcfyrq.png/100px-100255.png"
         },
         {
@@ -75,7 +75,7 @@
           "type": "炼金材料",
           "high_value": false,
           "recommend": false,
-          "remain": "3小时11分钟",
+          "remain": "已结束",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/3/32/2k88qbruf464xxyf02grnmkvun59h0c.png/100px-100121.png"
         },
         {
@@ -86,8 +86,51 @@
           "type": "炼金材料",
           "high_value": false,
           "recommend": false,
-          "remain": "3小时11分钟",
+          "remain": "已结束",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/4/41/qgthc06nxeq4r9tzejgwwox7qtqp86w.png/100px-100133.png"
+        }
+      ]
+    },
+    "3": {
+      "label": "16:00-20:00",
+      "items": [
+        {
+          "name": "炫彩蛋",
+          "price": "160w",
+          "limit": "1",
+          "desc": "蕴含着难以捉摸的魔力，必定孵化出“炫彩”外观、“了不起”天分的精灵。",
+          "type": "精灵蛋",
+          "high_value": false,
+          "recommend": true,
+          "remain": "已结束",
+          "image": "//img.71acg.net/whd~hykb/comm/hd_admin_upload_2982_d3f07a7c316e2b71dc3e5fc1871bd6da.png"
+        }
+      ]
+    },
+    "4": {
+      "label": "20:00-24:00",
+      "items": [
+        {
+          "name": "光系粉尘",
+          "price": "500",
+          "limit": "100",
+          "desc": "常见的炼金材料，蕴含少量光系魔法，是合成技能石的主要触媒。",
+          "type": "炼金材料",
+          "high_value": false,
+          "recommend": false,
+          "remain": "2小时58分钟",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/9/9d/t3udkq5fg8o3je088pcjktersn9wfrt.png/100px-100124.png"
+        },
+        {
+          "name": "普通粉尘",
+          "price": "500",
+          "limit": "100",
+          "desc": "常见的炼金材料，蕴含少量普通系魔法，是合成技能石的主要触媒。",
+          "type": "炼金材料",
+          "high_value": false,
+          "recommend": false,
+          "remain": "2小时58分钟",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/f/f6/ls7hsygs9epizddf1xo4q9b2iu1dduu.png/100px-100127.png"
         }
       ]
     }
