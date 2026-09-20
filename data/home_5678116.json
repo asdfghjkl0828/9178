@@ -1,6 +1,6 @@
 {
  "uid": "5678116",
- "fetched_at": "2026-09-19T22:55:42Z",
+ "fetched_at": "2026-09-20T01:00:23Z",
  "source": "rocodex.org (免费)",
  "quota_remaining": 2,
  "from_cache": false,
@@ -9,7 +9,7 @@
   "homeName": "牢大",
   "roomLevel": 5,
   "homeLevel": 25,
-  "homeExperience": 1344359,
+  "homeExperience": 1356359,
   "comfortLevel": 84105,
   "residentPetCount": 11,
   "guardianPetName": "",
@@ -111,7 +111,7 @@
     "energy": 10,
     "mutationName": "异色炫彩",
     "haveEgg": false,
-    "feedRound": 7,
+    "feedRound": 8,
     "status": 1701,
     "statusText": "状态 1701",
     "icon": "/images/spirits/3121/image.png"
@@ -127,7 +127,7 @@
     "energy": 10,
     "mutationName": "异色炫彩",
     "haveEgg": false,
-    "feedRound": 7,
+    "feedRound": 8,
     "status": 1701,
     "statusText": "状态 1701",
     "icon": "/images/spirits/3122/image.png"
@@ -143,7 +143,7 @@
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 8,
+    "feedRound": 9,
     "status": 1701,
     "statusText": "状态 1701",
     "icon": "/images/spirits/3071/image.png"
@@ -159,7 +159,7 @@
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 8,
+    "feedRound": 9,
     "status": 1701,
     "statusText": "状态 1701",
     "icon": "/images/spirits/3071/image.png"
@@ -175,7 +175,7 @@
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 8,
+    "feedRound": 9,
     "status": 1701,
     "statusText": "状态 1701",
     "icon": "/images/spirits/3071/image.png"
@@ -191,7 +191,7 @@
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 8,
+    "feedRound": 9,
     "status": 1701,
     "statusText": "状态 1701",
     "icon": "/images/spirits/3071/image.png"
@@ -350,9 +350,9 @@
    }
   ],
   "meta": {
-   "taskId": "tsk_dljnweg06e70_yoy",
-   "createdAt": "2026-09-19T22:55:40.991Z",
-   "finishedAt": "2026-09-19T22:55:42.052Z"
+   "taskId": "tsk_dljqjuz47jhf_10q1",
+   "createdAt": "2026-09-20T01:00:21.571Z",
+   "finishedAt": "2026-09-20T01:00:22.799Z"
   }
  }
 }
