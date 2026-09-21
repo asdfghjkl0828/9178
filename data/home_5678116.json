@@ -1,6 +1,6 @@
 {
  "uid": "5678116",
- "fetched_at": "2026-09-21T00:10:03Z",
+ "fetched_at": "2026-09-21T06:12:33Z",
  "source": "rocodex.org (免费)",
  "quota_remaining": 2,
  "from_cache": false,
@@ -112,8 +112,8 @@
     "mutationName": "异色炫彩",
     "haveEgg": false,
     "feedRound": 8,
-    "status": 1701,
-    "statusText": "状态 1701",
+    "status": 1702,
+    "statusText": "已驻守",
     "icon": "/images/spirits/3121/image.png"
    },
    {
@@ -128,8 +128,8 @@
     "mutationName": "异色炫彩",
     "haveEgg": false,
     "feedRound": 8,
-    "status": 1701,
-    "statusText": "状态 1701",
+    "status": 1702,
+    "statusText": "已驻守",
     "icon": "/images/spirits/3122/image.png"
    },
    {
@@ -144,8 +144,8 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 9,
-    "status": 1701,
-    "statusText": "状态 1701",
+    "status": 1702,
+    "statusText": "已驻守",
     "icon": "/images/spirits/3071/image.png"
    },
    {
@@ -160,8 +160,8 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 9,
-    "status": 1701,
-    "statusText": "状态 1701",
+    "status": 1702,
+    "statusText": "已驻守",
     "icon": "/images/spirits/3071/image.png"
    },
    {
@@ -176,8 +176,8 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 9,
-    "status": 1701,
-    "statusText": "状态 1701",
+    "status": 1702,
+    "statusText": "已驻守",
     "icon": "/images/spirits/3071/image.png"
    },
    {
@@ -192,8 +192,8 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 9,
-    "status": 1701,
-    "statusText": "状态 1701",
+    "status": 1702,
+    "statusText": "已驻守",
     "icon": "/images/spirits/3071/image.png"
    }
   ],
@@ -350,9 +350,9 @@
    }
   ],
   "meta": {
-   "taskId": "tsk_dlkk3vb4t7di_d9k",
-   "createdAt": "2026-09-21T00:10:01.768Z",
-   "finishedAt": "2026-09-21T00:10:02.832Z"
+   "taskId": "tsk_dlkrtfedndlw_ldl",
+   "createdAt": "2026-09-21T06:12:32.373Z",
+   "finishedAt": "2026-09-21T06:12:33.435Z"
   }
  }
 }
