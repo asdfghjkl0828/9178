@@ -1,6 +1,6 @@
 {
  "uid": "5678116",
- "fetched_at": "2026-09-25T07:40:34Z",
+ "fetched_at": "2026-09-25T18:30:30Z",
  "source": "rocodex.org (免费)",
  "quota_remaining": 2,
  "from_cache": false,
@@ -69,6 +69,22 @@
     "icon": "/images/spirits/3071/image.png"
    },
    {
+    "id": 3117,
+    "gid": 83755,
+    "name": "彩蝶鲨",
+    "defaultName": "彩蝶鲨",
+    "level": 60,
+    "gender": 2,
+    "genderText": "雌性",
+    "energy": 10,
+    "mutationName": "普通",
+    "haveEgg": false,
+    "feedRound": 1,
+    "status": 1701,
+    "statusText": "状态 1701",
+    "icon": "/images/spirits/3117/image.png"
+   },
+   {
     "id": 3071,
     "gid": 65070,
     "name": "音速犬",
@@ -85,6 +101,22 @@
     "icon": "/images/spirits/3071/image.png"
    },
    {
+    "id": 3526,
+    "gid": 83685,
+    "name": "抹茶布丁",
+    "defaultName": "抹茶布丁",
+    "level": 60,
+    "gender": 1,
+    "genderText": "雄性",
+    "energy": 10,
+    "mutationName": "普通",
+    "haveEgg": false,
+    "feedRound": 1,
+    "status": 1701,
+    "statusText": "状态 1701",
+    "icon": "/images/spirits/3526/image.png"
+   },
+   {
     "id": 3071,
     "gid": 64747,
     "name": "音速犬",
@@ -99,38 +131,6 @@
     "status": 1701,
     "statusText": "状态 1701",
     "icon": "/images/spirits/3071/image.png"
-   },
-   {
-    "id": 3121,
-    "gid": 54509,
-    "name": "大耳帽兜",
-    "defaultName": "大耳帽兜",
-    "level": 1,
-    "gender": 2,
-    "genderText": "雌性",
-    "energy": 10,
-    "mutationName": "异色炫彩",
-    "haveEgg": false,
-    "feedRound": 13,
-    "status": 1701,
-    "statusText": "状态 1701",
-    "icon": "/images/spirits/3121/image.png"
-   },
-   {
-    "id": 3122,
-    "gid": 66091,
-    "name": "帽兜娃娃",
-    "defaultName": "帽兜娃娃",
-    "level": 60,
-    "gender": 2,
-    "genderText": "雌性",
-    "energy": 10,
-    "mutationName": "异色炫彩",
-    "haveEgg": false,
-    "feedRound": 13,
-    "status": 1701,
-    "statusText": "状态 1701",
-    "icon": "/images/spirits/3122/image.png"
    },
    {
     "id": 3071,
@@ -350,9 +350,9 @@
    }
   ],
   "meta": {
-   "taskId": "tsk_dlo87029iagi_lgf",
-   "createdAt": "2026-09-25T07:40:33.716Z",
-   "finishedAt": "2026-09-25T07:40:34.748Z"
+   "taskId": "tsk_dlom0m8bykjj_zo0",
+   "createdAt": "2026-09-25T18:30:28.961Z",
+   "finishedAt": "2026-09-25T18:30:30.028Z"
   }
  }
 }
