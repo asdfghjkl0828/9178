@@ -1,8 +1,8 @@
 {
-  "date": "2026-09-28",
-  "updated_at": "2026-09-28T13:15:30.629218+08:00",
-  "server_now": 1790572530,
-  "active_round": "12:00-16:00",
+  "date": "2026-09-29",
+  "updated_at": "2026-09-29T00:43:18.641967+08:00",
+  "server_now": 1790613798,
+  "active_round": "20:00-24:00",
   "rounds": {
     "1": {
       "label": "08:00-12:00",
@@ -42,8 +42,51 @@
           "type": "炼金材料",
           "high_value": false,
           "recommend": true,
-          "remain": "2小时44分钟",
+          "remain": "已结束",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c5/k8wzdzechd88qs9bxuvcnyg0pv4tzl4.png/100px-100681.png"
+        }
+      ]
+    },
+    "4": {
+      "label": "20:00-24:00",
+      "items": [
+        {
+          "name": "蓝晶碧玺",
+          "price": "1000",
+          "limit": "100",
+          "desc": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 某些晶石蜗会产出珍贵的粉蓝色碧玺，为此商人翻着花样研究晶石蜗的食谱喜好。",
+          "type": "炼金材料",
+          "high_value": false,
+          "recommend": true,
+          "remain": "已结束",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c5/k8wzdzechd88qs9bxuvcnyg0pv4tzl4.png/100px-100681.png"
+        },
+        {
+          "name": "紫莲刚玉",
+          "price": "1000",
+          "limit": "100",
+          "desc": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 紫雀花王朝的贵族相信这是复活与不朽的象征，常常将紫莲刚玉制作成护身符随身携带。",
+          "type": "炼金材料",
+          "high_value": false,
+          "recommend": true,
+          "remain": "已结束",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/9/9c/s7ej54xr4magmv0h0zag15jah6avwlc.png/100px-100682.png"
+        }
+      ]
+    },
+    "3": {
+      "label": "16:00-20:00",
+      "items": [
+        {
+          "name": "电系粉尘",
+          "price": "500",
+          "limit": "100",
+          "desc": "常见的炼金材料，蕴含少量电系魔法，是合成技能石的主要触媒。",
+          "type": "炼金材料",
+          "high_value": false,
+          "recommend": false,
+          "remain": "已结束",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/2f/2sux0g15uo8at77bwpoxrg32rv3l4dz.png/100px-100132.png"
         }
       ]
     }
