@@ -1,6 +1,6 @@
 {
  "uid": "5678116",
- "fetched_at": "2026-10-01T05:41:15Z",
+ "fetched_at": "2026-10-01T13:02:48Z",
  "source": "rocodex.org (免费)",
  "quota_remaining": 2,
  "from_cache": false,
@@ -50,6 +50,22 @@
     "feedRound": 4,
     "status": 1702,
     "statusText": "已驻守",
+    "icon": "/images/spirits/3070/image.png"
+   },
+   {
+    "id": 3070,
+    "gid": 66030,
+    "name": "护主犬",
+    "defaultName": "护主犬",
+    "level": 13,
+    "gender": 2,
+    "genderText": "雌性",
+    "energy": 10,
+    "mutationName": "普通",
+    "haveEgg": false,
+    "feedRound": 1,
+    "status": 1701,
+    "statusText": "状态 1701",
     "icon": "/images/spirits/3070/image.png"
    },
    {
@@ -147,22 +163,6 @@
     "status": 1702,
     "statusText": "已驻守",
     "icon": "/images/spirits/3526/image.png"
-   },
-   {
-    "id": 3070,
-    "gid": 66030,
-    "name": "护主犬",
-    "defaultName": "护主犬",
-    "level": 13,
-    "gender": 2,
-    "genderText": "雌性",
-    "energy": 10,
-    "mutationName": "普通",
-    "haveEgg": false,
-    "feedRound": 1,
-    "status": 1701,
-    "statusText": "状态 1701",
-    "icon": "/images/spirits/3070/image.png"
    }
   ],
   "plants": [
@@ -318,9 +318,9 @@
    }
   ],
   "meta": {
-   "taskId": "tsk_dlt9ewtp3eby_4tmi",
-   "createdAt": "2026-10-01T05:41:14.474Z",
-   "finishedAt": "2026-10-01T05:41:15.518Z"
+   "taskId": "tsk_dltiszax7t8e_53kb",
+   "createdAt": "2026-10-01T13:02:46.957Z",
+   "finishedAt": "2026-10-01T13:02:48.007Z"
   }
  }
 }
