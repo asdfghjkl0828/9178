@@ -1,6 +1,6 @@
 {
  "uid": "5678116",
- "fetched_at": "2026-10-03T01:05:56Z",
+ "fetched_at": "2026-10-03T06:26:40Z",
  "source": "rocodex.org (免费)",
  "quota_remaining": 2,
  "from_cache": false,
@@ -32,8 +32,8 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 1,
-    "status": 1701,
-    "statusText": "状态 1701",
+    "status": 1702,
+    "statusText": "已驻守",
     "icon": "/images/spirits/3372/image.png"
    },
    {
@@ -334,9 +334,9 @@
    }
   ],
   "meta": {
-   "taskId": "tsk_dlust6zau7gj_624r",
-   "createdAt": "2026-10-03T01:05:54.724Z",
-   "finishedAt": "2026-10-03T01:05:55.980Z"
+   "taskId": "tsk_dluzmrky1jno_68o6",
+   "createdAt": "2026-10-03T06:26:38.788Z",
+   "finishedAt": "2026-10-03T06:26:39.819Z"
   }
  }
 }
