@@ -1,8 +1,8 @@
 {
   "date": "2026-10-03",
-  "updated_at": "2026-10-03T13:10:37.946915+08:00",
-  "server_now": 1791004237,
-  "active_round": "12:00-16:00",
+  "updated_at": "2026-10-03T21:19:13.641960+08:00",
+  "server_now": 1791033552,
+  "active_round": "20:00-24:00",
   "rounds": {
     "1": {
       "label": "08:00-12:00",
@@ -15,7 +15,7 @@
           "type": "特制咕噜球",
           "high_value": false,
           "recommend": true,
-          "remain": "10小时49分钟",
+          "remain": "2小时40分钟",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/b/b0/6ywvdkywqprqvws7m4ogeldp9y19swt.png/100px-Img_haihaiqiu.png"
         },
         {
@@ -42,8 +42,73 @@
           "type": "炼金材料",
           "high_value": false,
           "recommend": false,
-          "remain": "2小时49分钟",
+          "remain": "已结束",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/9/9d/t3udkq5fg8o3je088pcjktersn9wfrt.png/100px-100124.png"
+        }
+      ]
+    },
+    "3": {
+      "label": "16:00-20:00",
+      "items": [
+        {
+          "name": "蓝晶碧玺",
+          "price": "1000",
+          "limit": "100",
+          "desc": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 某些晶石蜗会产出珍贵的粉蓝色碧玺，为此商人翻着花样研究晶石蜗的食谱喜好。",
+          "type": "炼金材料",
+          "high_value": false,
+          "recommend": true,
+          "remain": "已结束",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c5/k8wzdzechd88qs9bxuvcnyg0pv4tzl4.png/100px-100681.png"
+        },
+        {
+          "name": "武系粉尘",
+          "price": "500",
+          "limit": "100",
+          "desc": "常见的炼金材料，蕴含少量武系魔法，是合成技能石的主要触媒。",
+          "type": "炼金材料",
+          "high_value": false,
+          "recommend": false,
+          "remain": "已结束",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/23/su3uy9wfjwvx3ifjaia3l88j2kjr5mg.png/100px-100135.png"
+        }
+      ]
+    },
+    "4": {
+      "label": "20:00-24:00",
+      "items": [
+        {
+          "name": "紫莲刚玉",
+          "price": "1000",
+          "limit": "100",
+          "desc": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 紫雀花王朝的贵族相信这是复活与不朽的象征，常常将紫莲刚玉制作成护身符随身携带。",
+          "type": "炼金材料",
+          "high_value": false,
+          "recommend": true,
+          "remain": "2小时40分钟",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/9/9c/s7ej54xr4magmv0h0zag15jah6avwlc.png/100px-100682.png"
+        },
+        {
+          "name": "虫系血脉秘药",
+          "price": "16w",
+          "limit": "3",
+          "desc": "能唤醒血脉力量的远古秘药，使精灵获得虫系血脉。 “一段失落的秘密将被重拾。”",
+          "type": "血脉修改道具",
+          "high_value": false,
+          "recommend": false,
+          "remain": "2小时40分钟",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/f/fa/kcywd1p2ikx394lixtb73roqc9fmx4a.png/100px-Xuemai_chong.png"
+        },
+        {
+          "name": "冰系粉尘",
+          "price": "500",
+          "limit": "100",
+          "desc": "常见的炼金材料，蕴含少量冰系魔法，是合成技能石的主要触媒。",
+          "type": "炼金材料",
+          "high_value": false,
+          "recommend": false,
+          "remain": "2小时40分钟",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/a/a9/no0rhm0wky3e406wni3ef13z6zvfxw1.png/100px-100130.png"
         }
       ]
     }
