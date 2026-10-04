@@ -1,6 +1,6 @@
 {
  "uid": "5678116",
- "fetched_at": "2026-10-04T13:09:01Z",
+ "fetched_at": "2026-10-04T18:05:49Z",
  "source": "rocodex.org (免费)",
  "quota_remaining": 2,
  "from_cache": false,
@@ -9,7 +9,7 @@
   "homeName": "牢大",
   "roomLevel": 5,
   "homeLevel": 25,
-  "homeExperience": 1579159,
+  "homeExperience": 1589159,
   "comfortLevel": 90255,
   "residentPetCount": 11,
   "guardianPetName": "",
@@ -21,22 +21,6 @@
   },
   "pets": [
    {
-    "id": 3121,
-    "gid": 84758,
-    "name": "大耳帽兜",
-    "defaultName": "大耳帽兜",
-    "level": 1,
-    "gender": 2,
-    "genderText": "雌性",
-    "energy": 10,
-    "mutationName": "普通",
-    "haveEgg": false,
-    "feedRound": 1,
-    "status": 1702,
-    "statusText": "已驻守",
-    "icon": "/images/spirits/3121/image.png"
-   },
-   {
     "id": 3070,
     "gid": 85156,
     "name": "护主犬",
@@ -47,9 +31,9 @@
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 1,
-    "status": 1702,
-    "statusText": "已驻守",
+    "feedRound": 2,
+    "status": 1700,
+    "statusText": "状态 1700",
     "icon": "/images/spirits/3070/image.png"
    },
    {
@@ -80,8 +64,8 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 1,
-    "status": 1702,
-    "statusText": "已驻守",
+    "status": 1700,
+    "statusText": "状态 1700",
     "icon": "/images/spirits/3117/image.png"
    },
    {
@@ -95,9 +79,9 @@
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 1,
-    "status": 1702,
-    "statusText": "已驻守",
+    "feedRound": 2,
+    "status": 1700,
+    "statusText": "状态 1700",
     "icon": "/images/spirits/3568/image.png"
    },
    {
@@ -133,54 +117,6 @@
     "icon": "/images/spirits/3117/image.png"
    },
    {
-    "id": 3001,
-    "gid": 83863,
-    "name": "喵喵",
-    "defaultName": "喵喵",
-    "level": 60,
-    "gender": 2,
-    "genderText": "雌性",
-    "energy": 10,
-    "mutationName": "普通",
-    "haveEgg": false,
-    "feedRound": 4,
-    "status": 1702,
-    "statusText": "已驻守",
-    "icon": "/images/spirits/3001/image.png"
-   },
-   {
-    "id": 3569,
-    "gid": 83858,
-    "name": "黑猫巫师",
-    "defaultName": "黑猫巫师",
-    "level": 60,
-    "gender": 2,
-    "genderText": "雌性",
-    "energy": 10,
-    "mutationName": "普通",
-    "haveEgg": false,
-    "feedRound": 4,
-    "status": 1702,
-    "statusText": "已驻守",
-    "icon": "/images/spirits/3569/image.png"
-   },
-   {
-    "id": 3071,
-    "gid": 65070,
-    "name": "音速犬",
-    "defaultName": "音速犬",
-    "level": 60,
-    "gender": 1,
-    "genderText": "雄性",
-    "energy": 10,
-    "mutationName": "普通",
-    "haveEgg": false,
-    "feedRound": 5,
-    "status": 1702,
-    "statusText": "已驻守",
-    "icon": "/images/spirits/3071/image.png"
-   },
-   {
     "id": 3526,
     "gid": 83685,
     "name": "抹茶布丁",
@@ -195,6 +131,70 @@
     "status": 1702,
     "statusText": "已驻守",
     "icon": "/images/spirits/3526/image.png"
+   },
+   {
+    "id": 3001,
+    "gid": 83863,
+    "name": "喵喵",
+    "defaultName": "喵喵",
+    "level": 60,
+    "gender": 2,
+    "genderText": "雌性",
+    "energy": 10,
+    "mutationName": "普通",
+    "haveEgg": false,
+    "feedRound": 5,
+    "status": 1700,
+    "statusText": "状态 1700",
+    "icon": "/images/spirits/3001/image.png"
+   },
+   {
+    "id": 3569,
+    "gid": 83858,
+    "name": "黑猫巫师",
+    "defaultName": "黑猫巫师",
+    "level": 60,
+    "gender": 2,
+    "genderText": "雌性",
+    "energy": 10,
+    "mutationName": "普通",
+    "haveEgg": false,
+    "feedRound": 4,
+    "status": 1700,
+    "statusText": "状态 1700",
+    "icon": "/images/spirits/3569/image.png"
+   },
+   {
+    "id": 3071,
+    "gid": 65070,
+    "name": "音速犬",
+    "defaultName": "音速犬",
+    "level": 60,
+    "gender": 1,
+    "genderText": "雄性",
+    "energy": 10,
+    "mutationName": "普通",
+    "haveEgg": false,
+    "feedRound": 6,
+    "status": 1700,
+    "statusText": "状态 1700",
+    "icon": "/images/spirits/3071/image.png"
+   },
+   {
+    "id": 3121,
+    "gid": 84307,
+    "name": "大耳帽兜",
+    "defaultName": "大耳帽兜",
+    "level": 14,
+    "gender": 2,
+    "genderText": "雌性",
+    "energy": 10,
+    "mutationName": "普通",
+    "haveEgg": false,
+    "feedRound": 1,
+    "status": 1701,
+    "statusText": "状态 1701",
+    "icon": "/images/spirits/3121/image.png"
    }
   ],
   "plants": [
@@ -350,9 +350,9 @@
    }
   ],
   "meta": {
-   "taskId": "tsk_dlw2tdkd52h4_78g0",
-   "createdAt": "2026-10-04T13:09:00.114Z",
-   "finishedAt": "2026-10-04T13:09:01.204Z"
+   "taskId": "tsk_dlw94mdp2ewg_7eh0",
+   "createdAt": "2026-10-04T18:05:47.967Z",
+   "finishedAt": "2026-10-04T18:05:49.040Z"
   }
  }
 }
