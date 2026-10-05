@@ -1,6 +1,6 @@
 {
  "uid": "5678116",
- "fetched_at": "2026-10-04T21:18:49Z",
+ "fetched_at": "2026-10-05T00:48:40Z",
  "source": "rocodex.org (免费)",
  "quota_remaining": 2,
  "from_cache": false,
@@ -35,6 +35,22 @@
     "status": 1700,
     "statusText": "状态 1700",
     "icon": "/images/spirits/3070/image.png"
+   },
+   {
+    "id": 3121,
+    "gid": 84307,
+    "name": "大耳帽兜",
+    "defaultName": "大耳帽兜",
+    "level": 14,
+    "gender": 2,
+    "genderText": "雌性",
+    "energy": 10,
+    "mutationName": "普通",
+    "haveEgg": false,
+    "feedRound": 1,
+    "status": 1702,
+    "statusText": "已驻守",
+    "icon": "/images/spirits/3121/image.png"
    },
    {
     "id": 3742,
@@ -117,22 +133,6 @@
     "icon": "/images/spirits/3117/image.png"
    },
    {
-    "id": 3526,
-    "gid": 83685,
-    "name": "抹茶布丁",
-    "defaultName": "抹茶布丁",
-    "level": 60,
-    "gender": 1,
-    "genderText": "雄性",
-    "energy": 10,
-    "mutationName": "普通",
-    "haveEgg": false,
-    "feedRound": 6,
-    "status": 1702,
-    "statusText": "已驻守",
-    "icon": "/images/spirits/3526/image.png"
-   },
-   {
     "id": 3001,
     "gid": 83863,
     "name": "喵喵",
@@ -181,20 +181,20 @@
     "icon": "/images/spirits/3071/image.png"
    },
    {
-    "id": 3121,
-    "gid": 84307,
-    "name": "大耳帽兜",
-    "defaultName": "大耳帽兜",
-    "level": 14,
-    "gender": 2,
-    "genderText": "雌性",
+    "id": 3526,
+    "gid": 83685,
+    "name": "抹茶布丁",
+    "defaultName": "抹茶布丁",
+    "level": 60,
+    "gender": 1,
+    "genderText": "雄性",
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 1,
-    "status": 1701,
-    "statusText": "状态 1701",
-    "icon": "/images/spirits/3121/image.png"
+    "feedRound": 6,
+    "status": 1702,
+    "statusText": "已驻守",
+    "icon": "/images/spirits/3526/image.png"
    }
   ],
   "plants": [
@@ -350,9 +350,9 @@
    }
   ],
   "meta": {
-   "taskId": "tsk_dlwd8eevlm3r_7g57",
-   "createdAt": "2026-10-04T21:18:48.520Z",
-   "finishedAt": "2026-10-04T21:18:49.611Z"
+   "taskId": "tsk_dlwhp2hvgk3c_7hwg",
+   "createdAt": "2026-10-05T00:48:39.211Z",
+   "finishedAt": "2026-10-05T00:48:40.304Z"
   }
  }
 }
