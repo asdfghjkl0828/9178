@@ -1,8 +1,8 @@
 {
-  "date": "2026-10-05",
-  "updated_at": "2026-10-05T13:28:15.712447+08:00",
-  "server_now": 1791178095,
-  "active_round": "12:00-16:00",
+  "date": "2026-10-06",
+  "updated_at": "2026-10-06T01:05:27.987545+08:00",
+  "server_now": 1791219927,
+  "active_round": "20:00-24:00",
   "rounds": {
     "1": {
       "label": "08:00-12:00",
@@ -37,7 +37,7 @@
           "type": "特制咕噜球",
           "high_value": false,
           "recommend": true,
-          "remain": "10小时31分钟",
+          "remain": "已结束",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/b/b0/6ywvdkywqprqvws7m4ogeldp9y19swt.png/100px-Img_haihaiqiu.png"
         },
         {
@@ -64,8 +64,62 @@
           "type": "炼金材料",
           "high_value": false,
           "recommend": true,
-          "remain": "2小时31分钟",
+          "remain": "已结束",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c5/k8wzdzechd88qs9bxuvcnyg0pv4tzl4.png/100px-100681.png"
+        }
+      ]
+    },
+    "3": {
+      "label": "16:00-20:00",
+      "items": [
+        {
+          "name": "神奇的蛋",
+          "price": "36000",
+          "limit": "5",
+          "desc": "蕴含着难以捉摸的魔力，不知道可以孵化出哪种精灵。",
+          "type": "精灵蛋",
+          "high_value": false,
+          "recommend": false,
+          "remain": "已结束",
+          "image": "//img.71acg.net/whd~hykb/comm/hd_admin_upload_2982_5390e1a946446e64d929ad89a3ad3eed.png"
+        }
+      ]
+    },
+    "4": {
+      "label": "20:00-24:00",
+      "items": [
+        {
+          "name": "首领血脉秘药",
+          "price": "32w",
+          "limit": "1",
+          "desc": "修改血脉的秘药，使特定精灵获得“首领血脉”。",
+          "type": "血脉修改道具",
+          "high_value": false,
+          "recommend": false,
+          "remain": "已结束",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/26/fbfwlhncfo0pstpv3ibxn1mj3ayg6di.png/100px-Xuemai_shoulingxuemai.png"
+        },
+        {
+          "name": "魔力果",
+          "price": "6000",
+          "limit": "20",
+          "desc": "不太常见的果实，精灵食用后获得能力提升。 “精灵食物营养科的研究总是不见进展，这么多年了精灵还在吃果子。”",
+          "type": "精灵喂养材料",
+          "high_value": false,
+          "recommend": false,
+          "remain": "已结束",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c6/5qe6rcdtfxe1gsrvgj3lrn033athx9p.png/100px-100668.png"
+        },
+        {
+          "name": "神奇的蛋",
+          "price": "36000",
+          "limit": "5",
+          "desc": "蕴含着难以捉摸的魔力，不知道可以孵化出哪种精灵。",
+          "type": "精灵蛋",
+          "high_value": false,
+          "recommend": false,
+          "remain": "已结束",
+          "image": "//img.71acg.net/whd~hykb/comm/hd_admin_upload_2982_5390e1a946446e64d929ad89a3ad3eed.png"
         }
       ]
     }
