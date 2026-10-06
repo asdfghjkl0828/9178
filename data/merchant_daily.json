@@ -1,34 +1,12 @@
 {
   "date": "2026-10-06",
-  "updated_at": "2026-10-06T01:05:27.987545+08:00",
-  "server_now": 1791219927,
-  "active_round": "20:00-24:00",
+  "updated_at": "2026-10-06T14:12:22.150207+08:00",
+  "server_now": 1791267141,
+  "active_round": "12:00-16:00",
   "rounds": {
     "1": {
       "label": "08:00-12:00",
       "items": [
-        {
-          "name": "国王球",
-          "price": "16w",
-          "limit": "3",
-          "desc": "昂贵且好用的咕噜球，能十分轻易地捕捉精灵，并能提升精灵的天分。 曾经专供贵族使用，制作方法不明。",
-          "type": "咕噜球",
-          "high_value": false,
-          "recommend": true,
-          "remain": "已结束",
-          "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/2e/jygbfxpdbup5weqy4zaqnyaw2fcfyrq.png/100px-100255.png"
-        },
-        {
-          "name": "蓝晶碧玺",
-          "price": "1000",
-          "limit": "100",
-          "desc": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 某些晶石蜗会产出珍贵的粉蓝色碧玺，为此商人翻着花样研究晶石蜗的食谱喜好。",
-          "type": "炼金材料",
-          "high_value": false,
-          "recommend": true,
-          "remain": "已结束",
-          "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c5/k8wzdzechd88qs9bxuvcnyg0pv4tzl4.png/100px-100681.png"
-        },
         {
           "name": "美妙球",
           "price": "3000",
@@ -37,19 +15,41 @@
           "type": "特制咕噜球",
           "high_value": false,
           "recommend": true,
-          "remain": "已结束",
+          "remain": "9小时47分钟",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/b/b0/6ywvdkywqprqvws7m4ogeldp9y19swt.png/100px-Img_haihaiqiu.png"
         },
         {
-          "name": "魔力果",
-          "price": "6000",
-          "limit": "20",
-          "desc": "不太常见的果实，精灵食用后获得能力提升。 “精灵食物营养科的研究总是不见进展，这么多年了精灵还在吃果子。”",
-          "type": "精灵喂养材料",
+          "name": "草系血脉秘药",
+          "price": "16w",
+          "limit": "3",
+          "desc": "能唤醒血脉力量的远古秘药，使精灵获得草系血脉。 “一段失落的秘密将被重拾。”",
+          "type": "血脉修改道具",
           "high_value": false,
           "recommend": false,
           "remain": "已结束",
-          "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c6/5qe6rcdtfxe1gsrvgj3lrn033athx9p.png/100px-100668.png"
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/e/e3/q44lm9csnpdmdswihzewb1gj6yln2v6.png/100px-Xuemai_cao.png"
+        },
+        {
+          "name": "电系粉尘",
+          "price": "500",
+          "limit": "100",
+          "desc": "常见的炼金材料，蕴含少量电系魔法，是合成技能石的主要触媒。",
+          "type": "炼金材料",
+          "high_value": false,
+          "recommend": false,
+          "remain": "已结束",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/2f/2sux0g15uo8at77bwpoxrg32rv3l4dz.png/100px-100132.png"
+        },
+        {
+          "name": "机械粉尘",
+          "price": "500",
+          "limit": "100",
+          "desc": "常见的炼金材料，蕴含少量机械系魔法，是合成技能石的主要触媒。",
+          "type": "炼金材料",
+          "high_value": false,
+          "recommend": false,
+          "remain": "已结束",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/1/1c/lcsenwszmlkz002ai6du9f32tbfpi19.png/100px-100138.png"
         }
       ]
     },
@@ -64,8 +64,30 @@
           "type": "炼金材料",
           "high_value": false,
           "recommend": true,
-          "remain": "已结束",
+          "remain": "1小时47分钟",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c5/k8wzdzechd88qs9bxuvcnyg0pv4tzl4.png/100px-100681.png"
+        },
+        {
+          "name": "普通血脉秘药",
+          "price": "16w",
+          "limit": "3",
+          "desc": "能唤醒血脉力量的远古秘药，使精灵获得普通系血脉。 “一段失落的秘密将被重拾。”",
+          "type": "血脉修改道具",
+          "high_value": false,
+          "recommend": false,
+          "remain": "1小时47分钟",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/a/a8/lx9q220586a1qpy109sy34ghfgtrs6w.png/100px-Xuemai_putong.png"
+        },
+        {
+          "name": "魔力果",
+          "price": "6000",
+          "limit": "20",
+          "desc": "不太常见的果实，精灵食用后获得能力提升。 “精灵食物营养科的研究总是不见进展，这么多年了精灵还在吃果子。”",
+          "type": "精灵喂养材料",
+          "high_value": false,
+          "recommend": false,
+          "remain": "1小时47分钟",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c6/5qe6rcdtfxe1gsrvgj3lrn033athx9p.png/100px-100668.png"
         }
       ]
     },
