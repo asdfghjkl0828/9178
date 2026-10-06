@@ -1,8 +1,8 @@
 {
   "date": "2026-10-06",
-  "updated_at": "2026-10-06T14:12:22.150207+08:00",
-  "server_now": 1791267141,
-  "active_round": "12:00-16:00",
+  "updated_at": "2026-10-06T23:04:28.180009+08:00",
+  "server_now": 1791299068,
+  "active_round": "20:00-24:00",
   "rounds": {
     "1": {
       "label": "08:00-12:00",
@@ -15,7 +15,7 @@
           "type": "特制咕噜球",
           "high_value": false,
           "recommend": true,
-          "remain": "9小时47分钟",
+          "remain": "0小时55分钟",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/b/b0/6ywvdkywqprqvws7m4ogeldp9y19swt.png/100px-Img_haihaiqiu.png"
         },
         {
@@ -64,7 +64,7 @@
           "type": "炼金材料",
           "high_value": false,
           "recommend": true,
-          "remain": "1小时47分钟",
+          "remain": "已结束",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c5/k8wzdzechd88qs9bxuvcnyg0pv4tzl4.png/100px-100681.png"
         },
         {
@@ -75,7 +75,7 @@
           "type": "血脉修改道具",
           "high_value": false,
           "recommend": false,
-          "remain": "1小时47分钟",
+          "remain": "已结束",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/a/a8/lx9q220586a1qpy109sy34ghfgtrs6w.png/100px-Xuemai_putong.png"
         },
         {
@@ -86,7 +86,7 @@
           "type": "精灵喂养材料",
           "high_value": false,
           "recommend": false,
-          "remain": "1小时47分钟",
+          "remain": "已结束",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c6/5qe6rcdtfxe1gsrvgj3lrn033athx9p.png/100px-100668.png"
         }
       ]
@@ -111,15 +111,15 @@
       "label": "20:00-24:00",
       "items": [
         {
-          "name": "首领血脉秘药",
-          "price": "32w",
-          "limit": "1",
-          "desc": "修改血脉的秘药，使特定精灵获得“首领血脉”。",
+          "name": "武系血脉秘药",
+          "price": "16w",
+          "limit": "3",
+          "desc": "能唤醒血脉力量的远古秘药，使精灵获得武系血脉。 “一段失落的秘密将被重拾。”",
           "type": "血脉修改道具",
           "high_value": false,
           "recommend": false,
-          "remain": "已结束",
-          "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/26/fbfwlhncfo0pstpv3ibxn1mj3ayg6di.png/100px-Xuemai_shoulingxuemai.png"
+          "remain": "0小时55分钟",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/6/60/07uvni7t86lah2a9c219z9x8smkdnzj.png/100px-Xuemai_wu.png"
         },
         {
           "name": "魔力果",
@@ -129,7 +129,7 @@
           "type": "精灵喂养材料",
           "high_value": false,
           "recommend": false,
-          "remain": "已结束",
+          "remain": "0小时55分钟",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c6/5qe6rcdtfxe1gsrvgj3lrn033athx9p.png/100px-100668.png"
         },
         {
@@ -140,7 +140,7 @@
           "type": "精灵蛋",
           "high_value": false,
           "recommend": false,
-          "remain": "已结束",
+          "remain": "0小时55分钟",
           "image": "//img.71acg.net/whd~hykb/comm/hd_admin_upload_2982_5390e1a946446e64d929ad89a3ad3eed.png"
         }
       ]
