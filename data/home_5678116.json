@@ -1,6 +1,6 @@
 {
  "uid": "5678116",
- "fetched_at": "2026-10-08T08:50:41Z",
+ "fetched_at": "2026-10-08T16:24:01Z",
  "source": "rocodex.org (免费)",
  "quota_remaining": 2,
  "from_cache": false,
@@ -9,7 +9,7 @@
   "homeName": "牢大",
   "roomLevel": 5,
   "homeLevel": 25,
-  "homeExperience": 1596909,
+  "homeExperience": 1597659,
   "comfortLevel": 90255,
   "residentPetCount": 11,
   "guardianPetName": "",
@@ -63,9 +63,9 @@
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 1,
-    "status": 1702,
-    "statusText": "已驻守",
+    "feedRound": 2,
+    "status": 1701,
+    "statusText": "状态 1701",
     "icon": "/images/spirits/3161/image.png"
    },
    {
@@ -85,10 +85,10 @@
     "icon": "/images/spirits/3117/image.png"
    },
    {
-    "id": 3742,
-    "gid": 85545,
-    "name": "鸭吉吉",
-    "defaultName": "鸭吉吉",
+    "id": 3121,
+    "gid": 85546,
+    "name": "大耳帽兜",
+    "defaultName": "大耳帽兜",
     "level": 1,
     "gender": 2,
     "genderText": "雌性",
@@ -96,9 +96,9 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 1,
-    "status": 1702,
-    "statusText": "已驻守",
-    "icon": "/images/spirits/3742/image.png"
+    "status": 1700,
+    "statusText": "状态 1700",
+    "icon": "/images/spirits/3121/image.png"
    },
    {
     "id": 3117,
@@ -133,20 +133,20 @@
     "icon": "/images/spirits/3001/image.png"
    },
    {
-    "id": 3569,
-    "gid": 83858,
-    "name": "黑猫巫师",
-    "defaultName": "黑猫巫师",
+    "id": 3526,
+    "gid": 83685,
+    "name": "抹茶布丁",
+    "defaultName": "抹茶布丁",
     "level": 60,
-    "gender": 2,
-    "genderText": "雌性",
+    "gender": 1,
+    "genderText": "雄性",
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 4,
+    "feedRound": 6,
     "status": 1700,
     "statusText": "状态 1700",
-    "icon": "/images/spirits/3569/image.png"
+    "icon": "/images/spirits/3526/image.png"
    },
    {
     "id": 3071,
@@ -165,10 +165,10 @@
     "icon": "/images/spirits/3071/image.png"
    },
    {
-    "id": 3121,
-    "gid": 85546,
-    "name": "大耳帽兜",
-    "defaultName": "大耳帽兜",
+    "id": 3742,
+    "gid": 85545,
+    "name": "鸭吉吉",
+    "defaultName": "鸭吉吉",
     "level": 1,
     "gender": 2,
     "genderText": "雌性",
@@ -176,25 +176,25 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 1,
-    "status": 1702,
-    "statusText": "已驻守",
-    "icon": "/images/spirits/3121/image.png"
+    "status": 1701,
+    "statusText": "状态 1701",
+    "icon": "/images/spirits/3742/image.png"
    },
    {
-    "id": 3526,
-    "gid": 83685,
-    "name": "抹茶布丁",
-    "defaultName": "抹茶布丁",
+    "id": 3569,
+    "gid": 83858,
+    "name": "黑猫巫师",
+    "defaultName": "黑猫巫师",
     "level": 60,
-    "gender": 1,
-    "genderText": "雄性",
+    "gender": 2,
+    "genderText": "雌性",
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 6,
-    "status": 1700,
-    "statusText": "状态 1700",
-    "icon": "/images/spirits/3526/image.png"
+    "feedRound": 1,
+    "status": 1701,
+    "statusText": "状态 1701",
+    "icon": "/images/spirits/3569/image.png"
    }
   ],
   "plants": [
@@ -350,9 +350,9 @@
    }
   ],
   "meta": {
-   "taskId": "tsk_dlzbtpx6lqlc_ag6s",
-   "createdAt": "2026-10-08T08:50:36.870Z",
-   "finishedAt": "2026-10-08T08:50:37.959Z"
+   "taskId": "tsk_dlzlgus5285j_aan",
+   "createdAt": "2026-10-08T16:23:59.813Z",
+   "finishedAt": "2026-10-08T16:24:00.880Z"
   }
  }
 }
