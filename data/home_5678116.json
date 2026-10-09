@@ -1,6 +1,6 @@
 {
  "uid": "5678116",
- "fetched_at": "2026-10-09T02:02:40Z",
+ "fetched_at": "2026-10-09T08:54:56Z",
  "source": "rocodex.org (免费)",
  "quota_remaining": 2,
  "from_cache": false,
@@ -9,7 +9,7 @@
   "homeName": "牢大",
   "roomLevel": 5,
   "homeLevel": 25,
-  "homeExperience": 1597659,
+  "homeExperience": 1597909,
   "comfortLevel": 90255,
   "residentPetCount": 11,
   "guardianPetName": "",
@@ -20,6 +20,22 @@
    "startedAt": null
   },
   "pets": [
+   {
+    "id": 3569,
+    "gid": 83858,
+    "name": "黑猫巫师",
+    "defaultName": "黑猫巫师",
+    "level": 60,
+    "gender": 2,
+    "genderText": "雌性",
+    "energy": 10,
+    "mutationName": "普通",
+    "haveEgg": false,
+    "feedRound": 1,
+    "status": 1702,
+    "statusText": "已驻守",
+    "icon": "/images/spirits/3569/image.png"
+   },
    {
     "id": 3568,
     "gid": 85155,
@@ -53,22 +69,6 @@
     "icon": "/images/spirits/3070/image.png"
    },
    {
-    "id": 3161,
-    "gid": 85547,
-    "name": "春团",
-    "defaultName": "春团",
-    "level": 1,
-    "gender": 2,
-    "genderText": "雌性",
-    "energy": 10,
-    "mutationName": "普通",
-    "haveEgg": false,
-    "feedRound": 2,
-    "status": 1701,
-    "statusText": "状态 1701",
-    "icon": "/images/spirits/3161/image.png"
-   },
-   {
     "id": 3117,
     "gid": 84136,
     "name": "彩蝶鲨",
@@ -85,10 +85,10 @@
     "icon": "/images/spirits/3117/image.png"
    },
    {
-    "id": 3121,
-    "gid": 85546,
-    "name": "大耳帽兜",
-    "defaultName": "大耳帽兜",
+    "id": 3742,
+    "gid": 85545,
+    "name": "鸭吉吉",
+    "defaultName": "鸭吉吉",
     "level": 1,
     "gender": 2,
     "genderText": "雌性",
@@ -96,9 +96,9 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 1,
-    "status": 1700,
-    "statusText": "状态 1700",
-    "icon": "/images/spirits/3121/image.png"
+    "status": 1702,
+    "statusText": "已驻守",
+    "icon": "/images/spirits/3742/image.png"
    },
    {
     "id": 3117,
@@ -117,6 +117,22 @@
     "icon": "/images/spirits/3117/image.png"
    },
    {
+    "id": 3161,
+    "gid": 85563,
+    "name": "春团",
+    "defaultName": "春团",
+    "level": 1,
+    "gender": 2,
+    "genderText": "雌性",
+    "energy": 10,
+    "mutationName": "普通",
+    "haveEgg": false,
+    "feedRound": 1,
+    "status": 1702,
+    "statusText": "已驻守",
+    "icon": "/images/spirits/3161/image.png"
+   },
+   {
     "id": 3001,
     "gid": 83863,
     "name": "喵喵",
@@ -131,22 +147,6 @@
     "status": 1700,
     "statusText": "状态 1700",
     "icon": "/images/spirits/3001/image.png"
-   },
-   {
-    "id": 3526,
-    "gid": 83685,
-    "name": "抹茶布丁",
-    "defaultName": "抹茶布丁",
-    "level": 60,
-    "gender": 1,
-    "genderText": "雄性",
-    "energy": 10,
-    "mutationName": "普通",
-    "haveEgg": false,
-    "feedRound": 6,
-    "status": 1700,
-    "statusText": "状态 1700",
-    "icon": "/images/spirits/3526/image.png"
    },
    {
     "id": 3071,
@@ -165,10 +165,10 @@
     "icon": "/images/spirits/3071/image.png"
    },
    {
-    "id": 3742,
-    "gid": 85545,
-    "name": "鸭吉吉",
-    "defaultName": "鸭吉吉",
+    "id": 3121,
+    "gid": 85546,
+    "name": "大耳帽兜",
+    "defaultName": "大耳帽兜",
     "level": 1,
     "gender": 2,
     "genderText": "雌性",
@@ -176,25 +176,25 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 1,
-    "status": 1701,
-    "statusText": "状态 1701",
-    "icon": "/images/spirits/3742/image.png"
+    "status": 1700,
+    "statusText": "状态 1700",
+    "icon": "/images/spirits/3121/image.png"
    },
    {
-    "id": 3569,
-    "gid": 83858,
-    "name": "黑猫巫师",
-    "defaultName": "黑猫巫师",
+    "id": 3526,
+    "gid": 83685,
+    "name": "抹茶布丁",
+    "defaultName": "抹茶布丁",
     "level": 60,
-    "gender": 2,
-    "genderText": "雌性",
+    "gender": 1,
+    "genderText": "雄性",
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 1,
-    "status": 1701,
-    "statusText": "状态 1701",
-    "icon": "/images/spirits/3569/image.png"
+    "feedRound": 6,
+    "status": 1700,
+    "statusText": "状态 1700",
+    "icon": "/images/spirits/3526/image.png"
    }
   ],
   "plants": [
@@ -350,9 +350,9 @@
    }
   ],
   "meta": {
-   "taskId": "tsk_dlzxrwmq3i0e_jn4",
-   "createdAt": "2026-10-09T02:02:39.164Z",
-   "finishedAt": "2026-10-09T02:02:40.262Z"
+   "taskId": "tsk_dm06jkcxye7v_6lk",
+   "createdAt": "2026-10-09T08:54:55.527Z",
+   "finishedAt": "2026-10-09T08:54:56.594Z"
   }
  }
 }
