@@ -1,8 +1,8 @@
 {
-  "date": "2026-10-09",
-  "updated_at": "2026-10-09T23:14:22.278307+08:00",
-  "server_now": 1791558862,
-  "active_round": "20:00-24:00",
+  "date": "2026-10-10",
+  "updated_at": "2026-10-10T13:43:09.299734+08:00",
+  "server_now": 1791610989,
+  "active_round": "12:00-16:00",
   "rounds": {
     "1": {
       "label": "08:00-12:00",
@@ -15,7 +15,7 @@
           "type": "特制咕噜球",
           "high_value": false,
           "recommend": true,
-          "remain": "0小时45分钟",
+          "remain": "10小时16分钟",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/5/5a/hif6470l7ojdexwm72t9brp0f0x3h4x.png/100px-Img_daodanqiu.png"
         },
         {
@@ -26,7 +26,7 @@
           "type": "特制咕噜球",
           "high_value": false,
           "recommend": true,
-          "remain": "0小时45分钟",
+          "remain": "10小时16分钟",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/8/81/7pzswfbn9l7hip6ptdg7f2mo341ztui.png/100px-Img_shaliqiu.png"
         },
         {
@@ -41,15 +41,15 @@
           "image": "//img.71acg.net/whd~hykb/comm/hd_admin_upload_2982_5390e1a946446e64d929ad89a3ad3eed.png"
         },
         {
-          "name": "光系粉尘",
+          "name": "火系粉尘",
           "price": "500",
           "limit": "100",
-          "desc": "常见的炼金材料，蕴含少量光系魔法，是合成技能石的主要触媒。",
+          "desc": "常见的炼金材料，蕴含少量火系魔法，是合成技能石的主要触媒。",
           "type": "炼金材料",
           "high_value": false,
           "recommend": false,
           "remain": "已结束",
-          "image": "https://patchwiki.biligame.com/images/rocom/thumb/9/9d/t3udkq5fg8o3je088pcjktersn9wfrt.png/100px-100124.png"
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/a/a6/a5v60zfm9ivyri166tias4efjnp5vyt.png/100px-100122.png"
         }
       ]
     },
@@ -57,47 +57,37 @@
       "label": "12:00-16:00",
       "items": [
         {
-          "name": "奇异血脉秘药",
-          "price": "16w",
-          "limit": "3",
-          "desc": "修改血脉的秘药，使精灵获得“奇异血脉”。",
-          "type": "血脉修改道具",
+          "name": "神奇的蛋",
+          "price": "36000",
+          "limit": "5",
+          "desc": "蕴含着难以捉摸的魔力，不知道可以孵化出哪种精灵。",
+          "type": "精灵蛋",
           "high_value": false,
           "recommend": false,
-          "remain": "已结束",
-          "image": "https://patchwiki.biligame.com/images/rocom/thumb/a/ab/eg7zj03u487p1l3f91z499w1nxdzac1.png/100px-Xuemai_qiyixuemai.png"
-        }
-      ]
-    },
-    "3": {
-      "label": "16:00-20:00",
-      "items": [
+          "remain": "2小时16分钟",
+          "image": "//img.71acg.net/whd~hykb/comm/hd_admin_upload_2982_5390e1a946446e64d929ad89a3ad3eed.png"
+        },
         {
-          "name": "紫莲刚玉",
-          "price": "1000",
+          "name": "草系粉尘",
+          "price": "500",
           "limit": "100",
-          "desc": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 紫雀花王朝的贵族相信这是复活与不朽的象征，常常将紫莲刚玉制作成护身符随身携带。",
+          "desc": "常见的炼金材料，蕴含少量草系魔法，是合成技能石的主要触媒。",
           "type": "炼金材料",
           "high_value": false,
-          "recommend": true,
-          "remain": "已结束",
-          "image": "https://patchwiki.biligame.com/images/rocom/thumb/9/9c/s7ej54xr4magmv0h0zag15jah6avwlc.png/100px-100682.png"
-        }
-      ]
-    },
-    "4": {
-      "label": "20:00-24:00",
-      "items": [
+          "recommend": false,
+          "remain": "2小时16分钟",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/3/32/2k88qbruf464xxyf02grnmkvun59h0c.png/100px-100121.png"
+        },
         {
-          "name": "蓝晶碧玺",
-          "price": "1000",
+          "name": "地系粉尘",
+          "price": "500",
           "limit": "100",
-          "desc": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 某些晶石蜗会产出珍贵的粉蓝色碧玺，为此商人翻着花样研究晶石蜗的食谱喜好。",
+          "desc": "常见的炼金材料，蕴含少量地系魔法，是合成技能石的主要触媒。",
           "type": "炼金材料",
           "high_value": false,
-          "recommend": true,
-          "remain": "0小时45分钟",
-          "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c5/k8wzdzechd88qs9bxuvcnyg0pv4tzl4.png/100px-100681.png"
+          "recommend": false,
+          "remain": "2小时16分钟",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/7/7a/n6n70lv43avntp8zie9k18a4zw41l8i.png/100px-100129.png"
         }
       ]
     }
