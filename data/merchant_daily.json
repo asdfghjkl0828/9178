@@ -1,8 +1,8 @@
 {
-  "date": "2026-10-12",
-  "updated_at": "2026-10-12T13:48:11.174119+08:00",
-  "server_now": 1791784090,
-  "active_round": "12:00-16:00",
+  "date": "2026-10-13",
+  "updated_at": "2026-10-13T01:48:10.448526+08:00",
+  "server_now": 1791827290,
+  "active_round": "20:00-24:00",
   "rounds": {
     "1": {
       "label": "08:00-12:00",
@@ -31,7 +31,7 @@
           "type": "炼金材料",
           "high_value": false,
           "recommend": true,
-          "remain": "2小时11分钟",
+          "remain": "已结束",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/b/bc/khe20j8lwkt1bg9g4b0gbnsff48g93c.png/100px-100628.png"
         },
         {
@@ -42,7 +42,7 @@
           "type": "炼金材料",
           "high_value": false,
           "recommend": false,
-          "remain": "2小时11分钟",
+          "remain": "已结束",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/20/okbnyp4feg52iaxuijvjzv6wodaqjmi.png/100px-100126.png"
         },
         {
@@ -53,8 +53,73 @@
           "type": "炼金材料",
           "high_value": false,
           "recommend": false,
-          "remain": "2小时11分钟",
+          "remain": "已结束",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/2f/2sux0g15uo8at77bwpoxrg32rv3l4dz.png/100px-100132.png"
+        }
+      ]
+    },
+    "3": {
+      "label": "16:00-20:00",
+      "items": [
+        {
+          "name": "神奇的蛋",
+          "price": "36000",
+          "limit": "5",
+          "desc": "蕴含着难以捉摸的魔力，不知道可以孵化出哪种精灵。",
+          "type": "精灵蛋",
+          "high_value": false,
+          "recommend": false,
+          "remain": "已结束",
+          "image": "//img.71acg.net/whd~hykb/comm/hd_admin_upload_2982_5390e1a946446e64d929ad89a3ad3eed.png"
+        },
+        {
+          "name": "水系粉尘",
+          "price": "500",
+          "limit": "100",
+          "desc": "常见的炼金材料，蕴含少量水系魔法，是合成技能石的主要触媒。",
+          "type": "炼金材料",
+          "high_value": false,
+          "recommend": false,
+          "remain": "已结束",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c7/4fxef31uslze9psd9375td9zbqtbllv.png/100px-100123.png"
+        },
+        {
+          "name": "龙系粉尘",
+          "price": "500",
+          "limit": "100",
+          "desc": "常见的炼金材料，蕴含少量龙系魔法，是合成技能石的主要触媒。",
+          "type": "炼金材料",
+          "high_value": false,
+          "recommend": false,
+          "remain": "已结束",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/a/ac/jhbsu0fzhq55ivqu89qz81366owvkki.png/100px-100131.png"
+        }
+      ]
+    },
+    "4": {
+      "label": "20:00-24:00",
+      "items": [
+        {
+          "name": "魔力果",
+          "price": "6000",
+          "limit": "20",
+          "desc": "不太常见的果实，精灵食用后获得能力提升。 “精灵食物营养科的研究总是不见进展，这么多年了精灵还在吃果子。”",
+          "type": "精灵喂养材料",
+          "high_value": false,
+          "recommend": false,
+          "remain": "已结束",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c6/5qe6rcdtfxe1gsrvgj3lrn033athx9p.png/100px-100668.png"
+        },
+        {
+          "name": "火系粉尘",
+          "price": "500",
+          "limit": "100",
+          "desc": "常见的炼金材料，蕴含少量火系魔法，是合成技能石的主要触媒。",
+          "type": "炼金材料",
+          "high_value": false,
+          "recommend": false,
+          "remain": "已结束",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/a/a6/a5v60zfm9ivyri166tias4efjnp5vyt.png/100px-100122.png"
         }
       ]
     }
