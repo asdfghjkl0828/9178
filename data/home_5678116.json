@@ -1,6 +1,6 @@
 {
  "uid": "5678116",
- "fetched_at": "2026-10-14T07:29:48Z",
+ "fetched_at": "2026-10-14T13:37:34Z",
  "source": "rocodex.org (免费)",
  "quota_remaining": 2,
  "from_cache": false,
@@ -9,7 +9,7 @@
   "homeName": "牢大",
   "roomLevel": 5,
   "homeLevel": 25,
-  "homeExperience": 1598659,
+  "homeExperience": 1599659,
   "comfortLevel": 90255,
   "residentPetCount": 11,
   "guardianPetName": "",
@@ -21,20 +21,36 @@
   },
   "pets": [
    {
-    "id": 3161,
-    "gid": 85547,
-    "name": "春团",
-    "defaultName": "春团",
-    "level": 1,
+    "id": 3005,
+    "gid": 52,
+    "name": "水灵",
+    "defaultName": "水灵",
+    "level": 60,
     "gender": 2,
     "genderText": "雌性",
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 1,
-    "status": 1702,
-    "statusText": "已驻守",
-    "icon": "/images/spirits/3161/image.png"
+    "status": 1701,
+    "statusText": "状态 1701",
+    "icon": "/images/spirits/3005/image.png"
+   },
+   {
+    "id": 3441,
+    "gid": 85503,
+    "name": "梦悠悠",
+    "defaultName": "梦悠悠",
+    "level": 60,
+    "gender": 2,
+    "genderText": "雌性",
+    "energy": 10,
+    "mutationName": "普通",
+    "haveEgg": false,
+    "feedRound": 1,
+    "status": 1701,
+    "statusText": "状态 1701",
+    "icon": "/images/spirits/3441/image.png"
    },
    {
     "id": 3568,
@@ -64,8 +80,8 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 1,
-    "status": 1702,
-    "statusText": "已驻守",
+    "status": 1700,
+    "statusText": "状态 1700",
     "icon": "/images/spirits/3776/image.png"
    },
    {
@@ -117,22 +133,6 @@
     "icon": "/images/spirits/3117/image.png"
    },
    {
-    "id": 3161,
-    "gid": 85563,
-    "name": "春团",
-    "defaultName": "春团",
-    "level": 1,
-    "gender": 2,
-    "genderText": "雌性",
-    "energy": 10,
-    "mutationName": "普通",
-    "haveEgg": false,
-    "feedRound": 1,
-    "status": 1700,
-    "statusText": "状态 1700",
-    "icon": "/images/spirits/3161/image.png"
-   },
-   {
     "id": 3001,
     "gid": 83863,
     "name": "喵喵",
@@ -160,8 +160,8 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 1,
-    "status": 1702,
-    "statusText": "已驻守",
+    "status": 1700,
+    "statusText": "状态 1700",
     "icon": "/images/spirits/3742/image.png"
    },
    {
@@ -350,9 +350,9 @@
    }
   ],
   "meta": {
-   "taskId": "tsk_dm4dv30vrxug_7lew",
-   "createdAt": "2026-10-14T07:29:45.759Z",
-   "finishedAt": "2026-10-14T07:29:46.815Z"
+   "taskId": "tsk_dm4lonz9v8b7_874w",
+   "createdAt": "2026-10-14T13:37:31.704Z",
+   "finishedAt": "2026-10-14T13:37:32.732Z"
   }
  }
 }
