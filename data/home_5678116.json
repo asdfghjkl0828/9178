@@ -1,6 +1,6 @@
 {
  "uid": "5678116",
- "fetched_at": "2026-10-15T22:09:58Z",
+ "fetched_at": "2026-10-16T07:03:29Z",
  "source": "rocodex.org (免费)",
  "quota_remaining": 2,
  "from_cache": false,
@@ -9,7 +9,7 @@
   "homeName": "牢大",
   "roomLevel": 5,
   "homeLevel": 25,
-  "homeExperience": 1599659,
+  "homeExperience": 1600909,
   "comfortLevel": 90255,
   "residentPetCount": 11,
   "guardianPetName": "",
@@ -20,6 +20,22 @@
    "startedAt": null
   },
   "pets": [
+   {
+    "id": 3002,
+    "gid": 87929,
+    "name": "水蓝蓝",
+    "defaultName": "水蓝蓝",
+    "level": 1,
+    "gender": 2,
+    "genderText": "雌性",
+    "energy": 10,
+    "mutationName": "普通",
+    "haveEgg": false,
+    "feedRound": 1,
+    "status": 1701,
+    "statusText": "状态 1701",
+    "icon": "/images/spirits/3002/image.png"
+   },
    {
     "id": 3259,
     "gid": 87892,
@@ -32,25 +48,9 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 1,
-    "status": 1702,
-    "statusText": "已驻守",
+    "status": 1700,
+    "statusText": "状态 1700",
     "icon": "/images/spirits/3259/image.png"
-   },
-   {
-    "id": 3005,
-    "gid": 52,
-    "name": "水灵",
-    "defaultName": "水灵",
-    "level": 60,
-    "gender": 2,
-    "genderText": "雌性",
-    "energy": 10,
-    "mutationName": "普通",
-    "haveEgg": false,
-    "feedRound": 1,
-    "status": 1702,
-    "statusText": "已驻守",
-    "icon": "/images/spirits/3005/image.png"
    },
    {
     "id": 3070,
@@ -64,8 +64,8 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 1,
-    "status": 1702,
-    "statusText": "已驻守",
+    "status": 1700,
+    "statusText": "状态 1700",
     "icon": "/images/spirits/3070/image.png"
    },
    {
@@ -80,9 +80,25 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 1,
-    "status": 1702,
-    "statusText": "已驻守",
+    "status": 1700,
+    "statusText": "状态 1700",
     "icon": "/images/spirits/3441/image.png"
+   },
+   {
+    "id": 3742,
+    "gid": 87931,
+    "name": "鸭吉吉",
+    "defaultName": "鸭吉吉",
+    "level": 1,
+    "gender": 2,
+    "genderText": "雌性",
+    "energy": 10,
+    "mutationName": "普通",
+    "haveEgg": false,
+    "feedRound": 1,
+    "status": 1701,
+    "statusText": "状态 1701",
+    "icon": "/images/spirits/3742/image.png"
    },
    {
     "id": 3776,
@@ -131,22 +147,6 @@
     "status": 1700,
     "statusText": "状态 1700",
     "icon": "/images/spirits/3117/image.png"
-   },
-   {
-    "id": 3742,
-    "gid": 87715,
-    "name": "鸭吉吉",
-    "defaultName": "鸭吉吉",
-    "level": 1,
-    "gender": 2,
-    "genderText": "雌性",
-    "energy": 10,
-    "mutationName": "普通",
-    "haveEgg": false,
-    "feedRound": 1,
-    "status": 1702,
-    "statusText": "已驻守",
-    "icon": "/images/spirits/3742/image.png"
    },
    {
     "id": 3117,
@@ -350,9 +350,9 @@
    }
   ],
   "meta": {
-   "taskId": "tsk_dm5r7j41mklk_a1th",
-   "createdAt": "2026-10-15T22:09:55.534Z",
-   "finishedAt": "2026-10-15T22:09:56.579Z"
+   "taskId": "tsk_dm62k1k21df0_anvp",
+   "createdAt": "2026-10-16T07:03:28.263Z",
+   "finishedAt": "2026-10-16T07:03:29.369Z"
   }
  }
 }
