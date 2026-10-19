@@ -1,6 +1,6 @@
 {
  "uid": "5678116",
- "fetched_at": "2026-10-19T15:31:21Z",
+ "fetched_at": "2026-10-19T20:59:51Z",
  "source": "rocodex.org (免费)",
  "quota_remaining": 2,
  "from_cache": false,
@@ -11,7 +11,7 @@
   "homeLevel": 25,
   "homeExperience": 1603409,
   "comfortLevel": 90255,
-  "residentPetCount": 11,
+  "residentPetCount": 10,
   "guardianPetName": "",
   "plantCount": 15,
   "featureOpened": true,
@@ -21,20 +21,20 @@
   },
   "pets": [
    {
-    "id": 3259,
-    "gid": 87892,
-    "name": "冰钻布鲁斯",
-    "defaultName": "冰钻布鲁斯",
+    "id": 3526,
+    "gid": 83685,
+    "name": "抹茶布丁",
+    "defaultName": "抹茶布丁",
     "level": 60,
-    "gender": 2,
-    "genderText": "雌性",
+    "gender": 1,
+    "genderText": "雄性",
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 1,
+    "feedRound": 6,
     "status": 1700,
     "statusText": "状态 1700",
-    "icon": "/images/spirits/3259/image.png"
+    "icon": "/images/spirits/3526/image.png"
    },
    {
     "id": 3070,
@@ -179,22 +179,6 @@
     "status": 1700,
     "statusText": "状态 1700",
     "icon": "/images/spirits/3071/image.png"
-   },
-   {
-    "id": 3526,
-    "gid": 83685,
-    "name": "抹茶布丁",
-    "defaultName": "抹茶布丁",
-    "level": 60,
-    "gender": 1,
-    "genderText": "雄性",
-    "energy": 10,
-    "mutationName": "普通",
-    "haveEgg": false,
-    "feedRound": 6,
-    "status": 1700,
-    "statusText": "状态 1700",
-    "icon": "/images/spirits/3526/image.png"
    }
   ],
   "plants": [
@@ -350,9 +334,9 @@
    }
   ],
   "meta": {
-   "taskId": "tsk_dm8x8j3p5u48_1hsa",
-   "createdAt": "2026-10-19T15:31:20.407Z",
-   "finishedAt": "2026-10-19T15:31:21.437Z"
+   "taskId": "tsk_dm9481oulh7x_1qio",
+   "createdAt": "2026-10-19T20:59:50.273Z",
+   "finishedAt": "2026-10-19T20:59:51.340Z"
   }
  }
 }
