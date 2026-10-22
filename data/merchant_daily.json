@@ -1,11 +1,49 @@
 {
-  "date": "2026-10-21",
-  "updated_at": "2026-10-21T21:42:42.589978+08:00",
-  "server_now": 1792590162,
-  "active_round": "20:00-24:00",
+  "date": "2026-10-22",
+  "updated_at": "2026-10-22T12:34:05.243135+08:00",
+  "server_now": 1792643645,
+  "active_round": "12:00-16:00",
   "rounds": {
     "1": {
       "label": "08:00-12:00",
+      "items": [
+        {
+          "name": "黄石榴石",
+          "price": "1000",
+          "limit": "100",
+          "desc": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 特殊的晶体排列解构，精灵打喷嚏可能会令这种晶体发生爆炸。",
+          "type": "炼金材料",
+          "high_value": false,
+          "recommend": true,
+          "remain": "已结束",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/f/f3/c5x5f0lgk33ly801m8w1n9aod8ny4sh.png/100px-100683.png"
+        },
+        {
+          "name": "魔力果",
+          "price": "6000",
+          "limit": "20",
+          "desc": "不太常见的果实，精灵食用后获得能力提升。 “精灵食物营养科的研究总是不见进展，这么多年了精灵还在吃果子。”",
+          "type": "精灵喂养材料",
+          "high_value": false,
+          "recommend": false,
+          "remain": "已结束",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c6/5qe6rcdtfxe1gsrvgj3lrn033athx9p.png/100px-100668.png"
+        },
+        {
+          "name": "普通粉尘",
+          "price": "500",
+          "limit": "100",
+          "desc": "常见的炼金材料，蕴含少量普通系魔法，是合成技能石的主要触媒。",
+          "type": "炼金材料",
+          "high_value": false,
+          "recommend": false,
+          "remain": "已结束",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/f/f6/ls7hsygs9epizddf1xo4q9b2iu1dduu.png/100px-100127.png"
+        }
+      ]
+    },
+    "2": {
+      "label": "12:00-16:00",
       "items": [
         {
           "name": "黑晶琉璃",
@@ -15,56 +53,8 @@
           "type": "炼金材料",
           "high_value": false,
           "recommend": true,
-          "remain": "已结束",
+          "remain": "3小时25分钟",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/b/bc/khe20j8lwkt1bg9g4b0gbnsff48g93c.png/100px-100628.png"
-        }
-      ]
-    },
-    "2": {
-      "label": "12:00-16:00",
-      "items": [
-        {
-          "name": "蓝晶碧玺",
-          "price": "1000",
-          "limit": "100",
-          "desc": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 某些晶石蜗会产出珍贵的粉蓝色碧玺，为此商人翻着花样研究晶石蜗的食谱喜好。",
-          "type": "炼金材料",
-          "high_value": false,
-          "recommend": true,
-          "remain": "已结束",
-          "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c5/k8wzdzechd88qs9bxuvcnyg0pv4tzl4.png/100px-100681.png"
-        }
-      ]
-    },
-    "4": {
-      "label": "20:00-24:00",
-      "items": [
-        {
-          "name": "蓝晶碧玺",
-          "price": "1000",
-          "limit": "100",
-          "desc": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 某些晶石蜗会产出珍贵的粉蓝色碧玺，为此商人翻着花样研究晶石蜗的食谱喜好。",
-          "type": "炼金材料",
-          "high_value": false,
-          "recommend": true,
-          "remain": "2小时17分钟",
-          "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c5/k8wzdzechd88qs9bxuvcnyg0pv4tzl4.png/100px-100681.png"
-        }
-      ]
-    },
-    "3": {
-      "label": "16:00-20:00",
-      "items": [
-        {
-          "name": "水系粉尘",
-          "price": "500",
-          "limit": "100",
-          "desc": "常见的炼金材料，蕴含少量水系魔法，是合成技能石的主要触媒。",
-          "type": "炼金材料",
-          "high_value": false,
-          "recommend": false,
-          "remain": "已结束",
-          "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c7/4fxef31uslze9psd9375td9zbqtbllv.png/100px-100123.png"
         }
       ]
     }
