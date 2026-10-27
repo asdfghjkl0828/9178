@@ -1,6 +1,6 @@
 {
  "uid": "5678116",
- "fetched_at": "2026-10-27T10:25:32Z",
+ "fetched_at": "2026-10-27T16:28:01Z",
  "source": "rocodex.org (免费)",
  "quota_remaining": 2,
  "from_cache": false,
@@ -10,7 +10,7 @@
   "roomLevel": 5,
   "homeLevel": 25,
   "homeExperience": 1610509,
-  "comfortLevel": 90255,
+  "comfortLevel": 91245,
   "residentPetCount": 11,
   "guardianPetName": "",
   "plantCount": 15,
@@ -69,22 +69,6 @@
     "icon": "/images/spirits/3115/image.png"
    },
    {
-    "id": 3117,
-    "gid": 84136,
-    "name": "彩蝶鲨",
-    "defaultName": "彩蝶鲨",
-    "level": 60,
-    "gender": 1,
-    "genderText": "雄性",
-    "energy": 10,
-    "mutationName": "普通",
-    "haveEgg": false,
-    "feedRound": 2,
-    "status": 1700,
-    "statusText": "状态 1700",
-    "icon": "/images/spirits/3117/image.png"
-   },
-   {
     "id": 3115,
     "gid": 88597,
     "name": "风铃鲨",
@@ -112,8 +96,8 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 2,
-    "status": 1701,
-    "statusText": "状态 1701",
+    "status": 1702,
+    "statusText": "已驻守",
     "icon": "/images/spirits/3115/image.png"
    },
    {
@@ -165,6 +149,22 @@
     "icon": "/images/spirits/3117/image.png"
    },
    {
+    "id": 3117,
+    "gid": 88607,
+    "name": "洄屿",
+    "defaultName": "彩蝶鲨",
+    "level": 60,
+    "gender": 2,
+    "genderText": "雌性",
+    "energy": 10,
+    "mutationName": "炫彩",
+    "haveEgg": false,
+    "feedRound": 1,
+    "status": 1702,
+    "statusText": "已驻守",
+    "icon": "/images/spirits/3117/image.png"
+   },
+   {
     "id": 3526,
     "gid": 83685,
     "name": "抹茶布丁",
@@ -182,26 +182,26 @@
    },
    {
     "id": 3117,
-    "gid": 88607,
-    "name": "洄屿",
+    "gid": 84136,
+    "name": "彩蝶鲨",
     "defaultName": "彩蝶鲨",
     "level": 60,
-    "gender": 2,
-    "genderText": "雌性",
+    "gender": 1,
+    "genderText": "雄性",
     "energy": 10,
-    "mutationName": "炫彩",
+    "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 1,
-    "status": 1701,
-    "statusText": "状态 1701",
+    "feedRound": 2,
+    "status": 1700,
+    "statusText": "状态 1700",
     "icon": "/images/spirits/3117/image.png"
    }
   ],
   "plants": [],
   "meta": {
-   "taskId": "tsk_dmfjqqc7ld45_6cs",
-   "createdAt": "2026-10-27T10:25:30.872Z",
-   "finishedAt": "2026-10-27T10:25:31.910Z"
+   "taskId": "tsk_dmfrga0b46pj_lp0",
+   "createdAt": "2026-10-27T16:28:00.561Z",
+   "finishedAt": "2026-10-27T16:28:01.621Z"
   }
  }
 }
