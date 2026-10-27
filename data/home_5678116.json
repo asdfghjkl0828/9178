@@ -1,6 +1,6 @@
 {
  "uid": "5678116",
- "fetched_at": "2026-10-27T04:52:57Z",
+ "fetched_at": "2026-10-27T10:25:32Z",
  "source": "rocodex.org (免费)",
  "quota_remaining": 2,
  "from_cache": false,
@@ -9,7 +9,7 @@
   "homeName": "牢大",
   "roomLevel": 5,
   "homeLevel": 25,
-  "homeExperience": 1608009,
+  "homeExperience": 1610509,
   "comfortLevel": 90255,
   "residentPetCount": 11,
   "guardianPetName": "",
@@ -32,8 +32,8 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 1,
-    "status": 1702,
-    "statusText": "已驻守",
+    "status": 1700,
+    "statusText": "状态 1700",
     "icon": "/images/spirits/3115/image.png"
    },
    {
@@ -64,25 +64,25 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 1,
-    "status": 1702,
-    "statusText": "已驻守",
+    "status": 1700,
+    "statusText": "状态 1700",
     "icon": "/images/spirits/3115/image.png"
    },
    {
-    "id": 3115,
-    "gid": 88594,
-    "name": "风铃鲨",
-    "defaultName": "风铃鲨",
-    "level": 1,
+    "id": 3117,
+    "gid": 84136,
+    "name": "彩蝶鲨",
+    "defaultName": "彩蝶鲨",
+    "level": 60,
     "gender": 1,
     "genderText": "雄性",
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 1,
-    "status": 1702,
-    "statusText": "已驻守",
-    "icon": "/images/spirits/3115/image.png"
+    "feedRound": 2,
+    "status": 1700,
+    "statusText": "状态 1700",
+    "icon": "/images/spirits/3117/image.png"
    },
    {
     "id": 3115,
@@ -96,8 +96,8 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 1,
-    "status": 1702,
-    "statusText": "已驻守",
+    "status": 1700,
+    "statusText": "状态 1700",
     "icon": "/images/spirits/3115/image.png"
    },
    {
@@ -111,9 +111,9 @@
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 1,
-    "status": 1702,
-    "statusText": "已驻守",
+    "feedRound": 2,
+    "status": 1701,
+    "statusText": "状态 1701",
     "icon": "/images/spirits/3115/image.png"
    },
    {
@@ -128,8 +128,8 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 1,
-    "status": 1702,
-    "statusText": "已驻守",
+    "status": 1700,
+    "statusText": "状态 1700",
     "icon": "/images/spirits/3115/image.png"
    },
    {
@@ -144,8 +144,8 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 1,
-    "status": 1702,
-    "statusText": "已驻守",
+    "status": 1700,
+    "statusText": "状态 1700",
     "icon": "/images/spirits/3117/image.png"
    },
    {
@@ -160,8 +160,8 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 1,
-    "status": 1702,
-    "statusText": "已驻守",
+    "status": 1700,
+    "statusText": "状态 1700",
     "icon": "/images/spirits/3117/image.png"
    },
    {
@@ -176,32 +176,32 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 1,
-    "status": 1702,
-    "statusText": "已驻守",
+    "status": 1700,
+    "statusText": "状态 1700",
     "icon": "/images/spirits/3526/image.png"
    },
    {
     "id": 3117,
-    "gid": 84136,
-    "name": "彩蝶鲨",
+    "gid": 88607,
+    "name": "洄屿",
     "defaultName": "彩蝶鲨",
     "level": 60,
-    "gender": 1,
-    "genderText": "雄性",
+    "gender": 2,
+    "genderText": "雌性",
     "energy": 10,
-    "mutationName": "普通",
+    "mutationName": "炫彩",
     "haveEgg": false,
-    "feedRound": 2,
-    "status": 1702,
-    "statusText": "已驻守",
+    "feedRound": 1,
+    "status": 1701,
+    "statusText": "状态 1701",
     "icon": "/images/spirits/3117/image.png"
    }
   ],
   "plants": [],
   "meta": {
-   "taskId": "tsk_dmfco3f5f67v_4hx",
-   "createdAt": "2026-10-27T04:52:56.486Z",
-   "finishedAt": "2026-10-27T04:52:57.573Z"
+   "taskId": "tsk_dmfjqqc7ld45_6cs",
+   "createdAt": "2026-10-27T10:25:30.872Z",
+   "finishedAt": "2026-10-27T10:25:31.910Z"
   }
  }
 }
