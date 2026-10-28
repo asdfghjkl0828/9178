@@ -1,6 +1,6 @@
 {
  "uid": "5678116",
- "fetched_at": "2026-10-28T08:19:46Z",
+ "fetched_at": "2026-10-28T15:56:24Z",
  "source": "rocodex.org (免费)",
  "quota_remaining": 2,
  "from_cache": false,
@@ -9,7 +9,7 @@
   "homeName": "牢大",
   "roomLevel": 5,
   "homeLevel": 25,
-  "homeExperience": 1610509,
+  "homeExperience": 1611259,
   "comfortLevel": 91245,
   "residentPetCount": 11,
   "guardianPetName": "",
@@ -20,6 +20,38 @@
    "startedAt": null
   },
   "pets": [
+   {
+    "id": 3546,
+    "gid": 88732,
+    "name": "圣剑-X",
+    "defaultName": "圣剑-X",
+    "level": 60,
+    "gender": 2,
+    "genderText": "雌性",
+    "energy": 10,
+    "mutationName": "普通",
+    "haveEgg": false,
+    "feedRound": 1,
+    "status": 1702,
+    "statusText": "已驻守",
+    "icon": "/images/spirits/3546/image.png"
+   },
+   {
+    "id": 3546,
+    "gid": 88782,
+    "name": "圣剑-X",
+    "defaultName": "圣剑-X",
+    "level": 60,
+    "gender": 1,
+    "genderText": "雄性",
+    "energy": 10,
+    "mutationName": "普通",
+    "haveEgg": false,
+    "feedRound": 1,
+    "status": 1702,
+    "statusText": "已驻守",
+    "icon": "/images/spirits/3546/image.png"
+   },
    {
     "id": 3115,
     "gid": 88593,
@@ -39,22 +71,6 @@
    {
     "id": 3115,
     "gid": 88595,
-    "name": "风铃鲨",
-    "defaultName": "风铃鲨",
-    "level": 1,
-    "gender": 1,
-    "genderText": "雄性",
-    "energy": 10,
-    "mutationName": "普通",
-    "haveEgg": false,
-    "feedRound": 1,
-    "status": 1702,
-    "statusText": "已驻守",
-    "icon": "/images/spirits/3115/image.png"
-   },
-   {
-    "id": 3115,
-    "gid": 88596,
     "name": "风铃鲨",
     "defaultName": "风铃鲨",
     "level": 1,
@@ -96,8 +112,8 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 2,
-    "status": 1702,
-    "statusText": "已驻守",
+    "status": 1700,
+    "statusText": "状态 1700",
     "icon": "/images/spirits/3115/image.png"
    },
    {
@@ -149,22 +165,6 @@
     "icon": "/images/spirits/3117/image.png"
    },
    {
-    "id": 3117,
-    "gid": 88607,
-    "name": "洄屿",
-    "defaultName": "彩蝶鲨",
-    "level": 60,
-    "gender": 2,
-    "genderText": "雌性",
-    "energy": 10,
-    "mutationName": "炫彩",
-    "haveEgg": false,
-    "feedRound": 1,
-    "status": 1702,
-    "statusText": "已驻守",
-    "icon": "/images/spirits/3117/image.png"
-   },
-   {
     "id": 3526,
     "gid": 83685,
     "name": "抹茶布丁",
@@ -199,9 +199,9 @@
   ],
   "plants": [],
   "meta": {
-   "taskId": "tsk_dmgboz5gaedm_1egm",
-   "createdAt": "2026-10-28T08:19:44.403Z",
-   "finishedAt": "2026-10-28T08:19:45.459Z"
+   "taskId": "tsk_dmglem0xu76x_1z9q",
+   "createdAt": "2026-10-28T15:56:23.290Z",
+   "finishedAt": "2026-10-28T15:56:24.361Z"
   }
  }
 }
