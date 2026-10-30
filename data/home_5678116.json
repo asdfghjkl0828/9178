@@ -1,6 +1,6 @@
 {
  "uid": "5678116",
- "fetched_at": "2026-10-30T00:50:07Z",
+ "fetched_at": "2026-10-30T07:00:54Z",
  "source": "rocodex.org (免费)",
  "quota_remaining": 2,
  "from_cache": false,
@@ -9,7 +9,7 @@
   "homeName": "牢大",
   "roomLevel": 5,
   "homeLevel": 25,
-  "homeExperience": 1611259,
+  "homeExperience": 1611759,
   "comfortLevel": 91245,
   "residentPetCount": 11,
   "guardianPetName": "",
@@ -21,20 +21,20 @@
   },
   "pets": [
    {
-    "id": 3546,
-    "gid": 88732,
-    "name": "圣剑-X",
-    "defaultName": "圣剑-X",
+    "id": 3117,
+    "gid": 84136,
+    "name": "彩蝶鲨",
+    "defaultName": "彩蝶鲨",
     "level": 60,
-    "gender": 2,
-    "genderText": "雌性",
+    "gender": 1,
+    "genderText": "雄性",
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 1,
-    "status": 1702,
-    "statusText": "已驻守",
-    "icon": "/images/spirits/3546/image.png"
+    "feedRound": 2,
+    "status": 1700,
+    "statusText": "状态 1700",
+    "icon": "/images/spirits/3117/image.png"
    },
    {
     "id": 3546,
@@ -48,8 +48,8 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 1,
-    "status": 1702,
-    "statusText": "已驻守",
+    "status": 1700,
+    "statusText": "状态 1700",
     "icon": "/images/spirits/3546/image.png"
    },
    {
@@ -181,27 +181,27 @@
     "icon": "/images/spirits/3526/image.png"
    },
    {
-    "id": 3117,
-    "gid": 84136,
-    "name": "彩蝶鲨",
-    "defaultName": "彩蝶鲨",
+    "id": 3546,
+    "gid": 88860,
+    "name": "圣剑-X",
+    "defaultName": "圣剑-X",
     "level": 60,
-    "gender": 1,
-    "genderText": "雄性",
+    "gender": 2,
+    "genderText": "雌性",
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 2,
-    "status": 1700,
-    "statusText": "状态 1700",
-    "icon": "/images/spirits/3117/image.png"
+    "feedRound": 1,
+    "status": 1701,
+    "statusText": "状态 1701",
+    "icon": "/images/spirits/3546/image.png"
    }
   ],
   "plants": [],
   "meta": {
-   "taskId": "tsk_dmhrdsnvmi69_2ff",
-   "createdAt": "2026-10-30T00:50:05.989Z",
-   "finishedAt": "2026-10-30T00:50:07.027Z"
+   "taskId": "tsk_dmhz9omjhb06_gwo",
+   "createdAt": "2026-10-30T07:00:52.624Z",
+   "finishedAt": "2026-10-30T07:00:53.701Z"
   }
  }
 }
