@@ -1,6 +1,6 @@
 {
  "uid": "5678116",
- "fetched_at": "2026-10-30T07:00:54Z",
+ "fetched_at": "2026-10-30T14:01:33Z",
  "source": "rocodex.org (免费)",
  "quota_remaining": 2,
  "from_cache": false,
@@ -20,22 +20,6 @@
    "startedAt": null
   },
   "pets": [
-   {
-    "id": 3117,
-    "gid": 84136,
-    "name": "彩蝶鲨",
-    "defaultName": "彩蝶鲨",
-    "level": 60,
-    "gender": 1,
-    "genderText": "雄性",
-    "energy": 10,
-    "mutationName": "普通",
-    "haveEgg": false,
-    "feedRound": 2,
-    "status": 1700,
-    "statusText": "状态 1700",
-    "icon": "/images/spirits/3117/image.png"
-   },
    {
     "id": 3546,
     "gid": 88782,
@@ -165,6 +149,22 @@
     "icon": "/images/spirits/3117/image.png"
    },
    {
+    "id": 3546,
+    "gid": 88860,
+    "name": "圣剑-X",
+    "defaultName": "圣剑-X",
+    "level": 60,
+    "gender": 2,
+    "genderText": "雌性",
+    "energy": 10,
+    "mutationName": "普通",
+    "haveEgg": false,
+    "feedRound": 1,
+    "status": 1702,
+    "statusText": "已驻守",
+    "icon": "/images/spirits/3546/image.png"
+   },
+   {
     "id": 3526,
     "gid": 83685,
     "name": "抹茶布丁",
@@ -181,27 +181,27 @@
     "icon": "/images/spirits/3526/image.png"
    },
    {
-    "id": 3546,
-    "gid": 88860,
-    "name": "圣剑-X",
-    "defaultName": "圣剑-X",
+    "id": 3117,
+    "gid": 84136,
+    "name": "彩蝶鲨",
+    "defaultName": "彩蝶鲨",
     "level": 60,
-    "gender": 2,
-    "genderText": "雌性",
+    "gender": 1,
+    "genderText": "雄性",
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 1,
-    "status": 1701,
-    "statusText": "状态 1701",
-    "icon": "/images/spirits/3546/image.png"
+    "feedRound": 2,
+    "status": 1700,
+    "statusText": "状态 1700",
+    "icon": "/images/spirits/3117/image.png"
    }
   ],
   "plants": [],
   "meta": {
-   "taskId": "tsk_dmhz9omjhb06_gwo",
-   "createdAt": "2026-10-30T07:00:52.624Z",
-   "finishedAt": "2026-10-30T07:00:53.701Z"
+   "taskId": "tsk_dmi87rmeqfl2_zft",
+   "createdAt": "2026-10-30T14:01:32.407Z",
+   "finishedAt": "2026-10-30T14:01:33.476Z"
   }
  }
 }
