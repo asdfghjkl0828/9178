@@ -1,6 +1,6 @@
 {
  "uid": "5678116",
- "fetched_at": "2026-11-01T23:30:30Z",
+ "fetched_at": "2026-11-02T05:51:39Z",
  "source": "rocodex.org (免费)",
  "quota_remaining": 2,
  "from_cache": false,
@@ -199,9 +199,9 @@
   ],
   "plants": [],
   "meta": {
-   "taskId": "tsk_dmk9kgwmaiul_43cs",
-   "createdAt": "2026-11-01T23:30:28.837Z",
-   "finishedAt": "2026-11-01T23:30:30.074Z"
+   "taskId": "tsk_dmkhoafdq0bx_4i1j",
+   "createdAt": "2026-11-02T05:51:37.070Z",
+   "finishedAt": "2026-11-02T05:51:38.159Z"
   }
  }
 }
