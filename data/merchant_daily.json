@@ -1,8 +1,8 @@
 {
   "date": "2026-11-06",
-  "updated_at": "2026-11-06T14:29:46.156390+08:00",
-  "server_now": 1793946585,
-  "active_round": "12:00-16:00",
+  "updated_at": "2026-11-06T23:52:32.137488+08:00",
+  "server_now": 1793980351,
+  "active_round": "20:00-24:00",
   "rounds": {
     "2": {
       "label": "12:00-16:00",
@@ -15,7 +15,7 @@
           "type": "炼金材料",
           "high_value": false,
           "recommend": true,
-          "remain": "1小时30分钟",
+          "remain": "已结束",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/9/9c/s7ej54xr4magmv0h0zag15jah6avwlc.png/100px-100682.png"
         },
         {
@@ -26,7 +26,7 @@
           "type": "精灵喂养材料",
           "high_value": false,
           "recommend": false,
-          "remain": "1小时30分钟",
+          "remain": "已结束",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c6/5qe6rcdtfxe1gsrvgj3lrn033athx9p.png/100px-100668.png"
         },
         {
@@ -37,7 +37,7 @@
           "type": "炼金材料",
           "high_value": false,
           "recommend": false,
-          "remain": "1小时30分钟",
+          "remain": "已结束",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/2f/2sux0g15uo8at77bwpoxrg32rv3l4dz.png/100px-100132.png"
         }
       ]
@@ -46,15 +46,26 @@
       "label": "16:00-20:00",
       "items": [
         {
-          "name": "黑晶琉璃",
-          "price": "1000",
-          "limit": "100",
-          "desc": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 “我的阿米亚特说这玩意儿太香了，嚼起来有些呛口，像火山灰，有纯正的拉布朗矿山味道。”",
-          "type": "炼金材料",
+          "name": "奇异血脉秘药",
+          "price": "16w",
+          "limit": "3",
+          "desc": "修改血脉的秘药，使精灵获得“奇异血脉”。",
+          "type": "血脉修改道具",
           "high_value": false,
-          "recommend": true,
+          "recommend": false,
           "remain": "已结束",
-          "image": "https://patchwiki.biligame.com/images/rocom/thumb/b/bc/khe20j8lwkt1bg9g4b0gbnsff48g93c.png/100px-100628.png"
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/a/ab/eg7zj03u487p1l3f91z499w1nxdzac1.png/100px-Xuemai_qiyixuemai.png"
+        },
+        {
+          "name": "幻系血脉秘药",
+          "price": "16w",
+          "limit": "3",
+          "desc": "能唤醒血脉力量的远古秘药，使精灵获得幻系血脉。 “一段失落的秘密将被重拾。”",
+          "type": "血脉修改道具",
+          "high_value": false,
+          "recommend": false,
+          "remain": "已结束",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/f/f5/osnobm6foxcvyf5t5304fz3ozr2w8cp.png/100px-Xuemai_huan.png"
         }
       ]
     },
@@ -69,30 +80,30 @@
           "type": "炼金材料",
           "high_value": false,
           "recommend": true,
-          "remain": "已结束",
+          "remain": "0小时7分钟",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/b/bc/khe20j8lwkt1bg9g4b0gbnsff48g93c.png/100px-100628.png"
         },
         {
-          "name": "光系粉尘",
-          "price": "500",
+          "name": "黄石榴石",
+          "price": "1000",
           "limit": "100",
-          "desc": "常见的炼金材料，蕴含少量光系魔法，是合成技能石的主要触媒。",
+          "desc": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 特殊的晶体排列解构，精灵打喷嚏可能会令这种晶体发生爆炸。",
           "type": "炼金材料",
           "high_value": false,
-          "recommend": false,
-          "remain": "已结束",
-          "image": "https://patchwiki.biligame.com/images/rocom/thumb/9/9d/t3udkq5fg8o3je088pcjktersn9wfrt.png/100px-100124.png"
+          "recommend": true,
+          "remain": "0小时7分钟",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/f/f3/c5x5f0lgk33ly801m8w1n9aod8ny4sh.png/100px-100683.png"
         },
         {
-          "name": "机械粉尘",
+          "name": "草系粉尘",
           "price": "500",
           "limit": "100",
-          "desc": "常见的炼金材料，蕴含少量机械系魔法，是合成技能石的主要触媒。",
+          "desc": "常见的炼金材料，蕴含少量草系魔法，是合成技能石的主要触媒。",
           "type": "炼金材料",
           "high_value": false,
           "recommend": false,
-          "remain": "已结束",
-          "image": "https://patchwiki.biligame.com/images/rocom/thumb/1/1c/lcsenwszmlkz002ai6du9f32tbfpi19.png/100px-100138.png"
+          "remain": "0小时7分钟",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/3/32/2k88qbruf464xxyf02grnmkvun59h0c.png/100px-100121.png"
         }
       ]
     },
@@ -118,7 +129,7 @@
           "type": "特制咕噜球",
           "high_value": false,
           "recommend": true,
-          "remain": "9小时30分钟",
+          "remain": "0小时7分钟",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/4/4b/60uvwzet0brdqlhtoa89domccpbo4hr.png/100px-Img_wangdiuqiu.png"
         }
       ]
