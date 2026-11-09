@@ -1,6 +1,6 @@
 {
  "uid": "5678116",
- "fetched_at": "2026-11-09T06:06:18Z",
+ "fetched_at": "2026-11-09T16:06:33Z",
  "source": "rocodex.org (免费)",
  "quota_remaining": 2,
  "from_cache": false,
@@ -32,8 +32,8 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 3,
-    "status": 1701,
-    "statusText": "状态 1701",
+    "status": 1702,
+    "statusText": "已驻守",
     "icon": "/images/spirits/3115/image.png"
    },
    {
@@ -64,8 +64,8 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 5,
-    "status": 1701,
-    "statusText": "状态 1701",
+    "status": 1702,
+    "statusText": "已驻守",
     "icon": "/images/spirits/3115/image.png"
    },
    {
@@ -96,8 +96,8 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 6,
-    "status": 1701,
-    "statusText": "状态 1701",
+    "status": 1702,
+    "statusText": "已驻守",
     "icon": "/images/spirits/3115/image.png"
    },
    {
@@ -112,8 +112,8 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 6,
-    "status": 1701,
-    "statusText": "状态 1701",
+    "status": 1702,
+    "statusText": "已驻守",
     "icon": "/images/spirits/3117/image.png"
    },
    {
@@ -144,8 +144,8 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 6,
-    "status": 1701,
-    "statusText": "状态 1701",
+    "status": 1702,
+    "statusText": "已驻守",
     "icon": "/images/spirits/3546/image.png"
    },
    {
@@ -160,8 +160,8 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 6,
-    "status": 1701,
-    "statusText": "状态 1701",
+    "status": 1702,
+    "statusText": "已驻守",
     "icon": "/images/spirits/3526/image.png"
    },
    {
@@ -176,8 +176,8 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 3,
-    "status": 1701,
-    "statusText": "状态 1701",
+    "status": 1702,
+    "statusText": "已驻守",
     "icon": "/images/spirits/3599/image.png"
    },
    {
@@ -192,16 +192,16 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 7,
-    "status": 1701,
-    "statusText": "状态 1701",
+    "status": 1702,
+    "statusText": "已驻守",
     "icon": "/images/spirits/3117/image.png"
    }
   ],
   "plants": [],
   "meta": {
-   "taskId": "tsk_dmqgdc39sls2_a0p",
-   "createdAt": "2026-11-09T06:06:17.316Z",
-   "finishedAt": "2026-11-09T06:06:18.380Z"
+   "taskId": "tsk_dmqt4winuv67_nnj",
+   "createdAt": "2026-11-09T16:06:30.933Z",
+   "finishedAt": "2026-11-09T16:06:32.928Z"
   }
  }
 }
