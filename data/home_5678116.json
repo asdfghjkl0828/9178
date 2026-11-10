@@ -1,6 +1,6 @@
 {
  "uid": "5678116",
- "fetched_at": "2026-11-10T00:13:21Z",
+ "fetched_at": "2026-11-10T08:19:29Z",
  "source": "rocodex.org (免费)",
  "quota_remaining": 2,
  "from_cache": false,
@@ -9,8 +9,8 @@
   "homeName": "牢大",
   "roomLevel": 5,
   "homeLevel": 25,
-  "homeExperience": 1619609,
-  "comfortLevel": 91320,
+  "homeExperience": 1621699,
+  "comfortLevel": 95420,
   "residentPetCount": 11,
   "guardianPetName": "",
   "plantCount": 15,
@@ -31,9 +31,9 @@
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 3,
-    "status": 1702,
-    "statusText": "已驻守",
+    "feedRound": 4,
+    "status": 1701,
+    "statusText": "状态 1701",
     "icon": "/images/spirits/3115/image.png"
    },
    {
@@ -47,9 +47,9 @@
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 2,
-    "status": 1702,
-    "statusText": "已驻守",
+    "feedRound": 3,
+    "status": 1701,
+    "statusText": "状态 1701",
     "icon": "/images/spirits/3216/image.png"
    },
    {
@@ -63,9 +63,9 @@
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 5,
-    "status": 1702,
-    "statusText": "已驻守",
+    "feedRound": 6,
+    "status": 1701,
+    "statusText": "状态 1701",
     "icon": "/images/spirits/3115/image.png"
    },
    {
@@ -79,9 +79,9 @@
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 6,
-    "status": 1702,
-    "statusText": "已驻守",
+    "feedRound": 7,
+    "status": 1701,
+    "statusText": "状态 1701",
     "icon": "/images/spirits/3115/image.png"
    },
    {
@@ -95,9 +95,9 @@
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 6,
-    "status": 1702,
-    "statusText": "已驻守",
+    "feedRound": 7,
+    "status": 1701,
+    "statusText": "状态 1701",
     "icon": "/images/spirits/3115/image.png"
    },
    {
@@ -111,9 +111,9 @@
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 6,
-    "status": 1702,
-    "statusText": "已驻守",
+    "feedRound": 7,
+    "status": 1701,
+    "statusText": "状态 1701",
     "icon": "/images/spirits/3117/image.png"
    },
    {
@@ -127,9 +127,9 @@
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 5,
-    "status": 1702,
-    "statusText": "已驻守",
+    "feedRound": 6,
+    "status": 1701,
+    "statusText": "状态 1701",
     "icon": "/images/spirits/3117/image.png"
    },
    {
@@ -143,9 +143,9 @@
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 6,
-    "status": 1702,
-    "statusText": "已驻守",
+    "feedRound": 7,
+    "status": 1701,
+    "statusText": "状态 1701",
     "icon": "/images/spirits/3546/image.png"
    },
    {
@@ -159,9 +159,9 @@
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 6,
-    "status": 1702,
-    "statusText": "已驻守",
+    "feedRound": 7,
+    "status": 1701,
+    "statusText": "状态 1701",
     "icon": "/images/spirits/3526/image.png"
    },
    {
@@ -175,9 +175,9 @@
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 3,
-    "status": 1702,
-    "statusText": "已驻守",
+    "feedRound": 4,
+    "status": 1701,
+    "statusText": "状态 1701",
     "icon": "/images/spirits/3599/image.png"
    },
    {
@@ -191,17 +191,168 @@
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 7,
-    "status": 1702,
-    "statusText": "已驻守",
+    "feedRound": 8,
+    "status": 1701,
+    "statusText": "状态 1701",
     "icon": "/images/spirits/3117/image.png"
    }
   ],
-  "plants": [],
+  "plants": [
+   {
+    "id": 1,
+    "seedId": 330018,
+    "seedName": "恶魔雪茄",
+    "state": 1,
+    "harvestNum": 0,
+    "ripeAt": "2026-11-10T23:49:58.000Z",
+    "canStealAccount": 0,
+    "stolenAccount": 0
+   },
+   {
+    "id": 2,
+    "seedId": 330018,
+    "seedName": "恶魔雪茄",
+    "state": 1,
+    "harvestNum": 0,
+    "ripeAt": "2026-11-10T23:49:59.000Z",
+    "canStealAccount": 0,
+    "stolenAccount": 0
+   },
+   {
+    "id": 3,
+    "seedId": 330018,
+    "seedName": "恶魔雪茄",
+    "state": 1,
+    "harvestNum": 0,
+    "ripeAt": "2026-11-10T23:49:59.000Z",
+    "canStealAccount": 0,
+    "stolenAccount": 0
+   },
+   {
+    "id": 4,
+    "seedId": 330018,
+    "seedName": "恶魔雪茄",
+    "state": 1,
+    "harvestNum": 0,
+    "ripeAt": "2026-11-10T23:50:24.000Z",
+    "canStealAccount": 0,
+    "stolenAccount": 0
+   },
+   {
+    "id": 5,
+    "seedId": 330018,
+    "seedName": "恶魔雪茄",
+    "state": 1,
+    "harvestNum": 0,
+    "ripeAt": "2026-11-10T23:50:26.000Z",
+    "canStealAccount": 0,
+    "stolenAccount": 0
+   },
+   {
+    "id": 6,
+    "seedId": 330018,
+    "seedName": "恶魔雪茄",
+    "state": 1,
+    "harvestNum": 0,
+    "ripeAt": "2026-11-10T23:50:01.000Z",
+    "canStealAccount": 0,
+    "stolenAccount": 0
+   },
+   {
+    "id": 7,
+    "seedId": 330018,
+    "seedName": "恶魔雪茄",
+    "state": 1,
+    "harvestNum": 0,
+    "ripeAt": "2026-11-10T23:50:19.000Z",
+    "canStealAccount": 0,
+    "stolenAccount": 0
+   },
+   {
+    "id": 8,
+    "seedId": 330018,
+    "seedName": "恶魔雪茄",
+    "state": 1,
+    "harvestNum": 0,
+    "ripeAt": "2026-11-10T23:50:06.000Z",
+    "canStealAccount": 0,
+    "stolenAccount": 0
+   },
+   {
+    "id": 9,
+    "seedId": 330018,
+    "seedName": "恶魔雪茄",
+    "state": 1,
+    "harvestNum": 0,
+    "ripeAt": "2026-11-10T23:50:08.000Z",
+    "canStealAccount": 0,
+    "stolenAccount": 0
+   },
+   {
+    "id": 10,
+    "seedId": 330018,
+    "seedName": "恶魔雪茄",
+    "state": 1,
+    "harvestNum": 0,
+    "ripeAt": "2026-11-10T23:50:18.000Z",
+    "canStealAccount": 0,
+    "stolenAccount": 0
+   },
+   {
+    "id": 11,
+    "seedId": 330018,
+    "seedName": "恶魔雪茄",
+    "state": 1,
+    "harvestNum": 0,
+    "ripeAt": "2026-11-10T23:50:12.000Z",
+    "canStealAccount": 0,
+    "stolenAccount": 0
+   },
+   {
+    "id": 12,
+    "seedId": 330018,
+    "seedName": "恶魔雪茄",
+    "state": 1,
+    "harvestNum": 0,
+    "ripeAt": "2026-11-10T23:50:09.000Z",
+    "canStealAccount": 0,
+    "stolenAccount": 0
+   },
+   {
+    "id": 13,
+    "seedId": 330018,
+    "seedName": "恶魔雪茄",
+    "state": 1,
+    "harvestNum": 0,
+    "ripeAt": "2026-11-10T23:50:16.000Z",
+    "canStealAccount": 0,
+    "stolenAccount": 0
+   },
+   {
+    "id": 14,
+    "seedId": 330018,
+    "seedName": "恶魔雪茄",
+    "state": 1,
+    "harvestNum": 0,
+    "ripeAt": "2026-11-10T23:50:11.000Z",
+    "canStealAccount": 0,
+    "stolenAccount": 0
+   },
+   {
+    "id": 15,
+    "seedId": 330018,
+    "seedName": "恶魔雪茄",
+    "state": 1,
+    "harvestNum": 0,
+    "ripeAt": "2026-11-10T23:50:10.000Z",
+    "canStealAccount": 0,
+    "stolenAccount": 0
+   }
+  ],
   "meta": {
-   "taskId": "tsk_dmr3hmpj7amz_w83",
-   "createdAt": "2026-11-10T00:13:19.414Z",
-   "finishedAt": "2026-11-10T00:13:20.513Z"
+   "taskId": "tsk_dmrdtuusqsm0_1g1p",
+   "createdAt": "2026-11-10T08:19:28.616Z",
+   "finishedAt": "2026-11-10T08:19:29.710Z"
   }
  }
 }
