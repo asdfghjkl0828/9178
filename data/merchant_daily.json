@@ -1,8 +1,8 @@
 {
   "date": "2026-11-12",
-  "updated_at": "2026-11-12T00:04:49.673886+08:00",
-  "server_now": 1794413089,
-  "active_round": "20:00-24:00",
+  "updated_at": "2026-11-12T15:01:28.970489+08:00",
+  "server_now": 1794466888,
+  "active_round": "12:00-16:00",
   "rounds": {
     "4": {
       "label": "20:00-24:00",
@@ -46,15 +46,37 @@
       "label": "08:00-12:00",
       "items": [
         {
-          "name": "虫系粉尘",
+          "name": "黑晶琉璃",
+          "price": "1000",
+          "limit": "100",
+          "desc": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 “我的阿米亚特说这玩意儿太香了，嚼起来有些呛口，像火山灰，有纯正的拉布朗矿山味道。”",
+          "type": "炼金材料",
+          "high_value": false,
+          "recommend": true,
+          "remain": "已结束",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/b/bc/khe20j8lwkt1bg9g4b0gbnsff48g93c.png/100px-100628.png"
+        },
+        {
+          "name": "神奇的蛋",
+          "price": "36000",
+          "limit": "5",
+          "desc": "蕴含着难以捉摸的魔力，不知道可以孵化出哪种精灵。",
+          "type": "精灵蛋",
+          "high_value": false,
+          "recommend": false,
+          "remain": "已结束",
+          "image": "//img.71acg.net/whd~hykb/comm/hd_admin_upload_2982_5390e1a946446e64d929ad89a3ad3eed.png"
+        },
+        {
+          "name": "普通粉尘",
           "price": "500",
           "limit": "100",
-          "desc": "常见的炼金材料，蕴含少量虫系魔法，是合成技能石的主要触媒。",
+          "desc": "常见的炼金材料，蕴含少量普通系魔法，是合成技能石的主要触媒。",
           "type": "炼金材料",
           "high_value": false,
           "recommend": false,
           "remain": "已结束",
-          "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c0/ihsb7b9pcs210dtaiswlsaxuhe2jfaa.png/100px-100134.png"
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/f/f6/ls7hsygs9epizddf1xo4q9b2iu1dduu.png/100px-100127.png"
         }
       ]
     },
@@ -69,8 +91,19 @@
           "type": "精灵喂养材料",
           "high_value": false,
           "recommend": false,
-          "remain": "已结束",
+          "remain": "0小时58分钟",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c6/5qe6rcdtfxe1gsrvgj3lrn033athx9p.png/100px-100668.png"
+        },
+        {
+          "name": "草系粉尘",
+          "price": "500",
+          "limit": "100",
+          "desc": "常见的炼金材料，蕴含少量草系魔法，是合成技能石的主要触媒。",
+          "type": "炼金材料",
+          "high_value": false,
+          "recommend": false,
+          "remain": "0小时58分钟",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/3/32/2k88qbruf464xxyf02grnmkvun59h0c.png/100px-100121.png"
         }
       ]
     },
