@@ -1,6 +1,6 @@
 {
  "uid": "5678116",
- "fetched_at": "2026-11-14T03:05:21Z",
+ "fetched_at": "2026-11-14T16:59:11Z",
  "source": "rocodex.org (免费)",
  "quota_remaining": 2,
  "from_cache": false,
@@ -9,7 +9,7 @@
   "homeName": "牢大",
   "roomLevel": 5,
   "homeLevel": 25,
-  "homeExperience": 1667924,
+  "homeExperience": 1687924,
   "comfortLevel": 98620,
   "residentPetCount": 11,
   "guardianPetName": "",
@@ -21,20 +21,20 @@
   },
   "pets": [
    {
-    "id": 3115,
-    "gid": 88597,
-    "name": "风铃鲨",
-    "defaultName": "风铃鲨",
-    "level": 1,
+    "id": 3546,
+    "gid": 88782,
+    "name": "圣剑-X",
+    "defaultName": "圣剑-X",
+    "level": 60,
     "gender": 1,
     "genderText": "雄性",
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 7,
+    "feedRound": 1,
     "status": 1701,
     "statusText": "状态 1701",
-    "icon": "/images/spirits/3115/image.png"
+    "icon": "/images/spirits/3546/image.png"
    },
    {
     "id": 3216,
@@ -47,7 +47,7 @@
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 6,
+    "feedRound": 7,
     "status": 1701,
     "statusText": "状态 1701",
     "icon": "/images/spirits/3216/image.png"
@@ -63,7 +63,7 @@
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 9,
+    "feedRound": 10,
     "status": 1701,
     "statusText": "状态 1701",
     "icon": "/images/spirits/3115/image.png"
@@ -79,7 +79,7 @@
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 10,
+    "feedRound": 11,
     "status": 1701,
     "statusText": "状态 1701",
     "icon": "/images/spirits/3115/image.png"
@@ -96,8 +96,8 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 10,
-    "status": 1701,
-    "statusText": "状态 1701",
+    "status": 1702,
+    "statusText": "已驻守",
     "icon": "/images/spirits/3115/image.png"
    },
    {
@@ -111,7 +111,7 @@
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 10,
+    "feedRound": 11,
     "status": 1701,
     "statusText": "状态 1701",
     "icon": "/images/spirits/3117/image.png"
@@ -126,10 +126,10 @@
     "genderText": "雌性",
     "energy": 10,
     "mutationName": "普通",
-    "haveEgg": false,
-    "feedRound": 8,
-    "status": 1702,
-    "statusText": "已驻守",
+    "haveEgg": true,
+    "feedRound": 9,
+    "status": 1701,
+    "statusText": "状态 1701",
     "icon": "/images/spirits/3117/image.png"
    },
    {
@@ -142,8 +142,8 @@
     "genderText": "雌性",
     "energy": 10,
     "mutationName": "普通",
-    "haveEgg": false,
-    "feedRound": 10,
+    "haveEgg": true,
+    "feedRound": 11,
     "status": 1701,
     "statusText": "状态 1701",
     "icon": "/images/spirits/3546/image.png"
@@ -159,7 +159,7 @@
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 10,
+    "feedRound": 11,
     "status": 1701,
     "statusText": "状态 1701",
     "icon": "/images/spirits/3526/image.png"
@@ -175,7 +175,7 @@
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 7,
+    "feedRound": 8,
     "status": 1701,
     "statusText": "状态 1701",
     "icon": "/images/spirits/3599/image.png"
@@ -191,7 +191,7 @@
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 11,
+    "feedRound": 12,
     "status": 1701,
     "statusText": "状态 1701",
     "icon": "/images/spirits/3117/image.png"
@@ -226,7 +226,7 @@
     "harvestNum": 18,
     "ripeAt": "2026-11-12T04:34:45.000Z",
     "canStealAccount": 6,
-    "stolenAccount": 0
+    "stolenAccount": 2
    },
    {
     "id": 4,
@@ -246,7 +246,7 @@
     "harvestNum": 18,
     "ripeAt": "2026-11-12T04:34:57.000Z",
     "canStealAccount": 6,
-    "stolenAccount": 0
+    "stolenAccount": 3
    },
    {
     "id": 6,
@@ -256,7 +256,7 @@
     "harvestNum": 18,
     "ripeAt": "2026-11-12T04:34:58.000Z",
     "canStealAccount": 6,
-    "stolenAccount": 0
+    "stolenAccount": 2
    },
    {
     "id": 7,
@@ -296,7 +296,7 @@
     "harvestNum": 18,
     "ripeAt": "2026-11-12T04:35:02.000Z",
     "canStealAccount": 6,
-    "stolenAccount": 0
+    "stolenAccount": 3
    },
    {
     "id": 11,
@@ -316,7 +316,7 @@
     "harvestNum": 18,
     "ripeAt": "2026-11-12T04:34:47.000Z",
     "canStealAccount": 6,
-    "stolenAccount": 0
+    "stolenAccount": 2
    },
    {
     "id": 13,
@@ -326,7 +326,7 @@
     "harvestNum": 36,
     "ripeAt": "2026-11-12T04:35:03.000Z",
     "canStealAccount": 12,
-    "stolenAccount": 0
+    "stolenAccount": 5
    },
    {
     "id": 14,
@@ -336,7 +336,7 @@
     "harvestNum": 36,
     "ripeAt": "2026-11-12T04:35:04.000Z",
     "canStealAccount": 12,
-    "stolenAccount": 0
+    "stolenAccount": 4
    },
    {
     "id": 15,
@@ -350,9 +350,9 @@
    }
   ],
   "meta": {
-   "taskId": "tsk_dmulnicw63ki_3by0",
-   "createdAt": "2026-11-14T03:05:19.976Z",
-   "finishedAt": "2026-11-14T03:05:21.063Z"
+   "taskId": "tsk_dmv3dx3em93l_4dt8",
+   "createdAt": "2026-11-14T16:59:08.391Z",
+   "finishedAt": "2026-11-14T16:59:09.456Z"
   }
  }
 }
