@@ -1,6 +1,6 @@
 {
  "uid": "5678116",
- "fetched_at": "2026-11-15T16:59:24Z",
+ "fetched_at": "2026-11-15T21:41:33Z",
  "source": "rocodex.org (免费)",
  "quota_remaining": 2,
  "from_cache": false,
@@ -21,20 +21,52 @@
   },
   "pets": [
    {
-    "id": 3115,
-    "gid": 88598,
-    "name": "风铃鲨",
-    "defaultName": "风铃鲨",
+    "id": 3071,
+    "gid": 65070,
+    "name": "音速犬",
+    "defaultName": "音速犬",
+    "level": 60,
+    "gender": 1,
+    "genderText": "雄性",
+    "energy": 10,
+    "mutationName": "普通",
+    "haveEgg": false,
+    "feedRound": 1,
+    "status": 1701,
+    "statusText": "状态 1701",
+    "icon": "/images/spirits/3071/image.png"
+   },
+   {
+    "id": 3600,
+    "gid": 96050,
+    "name": "小勇狮",
+    "defaultName": "小勇狮",
     "level": 1,
     "gender": 2,
     "genderText": "雌性",
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 12,
+    "feedRound": 1,
     "status": 1701,
     "statusText": "状态 1701",
-    "icon": "/images/spirits/3115/image.png"
+    "icon": "/images/spirits/3600/image.png"
+   },
+   {
+    "id": 3546,
+    "gid": 88782,
+    "name": "圣剑-X",
+    "defaultName": "圣剑-X",
+    "level": 60,
+    "gender": 1,
+    "genderText": "雄性",
+    "energy": 10,
+    "mutationName": "普通",
+    "haveEgg": false,
+    "feedRound": 2,
+    "status": 1701,
+    "statusText": "状态 1701",
+    "icon": "/images/spirits/3546/image.png"
    },
    {
     "id": 3599,
@@ -53,27 +85,43 @@
     "icon": "/images/spirits/3599/image.png"
    },
    {
-    "id": 3526,
-    "gid": 83685,
-    "name": "抹茶布丁",
-    "defaultName": "抹茶布丁",
+    "id": 3216,
+    "gid": 88007,
+    "name": "海豹战士",
+    "defaultName": "海豹船长",
     "level": 60,
     "gender": 1,
     "genderText": "雄性",
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 12,
+    "feedRound": 8,
     "status": 1701,
     "statusText": "状态 1701",
-    "icon": "/images/spirits/3526/image.png"
+    "icon": "/images/spirits/3216/image.png"
    },
    {
-    "id": 3546,
-    "gid": 88860,
-    "name": "圣剑-X",
-    "defaultName": "圣剑-X",
-    "level": 60,
+    "id": 3115,
+    "gid": 88593,
+    "name": "风铃鲨",
+    "defaultName": "风铃鲨",
+    "level": 1,
+    "gender": 2,
+    "genderText": "雌性",
+    "energy": 10,
+    "mutationName": "普通",
+    "haveEgg": true,
+    "feedRound": 11,
+    "status": 1701,
+    "statusText": "状态 1701",
+    "icon": "/images/spirits/3115/image.png"
+   },
+   {
+    "id": 3115,
+    "gid": 88598,
+    "name": "风铃鲨",
+    "defaultName": "风铃鲨",
+    "level": 1,
     "gender": 2,
     "genderText": "雌性",
     "energy": 10,
@@ -82,23 +130,7 @@
     "feedRound": 12,
     "status": 1701,
     "statusText": "状态 1701",
-    "icon": "/images/spirits/3546/image.png"
-   },
-   {
-    "id": 3546,
-    "gid": 88782,
-    "name": "圣剑-X",
-    "defaultName": "圣剑-X",
-    "level": 60,
-    "gender": 1,
-    "genderText": "雄性",
-    "energy": 10,
-    "mutationName": "普通",
-    "haveEgg": false,
-    "feedRound": 2,
-    "status": 1701,
-    "statusText": "状态 1701",
-    "icon": "/images/spirits/3546/image.png"
+    "icon": "/images/spirits/3115/image.png"
    },
    {
     "id": 3115,
@@ -133,68 +165,36 @@
     "icon": "/images/spirits/3117/image.png"
    },
    {
-    "id": 3115,
-    "gid": 88593,
-    "name": "风铃鲨",
-    "defaultName": "风铃鲨",
-    "level": 1,
+    "id": 3546,
+    "gid": 88860,
+    "name": "圣剑-X",
+    "defaultName": "圣剑-X",
+    "level": 60,
     "gender": 2,
     "genderText": "雌性",
     "energy": 10,
     "mutationName": "普通",
-    "haveEgg": false,
-    "feedRound": 11,
+    "haveEgg": true,
+    "feedRound": 12,
     "status": 1701,
     "statusText": "状态 1701",
-    "icon": "/images/spirits/3115/image.png"
+    "icon": "/images/spirits/3546/image.png"
    },
    {
-    "id": 3216,
-    "gid": 88007,
-    "name": "海豹战士",
-    "defaultName": "海豹船长",
+    "id": 3526,
+    "gid": 83685,
+    "name": "抹茶布丁",
+    "defaultName": "抹茶布丁",
     "level": 60,
     "gender": 1,
     "genderText": "雄性",
     "energy": 10,
     "mutationName": "普通",
     "haveEgg": false,
-    "feedRound": 8,
+    "feedRound": 12,
     "status": 1701,
     "statusText": "状态 1701",
-    "icon": "/images/spirits/3216/image.png"
-   },
-   {
-    "id": 3071,
-    "gid": 65070,
-    "name": "音速犬",
-    "defaultName": "音速犬",
-    "level": 60,
-    "gender": 1,
-    "genderText": "雄性",
-    "energy": 10,
-    "mutationName": "普通",
-    "haveEgg": false,
-    "feedRound": 1,
-    "status": 1701,
-    "statusText": "状态 1701",
-    "icon": "/images/spirits/3071/image.png"
-   },
-   {
-    "id": 3600,
-    "gid": 96050,
-    "name": "小勇狮",
-    "defaultName": "小勇狮",
-    "level": 1,
-    "gender": 2,
-    "genderText": "雌性",
-    "energy": 10,
-    "mutationName": "普通",
-    "haveEgg": false,
-    "feedRound": 1,
-    "status": 1701,
-    "statusText": "状态 1701",
-    "icon": "/images/spirits/3600/image.png"
+    "icon": "/images/spirits/3526/image.png"
    }
   ],
   "plants": [
@@ -350,9 +350,9 @@
    }
   ],
   "meta": {
-   "taskId": "tsk_dmvy0na8fxum_5qvo",
-   "createdAt": "2026-11-15T16:59:22.709Z",
-   "finishedAt": "2026-11-15T16:59:23.768Z"
+   "taskId": "tsk_dmw40ofao9x7_5v66",
+   "createdAt": "2026-11-15T21:41:31.851Z",
+   "finishedAt": "2026-11-15T21:41:32.922Z"
   }
  }
 }
