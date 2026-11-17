@@ -1,22 +1,44 @@
 {
   "date": "2026-11-17",
-  "updated_at": "2026-11-17T02:23:55.505094+08:00",
-  "server_now": 1794853435,
-  "active_round": "20:00-24:00",
+  "updated_at": "2026-11-17T15:46:42.111010+08:00",
+  "server_now": 1794901601,
+  "active_round": "12:00-16:00",
   "rounds": {
     "1": {
       "label": "08:00-12:00",
       "items": [
         {
-          "name": "黄石榴石",
+          "name": "蓝晶碧玺",
           "price": "1000",
           "limit": "100",
-          "desc": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 特殊的晶体排列解构，精灵打喷嚏可能会令这种晶体发生爆炸。",
+          "desc": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 某些晶石蜗会产出珍贵的粉蓝色碧玺，为此商人翻着花样研究晶石蜗的食谱喜好。",
           "type": "炼金材料",
           "high_value": false,
           "recommend": true,
           "remain": "已结束",
-          "image": "https://patchwiki.biligame.com/images/rocom/thumb/f/f3/c5x5f0lgk33ly801m8w1n9aod8ny4sh.png/100px-100683.png"
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c5/k8wzdzechd88qs9bxuvcnyg0pv4tzl4.png/100px-100681.png"
+        },
+        {
+          "name": "神奇的蛋",
+          "price": "36000",
+          "limit": "5",
+          "desc": "蕴含着难以捉摸的魔力，不知道可以孵化出哪种精灵。",
+          "type": "精灵蛋",
+          "high_value": false,
+          "recommend": false,
+          "remain": "已结束",
+          "image": "//img.71acg.net/whd~hykb/comm/hd_admin_upload_2982_5390e1a946446e64d929ad89a3ad3eed.png"
+        },
+        {
+          "name": "虫系粉尘",
+          "price": "500",
+          "limit": "100",
+          "desc": "常见的炼金材料，蕴含少量虫系魔法，是合成技能石的主要触媒。",
+          "type": "炼金材料",
+          "high_value": false,
+          "recommend": false,
+          "remain": "已结束",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c0/ihsb7b9pcs210dtaiswlsaxuhe2jfaa.png/100px-100134.png"
         }
       ]
     },
@@ -24,26 +46,26 @@
       "label": "12:00-16:00",
       "items": [
         {
-          "name": "黄石榴石",
-          "price": "1000",
-          "limit": "100",
-          "desc": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 特殊的晶体排列解构，精灵打喷嚏可能会令这种晶体发生爆炸。",
-          "type": "炼金材料",
+          "name": "地系血脉秘药",
+          "price": "16w",
+          "limit": "3",
+          "desc": "能唤醒血脉力量的远古秘药，使精灵获得地系血脉。 “一段失落的秘密将被重拾。”",
+          "type": "血脉修改道具",
           "high_value": false,
-          "recommend": true,
-          "remain": "已结束",
-          "image": "https://patchwiki.biligame.com/images/rocom/thumb/f/f3/c5x5f0lgk33ly801m8w1n9aod8ny4sh.png/100px-100683.png"
+          "recommend": false,
+          "remain": "0小时13分钟",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/1/17/808i7ggttfttqexttmvtmdknqszrb7t.png/100px-Xuemai_yanshi.png"
         },
         {
-          "name": "机械粉尘",
+          "name": "萌系粉尘",
           "price": "500",
           "limit": "100",
-          "desc": "常见的炼金材料，蕴含少量机械系魔法，是合成技能石的主要触媒。",
+          "desc": "常见的炼金材料，蕴含少量萌系魔法，是合成技能石的主要触媒。",
           "type": "炼金材料",
           "high_value": false,
           "recommend": false,
-          "remain": "已结束",
-          "image": "https://patchwiki.biligame.com/images/rocom/thumb/1/1c/lcsenwszmlkz002ai6du9f32tbfpi19.png/100px-100138.png"
+          "remain": "0小时13分钟",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/26/58llleh28pa33kxom2cub80nnf0y9zd.png/100px-100137.png"
         }
       ]
     },
