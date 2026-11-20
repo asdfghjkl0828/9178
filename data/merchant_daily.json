@@ -1,22 +1,55 @@
 {
   "date": "2026-11-20",
-  "updated_at": "2026-11-20T01:19:03.305742+08:00",
-  "server_now": 1795108743,
-  "active_round": "20:00-24:00",
+  "updated_at": "2026-11-20T15:03:02.781814+08:00",
+  "server_now": 1795158182,
+  "active_round": "12:00-16:00",
   "rounds": {
     "1": {
       "label": "08:00-12:00",
       "items": [
         {
-          "name": "祝福项坠",
-          "price": "80w",
-          "limit": "1",
-          "desc": "进行精灵赐福的必要道具。能容纳祝福的神秘容器。",
-          "type": "珍稀货币",
+          "name": "黑晶琉璃",
+          "price": "1000",
+          "limit": "100",
+          "desc": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 “我的阿米亚特说这玩意儿太香了，嚼起来有些呛口，像火山灰，有纯正的拉布朗矿山味道。”",
+          "type": "炼金材料",
           "high_value": false,
           "recommend": true,
           "remain": "已结束",
-          "image": "//img.71acg.net/whd~hykb/comm/hd_admin_upload_2982_56aa7234a2be18aae2069541da77b555.png"
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/b/bc/khe20j8lwkt1bg9g4b0gbnsff48g93c.png/100px-100628.png"
+        },
+        {
+          "name": "网兜球",
+          "price": "3000",
+          "limit": "200",
+          "desc": "更适合用来捕捉水系、翼系精灵。 轻快的球，能直线飞跃很远的距离。",
+          "type": "特制咕噜球",
+          "high_value": false,
+          "recommend": true,
+          "remain": "8小时56分钟",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/4/4b/60uvwzet0brdqlhtoa89domccpbo4hr.png/100px-Img_wangdiuqiu.png"
+        },
+        {
+          "name": "萌系血脉秘药",
+          "price": "16w",
+          "limit": "3",
+          "desc": "能唤醒血脉力量的远古秘药，使精灵获得萌系血脉。 “一段失落的秘密将被重拾。”",
+          "type": "血脉修改道具",
+          "high_value": false,
+          "recommend": false,
+          "remain": "已结束",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/a/a9/f93cxq6r5qxkkt6cs8hc2jaecsj3yy9.png/100px-Xuemai_meng.png"
+        },
+        {
+          "name": "恶系粉尘",
+          "price": "500",
+          "limit": "100",
+          "desc": "常见的炼金材料，蕴含少量恶系魔法，是合成技能石的主要触媒。",
+          "type": "炼金材料",
+          "high_value": false,
+          "recommend": false,
+          "remain": "已结束",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/e/ec/mbugzr13ol6m9ay5focjw9kctt14g5h.png/100px-100125.png"
         }
       ]
     },
@@ -24,15 +57,26 @@
       "label": "12:00-16:00",
       "items": [
         {
-          "name": "黄石榴石",
+          "name": "紫莲刚玉",
           "price": "1000",
           "limit": "100",
-          "desc": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 特殊的晶体排列解构，精灵打喷嚏可能会令这种晶体发生爆炸。",
+          "desc": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 紫雀花王朝的贵族相信这是复活与不朽的象征，常常将紫莲刚玉制作成护身符随身携带。",
           "type": "炼金材料",
           "high_value": false,
           "recommend": true,
-          "remain": "已结束",
-          "image": "https://patchwiki.biligame.com/images/rocom/thumb/f/f3/c5x5f0lgk33ly801m8w1n9aod8ny4sh.png/100px-100683.png"
+          "remain": "0小时56分钟",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/9/9c/s7ej54xr4magmv0h0zag15jah6avwlc.png/100px-100682.png"
+        },
+        {
+          "name": "毒系血脉秘药",
+          "price": "16w",
+          "limit": "3",
+          "desc": "能唤醒血脉力量的远古秘药，使精灵获得毒系血脉。 “一段失落的秘密将被重拾。”",
+          "type": "血脉修改道具",
+          "high_value": false,
+          "recommend": false,
+          "remain": "0小时56分钟",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/0/0a/4vxiijlbmrgcpj1r2d5lnzfmdhnurs3.png/100px-Xuemai_du.png"
         },
         {
           "name": "神奇的蛋",
@@ -42,19 +86,8 @@
           "type": "精灵蛋",
           "high_value": false,
           "recommend": false,
-          "remain": "已结束",
+          "remain": "0小时56分钟",
           "image": "//img.71acg.net/whd~hykb/comm/hd_admin_upload_2982_5390e1a946446e64d929ad89a3ad3eed.png"
-        },
-        {
-          "name": "电系粉尘",
-          "price": "500",
-          "limit": "100",
-          "desc": "常见的炼金材料，蕴含少量电系魔法，是合成技能石的主要触媒。",
-          "type": "炼金材料",
-          "high_value": false,
-          "recommend": false,
-          "remain": "已结束",
-          "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/2f/2sux0g15uo8at77bwpoxrg32rv3l4dz.png/100px-100132.png"
         }
       ]
     },
