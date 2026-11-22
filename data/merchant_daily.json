@@ -1,23 +1,12 @@
 {
   "date": "2026-11-22",
-  "updated_at": "2026-11-22T00:05:36.358500+08:00",
-  "server_now": 1795277135,
-  "active_round": "20:00-24:00",
+  "updated_at": "2026-11-22T14:35:17.887526+08:00",
+  "server_now": 1795329317,
+  "active_round": "12:00-16:00",
   "rounds": {
     "1": {
       "label": "08:00-12:00",
       "items": [
-        {
-          "name": "国王球",
-          "price": "16w",
-          "limit": "3",
-          "desc": "昂贵且好用的咕噜球，能十分轻易地捕捉精灵，并能提升精灵的天分。 曾经专供贵族使用，制作方法不明。",
-          "type": "咕噜球",
-          "high_value": false,
-          "recommend": true,
-          "remain": "已结束",
-          "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/2e/jygbfxpdbup5weqy4zaqnyaw2fcfyrq.png/100px-100255.png"
-        },
         {
           "name": "网兜球",
           "price": "3000",
@@ -26,8 +15,19 @@
           "type": "特制咕噜球",
           "high_value": false,
           "recommend": true,
-          "remain": "已结束",
+          "remain": "9小时24分钟",
           "image": "https://patchwiki.biligame.com/images/rocom/thumb/4/4b/60uvwzet0brdqlhtoa89domccpbo4hr.png/100px-Img_wangdiuqiu.png"
+        },
+        {
+          "name": "首领血脉秘药",
+          "price": "32w",
+          "limit": "1",
+          "desc": "修改血脉的秘药，使特定精灵获得“首领血脉”。",
+          "type": "血脉修改道具",
+          "high_value": false,
+          "recommend": false,
+          "remain": "已结束",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/26/fbfwlhncfo0pstpv3ibxn1mj3ayg6di.png/100px-Xuemai_shoulingxuemai.png"
         }
       ]
     },
@@ -42,19 +42,19 @@
           "type": "精灵蛋",
           "high_value": false,
           "recommend": true,
-          "remain": "已结束",
+          "remain": "1小时24分钟",
           "image": "//img.71acg.net/whd~hykb/comm/hd_admin_upload_2982_d3f07a7c316e2b71dc3e5fc1871bd6da.png"
         },
         {
-          "name": "神奇的蛋",
-          "price": "36000",
-          "limit": "5",
-          "desc": "蕴含着难以捉摸的魔力，不知道可以孵化出哪种精灵。",
-          "type": "精灵蛋",
+          "name": "机械粉尘",
+          "price": "500",
+          "limit": "100",
+          "desc": "常见的炼金材料，蕴含少量机械系魔法，是合成技能石的主要触媒。",
+          "type": "炼金材料",
           "high_value": false,
           "recommend": false,
-          "remain": "已结束",
-          "image": "//img.71acg.net/whd~hykb/comm/hd_admin_upload_2982_5390e1a946446e64d929ad89a3ad3eed.png"
+          "remain": "1小时24分钟",
+          "image": "https://patchwiki.biligame.com/images/rocom/thumb/1/1c/lcsenwszmlkz002ai6du9f32tbfpi19.png/100px-100138.png"
         }
       ]
     },
