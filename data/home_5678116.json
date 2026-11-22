@@ -1,6 +1,6 @@
 {
  "uid": "5678116",
- "fetched_at": "2026-11-22T11:08:54Z",
+ "fetched_at": "2026-11-22T19:28:22Z",
  "source": "rocodex.org (免费)",
  "quota_remaining": 2,
  "from_cache": false,
@@ -80,8 +80,8 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 1,
-    "status": 1701,
-    "statusText": "状态 1701",
+    "status": 1702,
+    "statusText": "已驻守",
     "icon": "/images/spirits/3545/image.png"
    },
    {
@@ -174,7 +174,7 @@
     "genderText": "雌性",
     "energy": 10,
     "mutationName": "普通",
-    "haveEgg": false,
+    "haveEgg": true,
     "feedRound": 19,
     "status": 1701,
     "statusText": "状态 1701",
@@ -350,9 +350,9 @@
    }
   ],
   "meta": {
-   "taskId": "tsk_dn1oy3qkb4x3_42k0",
-   "createdAt": "2026-11-22T11:08:53.183Z",
-   "finishedAt": "2026-11-22T11:08:54.319Z"
+   "taskId": "tsk_dn1zkixykx2d_4kb5",
+   "createdAt": "2026-11-22T19:28:21.393Z",
+   "finishedAt": "2026-11-22T19:28:22.528Z"
   }
  }
 }
