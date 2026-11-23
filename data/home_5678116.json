@@ -1,6 +1,6 @@
 {
  "uid": "5678116",
- "fetched_at": "2026-11-22T19:28:22Z",
+ "fetched_at": "2026-11-23T00:45:54Z",
  "source": "rocodex.org (免费)",
  "quota_remaining": 2,
  "from_cache": false,
@@ -32,8 +32,8 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 7,
-    "status": 1701,
-    "statusText": "状态 1701",
+    "status": 1702,
+    "statusText": "已驻守",
     "icon": "/images/spirits/3071/image.png"
    },
    {
@@ -48,8 +48,8 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 7,
-    "status": 1701,
-    "statusText": "状态 1701",
+    "status": 1702,
+    "statusText": "已驻守",
     "icon": "/images/spirits/3600/image.png"
    },
    {
@@ -64,8 +64,8 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 9,
-    "status": 1701,
-    "statusText": "状态 1701",
+    "status": 1702,
+    "statusText": "已驻守",
     "icon": "/images/spirits/3546/image.png"
    },
    {
@@ -94,10 +94,10 @@
     "genderText": "雌性",
     "energy": 10,
     "mutationName": "普通",
-    "haveEgg": false,
+    "haveEgg": true,
     "feedRound": 16,
-    "status": 1701,
-    "statusText": "状态 1701",
+    "status": 1702,
+    "statusText": "已驻守",
     "icon": "/images/spirits/3599/image.png"
    },
    {
@@ -112,8 +112,8 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 15,
-    "status": 1701,
-    "statusText": "状态 1701",
+    "status": 1702,
+    "statusText": "已驻守",
     "icon": "/images/spirits/3216/image.png"
    },
    {
@@ -128,8 +128,8 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 18,
-    "status": 1701,
-    "statusText": "状态 1701",
+    "status": 1702,
+    "statusText": "已驻守",
     "icon": "/images/spirits/3115/image.png"
    },
    {
@@ -144,8 +144,8 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 19,
-    "status": 1701,
-    "statusText": "状态 1701",
+    "status": 1702,
+    "statusText": "已驻守",
     "icon": "/images/spirits/3115/image.png"
    },
    {
@@ -160,8 +160,8 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 18,
-    "status": 1701,
-    "statusText": "状态 1701",
+    "status": 1702,
+    "statusText": "已驻守",
     "icon": "/images/spirits/3115/image.png"
    },
    {
@@ -176,8 +176,8 @@
     "mutationName": "普通",
     "haveEgg": true,
     "feedRound": 19,
-    "status": 1701,
-    "statusText": "状态 1701",
+    "status": 1702,
+    "statusText": "已驻守",
     "icon": "/images/spirits/3117/image.png"
    },
    {
@@ -192,8 +192,8 @@
     "mutationName": "普通",
     "haveEgg": false,
     "feedRound": 19,
-    "status": 1701,
-    "statusText": "状态 1701",
+    "status": 1702,
+    "statusText": "已驻守",
     "icon": "/images/spirits/3526/image.png"
    }
   ],
@@ -350,9 +350,9 @@
    }
   ],
   "meta": {
-   "taskId": "tsk_dn1zkixykx2d_4kb5",
-   "createdAt": "2026-11-22T19:28:21.393Z",
-   "finishedAt": "2026-11-22T19:28:22.528Z"
+   "taskId": "tsk_dn26bmwvkl6m_4q9f",
+   "createdAt": "2026-11-23T00:45:52.526Z",
+   "finishedAt": "2026-11-23T00:45:53.633Z"
   }
  }
 }
