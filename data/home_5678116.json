@@ -1,6 +1,6 @@
 {
  "uid": "5678116",
- "fetched_at": "2026-11-23T08:55:35Z",
+ "fetched_at": "2026-11-23T21:14:02Z",
  "source": "rocodex.org (免费)",
  "quota_remaining": 2,
  "from_cache": false,
@@ -46,7 +46,7 @@
     "genderText": "雌性",
     "energy": 10,
     "mutationName": "普通",
-    "haveEgg": false,
+    "haveEgg": true,
     "feedRound": 8,
     "status": 1701,
     "statusText": "状态 1701",
@@ -350,9 +350,9 @@
    }
   ],
   "meta": {
-   "taskId": "tsk_dn2gqkjai9nw_5cft",
-   "createdAt": "2026-11-23T08:55:33.913Z",
-   "finishedAt": "2026-11-23T08:55:34.926Z"
+   "taskId": "tsk_dn2wfyzntr9c_608i",
+   "createdAt": "2026-11-23T21:14:01.130Z",
+   "finishedAt": "2026-11-23T21:14:02.236Z"
   }
  }
 }
